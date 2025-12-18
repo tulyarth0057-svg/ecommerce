@@ -9,9 +9,9 @@ class whistlist extends Model
 {
     use HasFactory;
 
-    public function wishlist()
+    public function whistlist()
 {
-    return $this->belongsToMany(Product::class, 'wishlists', 'user_id', 'product_id')->withTimestamps();
+    return $this->belongsToMany(Product::class, 'whistlist', 'user_id', 'p_id')->withTimestamps();
 }
 
 }

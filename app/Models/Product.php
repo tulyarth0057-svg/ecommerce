@@ -69,10 +69,10 @@ class Product extends Model
             return $this->belongsTo(MainCategory::class, 'main_category_id', 'cat_id');
         }
 
-        public function usersWhoWishlisted()
-        {
-            return $this->belongsToMany(User::class, 'wishlists', 'product_id', 'user_id')->withTimestamps();
-        }
+           public function usersWhoWishlisted()
+    {
+        return $this->belongsToMany(User::class, 'wishlists', 'product_id', 'user_id')->withTimestamps();
+    }
 
 
 }

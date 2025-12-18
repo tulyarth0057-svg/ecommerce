@@ -46,7 +46,7 @@ class AuthController extends Controller
 
 
       // Handle Login
-   public function authenticate(Request $request)
+   public function post_signin(Request $request)
 {
     // Validate input
     $request->validate([

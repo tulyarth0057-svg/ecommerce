@@ -77,7 +77,7 @@ Route::post('/sign-up', [AuthController::class, 'signup']);
 
 Route::get('/signin', [AuthController::class, 'signin'])->name('signin');
 
-Route::post('/signin', [AuthController::class, 'authenticate'])->name('signin');
+Route::post('/signin', [AuthController::class, 'post_signin'])->name('signin');
 
 
 Route::get('admin/dashboard', function () {
