@@ -8,10 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class whistlist extends Model
 {
     use HasFactory;
+           protected $table = 'wishlist';
 
-    public function whistlist()
-{
-    return $this->belongsToMany(Product::class, 'whistlist', 'user_id', 'p_id')->withTimestamps();
-}
+        protected $fillable = ['user_id', 'p_id'];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'p_id');
+    }
+
 
 }

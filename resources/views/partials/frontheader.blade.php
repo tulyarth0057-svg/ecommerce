@@ -613,6 +613,10 @@
 
 
 
+<!-- starting scripts -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 {{--  Login → Signup --}}
 <script>
@@ -748,6 +752,7 @@ document.getElementById('openLogin')?.addEventListener('click', function () {
 
 
 {{-- whistlist login alert --}}
+
 <script>document.getElementById('wishlistBtn').addEventListener('click', function(e){
     @if(!Auth::check())
         e.preventDefault(); // prevent redirect

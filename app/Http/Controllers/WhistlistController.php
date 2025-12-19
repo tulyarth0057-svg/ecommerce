@@ -3,15 +3,21 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Whistlist;
+
 use Illuminate\Support\Facades\Auth;
 
 class WhistlistController extends Controller
 {
 
-       public function whistlist()
-    {
-        return view('whistlist');
-    }
+     public function whistlist()
+{
+    $wishlists = Whistlist::with('product')
+        ->where('user_id', Auth::id())
+        ->get();
+
+    return view('whistlist', compact('wishlists'));
+}
 
 
 
@@ -44,6 +50,16 @@ class WhistlistController extends Controller
     ]);
 
    }
+
+   public function remove($id)
+{
+    Whistlist::where('w_id', $id)
+        ->where('user_id', Auth::id()) // ensure user only deletes their own item
+        ->delete();
+
+    return back()->with('success', 'Removed from wishlist');
+}
+
 
 }
 

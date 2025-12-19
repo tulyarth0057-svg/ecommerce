@@ -115,7 +115,6 @@
                                 <div class="col-12 ">
                                     <div class="shop-product-wrap data-grid">
                                         <!-- shop-grid start -->
-
 <div class="col-12">
     <div class="shop-product-wrap data-grid">
         <div class="row row-mtm">
@@ -126,8 +125,8 @@
 
                             <!-- Product Image Column -->
                             <div class="product-image-col">
-                                <div class="product-image position-relative">
-                                 <a href="{{ url('products/'.$product->p_id) }}" class="pro-img d-block position-relative">
+                                <div class="product-image">
+                                 <a href="{{ url('products/'.$product->p_id) }}" class="d-block ">
     <img src="{{ asset('storage/colors/' . $product->img_path) }}"
          alt="{{ $product->img_alt_text ?? $product->p_name }}"
          class="img-fluid img1"
@@ -135,19 +134,7 @@
 </a>
 
 
-                                    <div class="product-action-wrap position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center opacity-0 transition-opacity">
-                                        <div class="product-action d-flex gap-2">
-                                            <a href="javascript:void(0)" class="add-to-wishlist btn btn-light">
-                                                <i class="ri-heart-line"></i>
-                                            </a>
-                                            <a href="javascript:void(0)" class="add-to-cart btn btn-light">
-                                                <i class="ri-shopping-bag-3-line"></i>
-                                            </a>
-                                            <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view btn btn-light">
-                                                <i class="ri-eye-line"></i>
-                                            </a>
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
 
@@ -162,6 +149,25 @@
                                         @if($product->p_old_price)
                                             <span class="old-price text-decoration-line-through ms-3">${{ number_format($product->p_old_price, 2) }}</span>
                                         @endif
+                                    </div>
+
+                                     <div class=" align-items-center justify-content-center w-100 h-100 mt-3  transition-3 text-center d-flex">
+                                        <div class="d-flex gap-2">
+                                       <a href="javascript:void(0)"
+                                            class="add-to-wishlist btn btn-light"
+                                            {{-- data-bs-toggle="modal" data-bs-target="#loginModal" --}}
+                                            data-product-id="{{ $product->p_id }}"data-redirect="{{ route('whistlist') }}">
+                                            <i class="ri-heart-line"></i>
+                                        </a>
+
+
+                                            <a href="javascript:void(0)" class="add-to-cart btn btn-light">
+                                                <i class="ri-shopping-bag-3-line"></i>
+                                            </a>
+                                            <a href="{{ url('products/'.$product->p_id) }}" class="d-block quick-view btn btn-light">
+                                                <i class="ri-eye-line"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                     {{-- <div class="product-description d-none d-md-block">
                                         <p>{{ $product->p_short_description }}</p>
@@ -178,22 +184,88 @@
         </div>
     </div>
 </div>
+                                    <!-- shop-grid end -->
 
 
-                                        <!-- shop-grid end -->
-                                    </div>
-
-                                </div>
-         </section>
+    </section>
 
 
 
-
-    @endsection
-
+        </main>
 
 
+        {{-- script start --}}
+
+        @push('scripts')
 
 
+        <!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+<script>
+           document.querySelectorAll('.add-to-wishlist').forEach(btn => {
+    btn.addEventListener('click', function(e){
+        e.preventDefault(); // stop default link
+
+        const productId = this.dataset.productId;
+
+        @if(!Auth::check())
+            Swal.fire({
+                icon: 'warning',
+                title: 'Login Required',
+                text: 'Please login first to add items to wishlist!',
+                showCancelButton: true,
+                confirmButtonText: 'Login',
+                cancelButtonText: 'Cancel',
+            }).then((result) => {
+                if(result.isConfirmed){
+                    const loginModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('loginModal'));
+                    loginModal.show();
+                }
+            });
+        @else
+           fetch("{{ route('wishlist') }}", {
+    method: "POST",
+    headers: {
+        "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value,
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ product_id: productId })
+})
+.then(res => res.json())
+.then(data => {
+    if(data.status){
+        Swal.fire({
+            icon: 'success',
+            title: 'Added!',
+            text: data.message,
+            timer: 1500,
+            showConfirmButton: false
+        });
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: data.message
+        });
+    }
+});
+        @endif
+    });
+});
+
+</script>
+
+
+
+
+        @endpush
+
+
+     @endsection
 
 

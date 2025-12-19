@@ -189,6 +189,14 @@
         {{-- script start --}}
 
         @push('scripts')
+
+
+        <!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
 <script>
            document.querySelectorAll('.add-to-wishlist').forEach(btn => {
     btn.addEventListener('click', function(e){
@@ -244,24 +252,7 @@
 
 </script>
 
-<!-- SweetAlert2 CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-<!-- SweetAlert2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-
-<script>
-    Swal.fire({
-    icon: 'success',
-    title: 'Success!',
-    text: data.message,
-    timer: 1500,
-    showConfirmButton: false
-});
-
-</script>
 
 
         @endpush

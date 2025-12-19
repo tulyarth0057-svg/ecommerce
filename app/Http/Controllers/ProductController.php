@@ -9,6 +9,7 @@ use App\Models\size;
 use App\Models\Image;
 use App\Models\category;
 use App\Models\maincategory;
+use App\Models\whistlist;
 
 class ProductController extends Controller
 {

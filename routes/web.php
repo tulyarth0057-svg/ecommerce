@@ -186,4 +186,8 @@ Route::post('/wishlist', [WhistlistController::class, 'addToWishlist'])->name('w
 
 Route::get('/whistlist', [WhistlistController::class, 'whistlist'])->name('whistlist')->middleware('auth');
 
+Route::delete('/wishlist/{id}', [WhistlistController::class, 'remove'])
+    ->name('wishlist.remove');
+
+
 
