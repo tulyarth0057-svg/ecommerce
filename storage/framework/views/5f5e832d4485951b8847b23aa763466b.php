@@ -1,4 +1,4 @@
-<?php $__env->startSection('title', 'shirt collection'); ?>
+<?php $__env->startSection('title', 'shirt-collection'); ?>
 
 
 
@@ -115,14 +115,13 @@
                             <!-- Product Image Column -->
                             <div class="product-image-col">
                                 <div class="product-image">
-                                 <a href="<?php echo e(url('products/'.$product->p_id)); ?>" class="d-block ">
-    <img src="<?php echo e(asset('storage/colors/' . $product->img_path)); ?>"
-         alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
-         class="img-fluid img1"
-         style="height:400px; width:100%; object-fit:contain;">
-</a>
-
-
+                                    
+                            <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="d-block ">
+                            <img src="<?php echo e(asset('storage/colors/' . $product->img_path)); ?>"
+                                alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
+                                class="img-fluid img1"
+                                style="height:400px; width:100%; object-fit:contain;">
+                            </a>
 
                                 </div>
                             </div>
@@ -134,9 +133,9 @@
                                         <a href="<?php echo e(url('products/'.$product->p_id)); ?>" class="primary-link"><?php echo e($product->p_name); ?></a>
                                     </div>
                                     <div class="product-price mb-1">
-                                        <span class="new-price primary-color">$<?php echo e(number_format($product->p_price, 2)); ?></span>
+                                        <span class="new-price primary-color">₹<?php echo e(number_format($product->p_price, 2)); ?></span>
                                         <?php if($product->p_old_price): ?>
-                                            <span class="old-price text-decoration-line-through ms-3">$<?php echo e(number_format($product->p_old_price, 2)); ?></span>
+                                            <span class="old-price text-decoration-line-through ms-3">₹<?php echo e(number_format($product->p_old_price, 2)); ?></span>
                                         <?php endif; ?>
                                     </div>
 
@@ -145,7 +144,7 @@
                                        <a href="javascript:void(0)"
                                             class="add-to-wishlist btn btn-light"
                                             
-                                            data-product-id="<?php echo e($product->p_id); ?>"data-redirect="<?php echo e(route('whistlist')); ?>">
+                                            data-product-id="<?php echo e($product->p_id); ?>"data-redirect="<?php echo e(route('wishlist.index')); ?>">
                                             <i class="ri-heart-line"></i>
                                         </a>
 
@@ -214,7 +213,7 @@
                 }
             });
         <?php else: ?>
-           fetch("<?php echo e(route('wishlist')); ?>", {
+           fetch("<?php echo e(route('wishlist.index')); ?>", {
     method: "POST",
     headers: {
         "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value,

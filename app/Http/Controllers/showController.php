@@ -501,6 +501,17 @@ class showController extends Controller
     }
 
 
+    // product-view ----->
+    public function productview($id)
+    {
+        
+        $product = Product::findOrFail($id);
+
+        
+        return view('product-view', compact('product'));
+    }
+
+
 
 
 

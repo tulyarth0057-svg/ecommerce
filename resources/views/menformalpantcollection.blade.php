@@ -154,7 +154,7 @@
                                        <a href="javascript:void(0)"
                                             class="add-to-wishlist btn btn-light"
                                             {{-- data-bs-toggle="modal" data-bs-target="#loginModal" --}}
-                                            data-product-id="{{ $product->p_id }}"data-redirect="{{ route('whistlist') }}">
+                                            data-product-id="{{ $product->p_id }}"data-redirect="{{ route('wishlist.index') }}">
                                             <i class="ri-heart-line"></i>
                                         </a>
 
@@ -225,7 +225,7 @@
                 }
             });
         @else
-           fetch("{{ route('wishlist') }}", {
+           fetch("{{ route('wishlist.index') }}", {
     method: "POST",
     headers: {
         "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value,

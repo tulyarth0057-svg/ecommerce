@@ -233,7 +233,7 @@ h4{
              <hr>
             <div>
                 <div class="fw-semibold">Long Description</div>
-                <p>{!! $product->p_long_description !!}</p>
+                <p>{{ Str::limit($product->p_long_description, 5000) }}</p>
             </div>
         </div>
     </div>

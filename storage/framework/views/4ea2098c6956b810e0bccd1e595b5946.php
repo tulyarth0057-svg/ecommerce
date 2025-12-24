@@ -149,7 +149,7 @@
                                        <a href="javascript:void(0)"
                                             class="add-to-wishlist btn btn-light"
                                             
-                                            data-product-id="<?php echo e($product->p_id); ?>"data-redirect="<?php echo e(route('whistlist')); ?>">
+                                            data-product-id="<?php echo e($product->p_id); ?>"data-redirect="<?php echo e(route('wishlist.index')); ?>">
                                             <i class="ri-heart-line"></i>
                                         </a>
 
@@ -218,7 +218,7 @@
                 }
             });
         <?php else: ?>
-           fetch("<?php echo e(route('wishlist')); ?>", {
+           fetch("<?php echo e(route('wishlist.index')); ?>", {
     method: "POST",
     headers: {
         "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value,

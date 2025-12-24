@@ -4,6 +4,29 @@
 <?php $__env->startSection('content'); ?>
 
 
+<?php $__env->startPush('styles'); ?>
+
+<style>
+.whistlist-img{
+     height:200px;
+      width:300px;
+       object-fit:contain;
+       border:1px solid #ddd;
+}
+.custom-border {
+    border: 1px solid grey;
+    height: 40px;
+    width: 40px; 
+         
+    border-radius: 0.25rem;
+
+}
+
+
+</style>
+<?php $__env->stopPush(); ?>
+
+
 
 
         <!-- breadcrumb-area start -->
@@ -21,63 +44,13 @@
             <!-- wishlist-page strat -->
             <section class="wish-area section-ptb">
                 <div class="container">
-                    <form method="post">
-                        <div class="row row-mtm">
-                            <div class="col-12 col-lg-7 col-xxl-8" data-animate="animate__fadeIn">
-                                <div class="wish-textview ul-mtm30">
-                                    <div class="wish-text">Create your very own personalized collections of items and save them in your account for future reference. Your collection are waiting!</div>
-                                    <div class="wish-text">
-                                        <div class="wish-text-content ul-mtm-15">
-                                            <span>This list will expire in 30 days.</span>
-                                            <span><a href="<?php echo e(route('signin')); ?>" class="body-primary-color text-decoration-underline" aria-label="Login user" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a> or <a href="<?php echo e(route('signup')); ?>" class="body-primary-color text-decoration-underline" data-bs-toggle="modal" data-bs-target="#signupModal">Create account</a> to make sure lists will be saved.</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-5 col-xxl-4" data-animate="animate__fadeIn">
-                                <div class="wish-summary ptb-30 plr-15 plr-md-30 extra-bg border-radius">
-                                    <h6 class="font-18 meb-21">Wishlist summary</h6>
-                                    <div class="wish-total ul-mtm20">
-                                        <div class="wish-total-info d-flex justify-content-between">
-                                            <span>Subtotal</span>
-                                            <span class="heading-color heading-weight">$246.00</span>
-                                        </div>
-                                        <div class="wish-total-info d-flex justify-content-between">
-                                            <span>Shipping</span>
-                                            <span class="text-success heading-weight">Excluding</span>
-                                        </div>
-                                    </div>
-                                    <div class="wish-total mst-26 pst-26 bst">
-                                        <div class="wish-total-info d-flex justify-content-between">
-                                            <span>Total</span>
-                                            <span class="heading-color heading-weight">$246.00</span>
-                                        </div>
-                                    </div>
-                                    <div class="wish-summary-btn mst-26">
-                                        <div class="row row-mtm15">
-                                            <div class="col-12">
-                                                <button type="submit" class="w-100 btn-style quaternary-btn add-to-cart">
-                                                    <span class="product-icon">
-                                                        <span class="product-bag-icon">All add to cart</span>
-                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                    </span>
-                                                </button>
-                                            </div>
-                                            <div class="col-12">
-                                                <a href="wishlist-empty.html" class="w-100 btn-style secondary-btn">Clear wishlist</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                       
                         <!-- add product to whistlist -->
 
                         <div class="wish-itemview section-pt">
                             <div class="wish-title d-flex align-items-center justify-content-between peb-30 beb" data-animate="animate__fadeIn">
                                 <h6 class="font-18">My favorites</h6>
-                                <span class="wish-count"><span class="wish-counter">4</span> Items</span>
+                                <span class="wish-count"><span class="wish-counter">4</span>Items</span>
                             </div>
                             <div class="wish-table">
                                 <div class="wish-table-heading d-none d-md-block ptb-30 beb" data-animate="animate__fadeIn">
@@ -90,72 +63,86 @@
                                 </div>
                                 <div class="wish-table-data">
                                     <div class="wish-table-info ptb-30 beb" data-animate="animate__fadeIn">
-                                        <?php $__currentLoopData = $wishlists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $wishlist): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-<div class="row row-mtm w-750 m-auto mb-4 p-4 border">
-    <div class="wish-table-item">
-        <div class="row row-mtm30">
+                                       
 
-            <!-- Product -->
-            <div class="col-12 col-md-5">
-                <div class="wish-item-content d-flex flex-wrap">
-                    <div class="wish-item-image width-80">
-                        <a href="<?php echo e(route('whistlist', $wishlist->product->p_id)); ?>" class="d-block br-hidden">
-                            <img src="<?php echo e(asset($wishlist->products->img_path ?? 'public/colors/default.jpg')); ?>" class="w-100 img-fluid">
-                        </a>
-                    </div>
+                                        <?php $__currentLoopData = $wishlists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $wishlist): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>                               
+                                    <div class="row row-mtm w-750 m-auto mb-4 p-4 border">
+                                        <div class="wish-table-item">
+                                            <div class="row row-mtm30">
 
-                    <div class="wish-item-info width-calc-80 psl-15">
-                        <a href="<?php echo e(route('whistlist', $wishlist->product->p_id)); ?>" class="primary-link heading-weight">
-                            <?php echo e($wishlist->product->p_name); ?>
+                                                <!-- Product -->
+                                                <div class="col-12 col-md-8">
+                                                    <div class="wish-item-content d-flex flex-wrap">
+                                                        <div class="wish-item-image ">
+                                                            <a href="<?php echo e(route('wishlist.index', $wishlist->product->p_id)); ?>" class="d-block br-hidden">
+                                                            <img src="<?php echo e(asset('storage/colors/' . $wishlist->product->colors->first()->images->first()->img_path)); ?>"
+                                                            alt="<?php echo e($wishlist->product->img_alt_text ?? $wishlist->product->p_name); ?>" class="whistlist-img"
+                                                            >
+                                                            </a>
+                                                        </div>
 
-                        </a>
+                                                        <div class="wish-item-info p-2 ms-3 ">
+                                                            <a href="<?php echo e(route('wishlist.index', $wishlist->product->p_id)); ?>" class="primary-link heading-weight">
+                                                                <label for="">Product name:</label><br>
+                                                                <?php echo e($wishlist->product->p_name); ?>
 
-                        <div class="wish-item-price heading-color heading-weight mst-7">
-                            ₹<?php echo e($wishlist->product->p_price); ?>
+                                                            </a>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
+                                                            <div class="wish-item-price heading-color heading-weight mst-7 ">
+                                                                <label for="">Price :</label><br>
+                                                                <span>₹<?php echo e($wishlist->product->p_price); ?></span>
+                                                                
+                                                            </div>
 
-            <!-- Qty -->
-            <div class="col-6 col-md-3">
-                <input type="number" value="1" min="1" class="text-center js-qty-num">
-            </div>
+                                                            <div class="wish-item-sizes heading-color heading-weight mst-7 gap-2 pt-2">
+                                                                <label for="">Available sizes:</label><br><br>
+
+                                                            <?php $__currentLoopData = $wishlist->product->colors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <?php $__currentLoopData = $color->sizes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $size): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+                                                            <span class="custom-border mt-3 p-1"><?php echo e($size->size_name); ?></span>
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
             <!-- Total -->
-            <div class="col-3 col-md-2">
-                <div class="wish-total-price heading-color heading-weight">
-                    ₹<?php echo e($wishlist->product->p_price); ?>
+                                                    <div class="col-3 col-md-2">
+                                                        <div class="wish-total-price heading-color heading-weight">
+                                                        <label for="">total price :</label>
+                                                            <span class="text-danger"> ₹<?php echo e($wishlist->product->p_price); ?></span>
+                                                        </div>
+                                                    </div>
 
-                </div>
-            </div>
+                                                    <!-- Remove -->
+                                                    <div class="col-3 col-md-2 text-end">
+                                                        <form action="<?php echo e(route('wishlist.remove', $wishlist->w_id)); ?>" method="POST">
+                                                            <?php echo csrf_field(); ?>
+                                                            <?php echo method_field('DELETE'); ?>
+                                                            <button type="submit" class="wish-remove text-danger icon-16">
+                                                                <i class="ri-close-large-line"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
 
-            <!-- Remove -->
-            <div class="col-3 col-md-2 text-end">
-                <form action="<?php echo e(route('wishlist.remove', $wishlist->w_id)); ?>" method="POST">
-                    <?php echo csrf_field(); ?>
-                    <?php echo method_field('DELETE'); ?>
-                    <button type="submit" class="wish-remove text-danger icon-16">
-                        <i class="ri-close-large-line"></i>
-                    </button>
-                </form>
-            </div>
+                                                </div>
+                                            </div>
 
-        </div>
-    </div>
+                                            <!-- Add to Cart -->
+                                            <div class="wish-note-cart">
+                                                <button class="w-100 btn-style secondary-btn add-to-cart" 
+                                                    data-product="<?php echo e($wishlist->product->p_id); ?>">
+                                                    Add to cart
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-    <!-- Add to Cart -->
-    <div class="wish-note-cart">
-        <button class="w-100 btn-style secondary-btn add-to-cart" data-product="<?php echo e($wishlist->product->p_id); ?>">
-            Add to cart
-        </button>
-    </div>
-</div>
-<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-</div>
-</div>
+                                        </div>
+                                        </div>
                                     </div>
                             
                                         </div>
@@ -846,7 +833,9 @@
             </div>
         </div>
         <!-- search-modal end -->
-        <!-- cart-drawer start -->
+
+
+        <!-- Add to card drawer start -->
         <div class="cart-drawer position-fixed top-0 bottom-0 body-bg z-index-5 invisible box-shadow" id="cart-drawer">
             <form method="post" action="javascript:void(0)" class="drawer-contents d-flex flex-column">
                 <div class="drawer-fixed-header ptb-10 plr-15 beb">
@@ -858,7 +847,7 @@
                     </div>
                 </div>
                 <div class="pst-10 plr-15 text-center">
-                    <div class="extra-color font-14 ptb-6 plr-15 primary-bg">First order? Get 11% off with code <span class="heading-weight blinking">11%OFF</span>.</div>
+                    <div class="extra-color font-14 ptb-6 plr-15 primary-bg">First order? Get 10% off with code <span class="heading-weight blinking">10% OFF</span>.</div>
                 </div>
                 <div class="drawer-cart-empty d-none h-100 ptb-30 plr-15">
                     <div class="drawer-scrollable h-100 d-flex flex-column align-items-center justify-content-center text-center">
@@ -1179,6 +1168,40 @@
             <div class="bg-shop position-fixed top-0 end-0 bottom-0 start-0 bg-black z-index-4 opacity-0 invisible"></div>
         </div>
         <!-- bg-screen end -->
+
+
+        <?php $__env->startPush('scripts'); ?>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+    $('.add-to-cart').click(function(){
+        let productId = $(this).data('product');
+        let button = $(this);
+
+        $.ajax({
+            url: '<?php echo e(route("wishlist.addToCart")); ?>',
+            type: 'POST',
+            data: {
+                _token: '<?php echo e(csrf_token()); ?>',
+                product_id: productId
+            },
+            success: function(response){
+                if(response.success){
+                    alert(response.message); // You can replace this with a nicer toast notification
+                    button.text('Added'); // Update button text
+                    button.prop('disabled', true);
+                } else {
+                    alert('Something went wrong!');
+                }
+            },
+            error: function(){
+                alert('Error adding product to cart.');
+            }
+        });
+    });
+});
+</script>
+        <?php $__env->stopPush(); ?>
 
 
  <?php $__env->stopSection(); ?>

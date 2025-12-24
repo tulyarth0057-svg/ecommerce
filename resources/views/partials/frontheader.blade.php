@@ -488,7 +488,8 @@
                                         </li>
                                         <li class="header-icon-wrap wishlist-wrap d-md-block d-none">
                                             <div class="header-icon-wrapper">
-                                                <a href="{{ url('/whistlist') }}" class="d-block header-icon-wishlist" id="wishlistBtn">
+                                             <a href="{{ route('wishlist.index') }}"
+                                                 class="d-block header-icon-wishlist" id="wishlistBtn">
                                                     <span class="primary-link ul-mt5 flex-nowrap align-items-center">
                                                         <span class="d-block">
                                                             <span class="d-block header-block-icon-wrap position-relative per-8">

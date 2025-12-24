@@ -1,7 +1,7 @@
 
 @extends('layouts.frontend-layout')
 
-@section('title', 'shirt collection')
+@section('title', 'shirt-collection')
 
 
 
@@ -118,14 +118,13 @@
                             <!-- Product Image Column -->
                             <div class="product-image-col">
                                 <div class="product-image">
-                                 <a href="{{ url('products/'.$product->p_id) }}" class="d-block ">
-    <img src="{{ asset('storage/colors/' . $product->img_path) }}"
-         alt="{{ $product->img_alt_text ?? $product->p_name }}"
-         class="img-fluid img1"
-         style="height:400px; width:100%; object-fit:contain;">
-</a>
-
-
+                                    
+                            <a href="{{ url('product-view/'.$product->p_id) }}" class="d-block ">
+                            <img src="{{ asset('storage/colors/' . $product->img_path) }}"
+                                alt="{{ $product->img_alt_text ?? $product->p_name }}"
+                                class="img-fluid img1"
+                                style="height:400px; width:100%; object-fit:contain;">
+                            </a>
 
                                 </div>
                             </div>
@@ -137,9 +136,9 @@
                                         <a href="{{ url('products/'.$product->p_id) }}" class="primary-link">{{ $product->p_name }}</a>
                                     </div>
                                     <div class="product-price mb-1">
-                                        <span class="new-price primary-color">${{ number_format($product->p_price, 2) }}</span>
+                                        <span class="new-price primary-color">₹{{ number_format($product->p_price, 2) }}</span>
                                         @if($product->p_old_price)
-                                            <span class="old-price text-decoration-line-through ms-3">${{ number_format($product->p_old_price, 2) }}</span>
+                                            <span class="old-price text-decoration-line-through ms-3">₹{{ number_format($product->p_old_price, 2) }}</span>
                                         @endif
                                     </div>
 
@@ -148,7 +147,7 @@
                                        <a href="javascript:void(0)"
                                             class="add-to-wishlist btn btn-light"
                                             {{-- data-bs-toggle="modal" data-bs-target="#loginModal" --}}
-                                            data-product-id="{{ $product->p_id }}"data-redirect="{{ route('whistlist') }}">
+                                            data-product-id="{{ $product->p_id }}"data-redirect="{{ route('wishlist.index') }}">
                                             <i class="ri-heart-line"></i>
                                         </a>
 
@@ -219,7 +218,7 @@
                 }
             });
         @else
-           fetch("{{ route('wishlist') }}", {
+           fetch("{{ route('wishlist.index') }}", {
     method: "POST",
     headers: {
         "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value,

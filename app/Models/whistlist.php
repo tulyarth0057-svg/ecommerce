@@ -14,7 +14,7 @@ class whistlist extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'p_id');
+        return $this->belongsTo(Product::class, 'p_id','p_id');
     }
 
 

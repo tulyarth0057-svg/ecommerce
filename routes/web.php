@@ -182,12 +182,33 @@ Route::get('/Kidscategroy', [showController::class, 'KidsMaincollection'])->name
 
 // whistlist route---->
 
-Route::post('/wishlist', [WhistlistController::class, 'addToWishlist'])->name('wishlist');
+// ADD to wishlist (button / form)
+Route::post('/wishlist', [WhistlistController::class, 'addToWishlist'])
+    ->name('wishlist.store');
 
-Route::get('/whistlist', [WhistlistController::class, 'whistlist'])->name('whistlist')->middleware('auth');
+// SHOW wishlist page
+Route::get('/wishlist', [WhistlistController::class, 'wishlist'])
+    ->name('wishlist.index')
+    ->middleware('auth');
 
-Route::delete('/wishlist/{id}', [WhistlistController::class, 'remove'])
+// CLEAR wishlist
+Route::delete('/wishlist/clear', [WhistlistController::class, 'clearWishlist'])
+    ->name('wishlist.clear');
+
+// REMOVE single item
+Route::delete('/wishlist/{id}', [WhistlistController::class, 'removeWishlist'])
     ->name('wishlist.remove');
+
+
+// add to card route
+
+Route::post('/wishlist/add-to-cart', [CartController::class, 'addFromWishlist'])->name('wishlist.addToCart');
+
+
+// product view route--->
+Route::get('/product-view/{id}', [showController::class, 'productview'])->name('productview');
+
+
 
 
 

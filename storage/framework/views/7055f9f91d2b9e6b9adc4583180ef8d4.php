@@ -32,7 +32,8 @@
     <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/collection.css')); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/blog.css')); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/css/style.css')); ?>">
-
+    
+    
     <?php echo $__env->yieldPushContent('styles'); ?>
 
     <style>
@@ -88,6 +89,12 @@
    
     <!-- SweetAlert2 JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    
 
     
     <?php echo $__env->yieldPushContent('scripts'); ?>
