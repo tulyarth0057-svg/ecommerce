@@ -10,6 +10,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\MainCategoryController;
 use App\Http\Controllers\showController;
+use App\Http\Controllers\AddtocardController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -33,9 +35,7 @@ route ::get('/about',function (){
     return view('about');
 });
 
-route ::get('/cartpage',function (){
-    return view('cart-page');
-});
+
 
 route ::get('/checkout',function (){
     return view('checkout');
@@ -202,11 +202,21 @@ Route::delete('/wishlist/{id}', [WhistlistController::class, 'removeWishlist'])
 
 // add to card route
 
-Route::post('/wishlist/add-to-cart', [CartController::class, 'addFromWishlist'])->name('wishlist.addToCart');
+Route::post('/wishlist/add-to-cart', [AddtocardController::class, 'addFromWishlist'])->name('wishlist.addToCart');
 
 
 // product view route--->
 Route::get('/product-view/{id}', [showController::class, 'productview'])->name('productview');
+
+
+// add to cart route--->
+Route::get('/cart', [AddtocardController::class, 'index'])
+     ->name('cart')
+     ->middleware('auth');
+
+Route::post('/add-to-cart', [AddtocardController::class, 'addToCart'])
+     ->name('add-to-cart')
+     ->middleware('auth');
 
 
 

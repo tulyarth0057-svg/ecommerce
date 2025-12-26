@@ -143,76 +143,68 @@
             <div class="single-product">
                 <div class="row single-product-wrap">
 
-                    <!-- Product Image-->
-                     <div class="product-image mb-2">
-                       <a href="{{ url('products/'.$product->p_id) }}">
-                      <img src="{{ asset('storage/colors/' . $product->img_path) }}"
-                        alt="{{ $product->img_alt_text ?? $product->p_name }}"
-                         class="img-fluid border"
-     style="height:400px; width:100%; object-fit:contain;">
-                        </a>
-</a>
+                   <!-- Product column Image-->
+                     <div class="product-image-col">
+                                <div class="product-image">
+                                <a href="{{ url('product-view/'.$product->p_id) }}" class="d-block ">
+                                    <img src="{{ asset('storage/colors/' . $product->img_path) }}"
+                                        alt="{{ $product->img_alt_text ?? $product->p_name }}"
+                                        class="img-fluid img1"
+                                        style="height:400px; width:100%; object-fit:contain;">
+                                </a>
 
-                    </div>
-
-                    <!-- Product Content -->
-                    <div class="product-content">
-                        <div class="pro-content">
-                            <div class="product-title">
-                                <span class="d-block heading-weight">
-                                    <a href="{{ url('product/'.$product->p_id) }}" class="primary-link">{{ $product->p_name }}</a>
-                                </span>
-                            </div>
-                            <div class="product-price">
-                                <div class="price-box heading-weight">
-                                    <span class="new-price primary-color">${{ number_format($product->p_price, 2) }}</span>
-                                    @if($product->p_old_price)
-                                        <span class="old-price">
-                                            <span class="mer-3">~</span>
-                                            <span class="text-decoration-line-through">${{ number_format($product->p_old_price, 2) }}</span>
-                                        </span>
-                                    @endif
                                 </div>
                             </div>
 
-                            <div class="product-description">
-                                <p>{{ $product->p_short_description }}</p>
-                            </div>
-                            <div class="product-action-wrap">
-                                <div class="product-action">
-                                    <a href="javascript:void(0)" class="add-to-wishlist">
-                                        <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                        <span class="tooltip-text">wishlist</span>
-                                    </a>
-                                    <a href="javascript:void(0)" class="add-to-cart">
-                                        <span class="product-icon">
-                                            <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                            <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                            <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                        </span>
-                                        <span class="tooltip-text">add to cart</span>
-                                    </a>
-                                    <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                        <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                        <span class="tooltip-text">quickview</span>
-                                    </a>
+                            <!-- Product Content Column -->
+                            <div class="product-content mt-2">
+                                <div class="pro-content">
+                                    <div class="product-title mb-1">
+                                        <a href="{{ url('product-view/'.$product->p_id) }}" class="primary-link">{{ $product->p_name }}</a>
+                                    </div>
+                                    <div class="product-price mb-1">
+                                        <span class="new-price primary-color">${{ number_format($product->p_price, 2) }}</span>
+                                        @if($product->p_old_price)
+                                            <span class="old-price text-decoration-line-through ms-3">${{ number_format($product->p_old_price, 2) }}</span>
+                                        @endif
+                                    </div>
+
+                                     <div class=" align-items-center justify-content-center w-100 h-100 mt-3  transition-3 text-center d-flex">
+                                        <div class="d-flex gap-2">
+                                       <a href="javascript:void(0)"
+                                            class="add-to-wishlist btn btn-light"
+                                            {{-- data-bs-toggle="modal" data-bs-target="#loginModal" --}}
+                                            data-product-id="{{ $product->p_id }}"data-redirect="{{ route('wishlist.index') }}">
+                                            <i class="ri-heart-line"></i>
+                                        </a>
+
+
+                                            <a href="javascript:void(0)" class="add-to-cart btn btn-light">
+                                                <i class="ri-shopping-bag-3-line"></i>
+                                            </a>
+                                            <a href="{{ url('product-view/'.$product->p_id) }}" class="d-block quick-view btn btn-light">
+                                                <i class="ri-eye-line"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {{-- <div class="product-description d-none d-md-block">
+                                        <p>{{ $product->p_short_description }}</p>
+                                    </div> --}}
                                 </div>
                             </div>
+
                         </div>
                     </div>
-
                 </div>
-            </div>
+            @empty
+                <p>No products found!</p>
+            @endforelse
         </div>
-    @empty
-        <p>No products found!</p>
-    @endforelse
-</div>
+     </div>
+   </div>
+  </div>
 
-                                     </div>
-                  </div>
-               </div>
-                                </section>
+</section>
 
 
 
@@ -226,6 +218,75 @@
         </div>
         <!-- bg-screen end -->
 
+
+        @push('scripts')
+
+
+        <!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+<script>
+           document.querySelectorAll('.add-to-wishlist').forEach(btn => {
+    btn.addEventListener('click', function(e){
+        e.preventDefault(); // stop default link
+
+        const productId = this.dataset.productId;
+
+        @if(!Auth::check())
+            Swal.fire({
+                icon: 'warning',
+                title: 'Login Required',
+                text: 'Please login first to add items to wishlist!',
+                showCancelButton: true,
+                confirmButtonText: 'Login',
+                cancelButtonText: 'Cancel',
+            }).then((result) => {
+                if(result.isConfirmed){
+                    const loginModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('loginModal'));
+                    loginModal.show();
+                }
+            });
+        @else
+           fetch("{{ route('wishlist.index') }}", {
+    method: "POST",
+    headers: {
+        "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value,
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ product_id: productId })
+})
+.then(res => res.json())
+.then(data => {
+    if(data.status){
+        Swal.fire({
+            icon: 'success',
+            title: 'Added!',
+            text: data.message,
+            timer: 1500,
+            showConfirmButton: false
+        });
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: data.message
+        });
+    }
+});
+        @endif
+    });
+});
+
+</script>
+
+
+
+
+        @endpush
 
  @endsection
 

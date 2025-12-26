@@ -123,12 +123,12 @@ h4{
         <div class="card-body">
             <div class="mb-3">
                 <div class="fw-semibold">Short Description</div>
-                <p><?php echo e(Str::limit($product->p_short_description, 400)); ?></p>
+                <p><?php echo e(Str::limit($product->p_short_description, 800)); ?></p>
             </div>
              <hr>
             <div>
                 <div class="fw-semibold">Long Description</div>
-                <p><?php echo $product->p_long_description; ?></p>
+              <p><?php echo Str::limit($product->p_long_description, 5000); ?></p>
             </div>
         </div>
     </div>

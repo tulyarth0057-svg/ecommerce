@@ -121,7 +121,7 @@
                             <!-- Product Image Column -->
                             <div class="product-image-col">
                                 <div class="product-image">
-                                 <a href="<?php echo e(url('products/'.$product->p_id)); ?>" class="d-block ">
+                                 <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="d-block ">
     <img src="<?php echo e(asset('storage/colors/' . $product->img_path)); ?>"
          alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
          class="img-fluid img1"
@@ -137,7 +137,7 @@
                             <div class="product-content mt-2">
                                 <div class="pro-content">
                                     <div class="product-title mb-1">
-                                        <a href="<?php echo e(url('products/'.$product->p_id)); ?>" class="primary-link"><?php echo e($product->p_name); ?></a>
+                                        <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="primary-link"><?php echo e($product->p_name); ?></a>
                                     </div>
                                     <div class="product-price mb-1">
                                         <span class="new-price primary-color">$<?php echo e(number_format($product->p_price, 2)); ?></span>
@@ -159,7 +159,7 @@
                                             <a href="javascript:void(0)" class="add-to-cart btn btn-light">
                                                 <i class="ri-shopping-bag-3-line"></i>
                                             </a>
-                                            <a href="<?php echo e(url('products/'.$product->p_id)); ?>" class="d-block quick-view btn btn-light">
+                                            <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="d-block quick-view btn btn-light">
                                                 <i class="ri-eye-line"></i>
                                             </a>
                                         </div>

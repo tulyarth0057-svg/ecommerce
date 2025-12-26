@@ -502,17 +502,105 @@ class showController extends Controller
 
 
     // product-view ----->
-    public function productview($id)
-    {
-        
-        $product = Product::findOrFail($id);
+public function productview($id)
+{
 
+
+
+    // 1️⃣ Product + single image (listing style)
+    $product = DB::table('products')
+        ->leftJoin('color', 'products.p_id', '=', 'color.color_product_id')
+        ->leftJoin('images', 'color.color_id', '=', 'images.img_color_id')
+        ->select(
+            'products.p_id',
+            'products.p_name',
+            'products.p_price',
+            'products.p_old_price',
+            'products.p_stock',
+            'products.p_short_description',
+            'products.p_long_description',
+            'products.p_category_id',
+            DB::raw('MIN(images.img_path) as img_path'),
+            DB::raw('MIN(images.img_alt_text) as img_alt_text')
+        )
+        ->where('products.p_id', $id)
+        ->groupBy(
+            'products.p_id',
+            'products.p_name',
+            'products.p_price',
+            'products.p_old_price',
+            'products.p_stock',
+            'products.p_short_description',
+            'products.p_long_description',
+            'products.p_category_id' 
+        )
+        ->first();
         
-        return view('product-view', compact('product'));
+
+    if (!$product) {
+        abort(404);
+    }
+     $images = DB::table('images')
+        ->join('color', 'images.img_color_id', '=', 'color.color_id')
+        ->where('color.color_product_id', $id)
+        ->select('images.img_path', 'images.img_alt_text')
+        ->get();
+
+    // 2️⃣ Colors
+    $colors = DB::table('color')
+        ->where('color_product_id', $id)
+        ->get();
+
+    // 3️⃣ Sizes (color wise attach)
+    foreach ($colors as $color) {
+        $color->sizes = DB::table('sizes')
+            ->where('size_color_id', $color->color_id)
+              ->where('size_price_adjustment', $color->color_id)
+            ->get();
     }
 
+    foreach ($colors as $color) {
+    $color->sizes = DB::table('sizes')
+        ->where('size_color_id', $color->color_id)
+        ->select(
+            'size_id',
+            'size_name',
+            'size_price_adjustment'
+        )
+        ->get();
+}
 
 
+    
+  $relatedProducts = DB::table('products')
+    ->leftJoin('color', 'products.p_id', '=', 'color.color_product_id')
+    ->leftJoin('images', 'color.color_id', '=', 'images.img_color_id')
+    ->select(
+        'products.p_id',
+        'products.p_name',
+        'products.p_price',
+        'products.p_old_price',
+         'products.p_category_id',
+        DB::raw('MIN(images.img_path) as img_path'),
+        DB::raw('MIN(images.img_alt_text) as img_alt_text')
+    )
+    ->where('products.p_category_id', $product->p_category_id)
+    ->where('products.p_id', '!=', $id)
+    ->groupBy(
+        'products.p_id',
+        'products.p_name',
+        'products.p_price',
+        'products.p_old_price',
+         'products.p_category_id'
+    )
+    ->get();
+
+
+    
+    $product->colors = $colors;
+
+    return view('product-view', compact('product','images', 'relatedProducts'));
+}
 
 
 }

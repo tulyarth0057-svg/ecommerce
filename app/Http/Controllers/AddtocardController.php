@@ -1,38 +1,72 @@
 <?php
 
 namespace App\Http\Controllers;
-
+ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\addtocart;
+use App\Models\Product;
+use App\Models\Size;
+use App\Models\Color;
+
 
 class AddtocardController extends Controller
 {
-    public function addFromWishlist(Request $request)
+     
+
+public function index()
 {
-    $productId = $request->input('p_id');
-    
-    // Assuming you have a Cart model or session-based cart
-    $product = Product::find($productId);
-    if (!$product) {
-        return response()->json(['success' => false, 'message' => 'Product not found.']);
-    }
+    $cartItems = addtocart::with(['p_id', 'size_id', 'color_id'])
+        ->where('user_id', Auth::id())
+        ->get();
 
-    // Example using session-based cart
-    $cart = session()->get('cart', []);
-
-    if(isset($cart[$productId])){
-        $cart[$productId]['quantity']++;
-    } else {
-        $cart[$productId] = [
-            "name" => $product->p_name,
-            "quantity" => 1,
-            "price" => $product->p_price,
-            "image" => $product->colors->first()->images->first()->img_path
-        ];
-    }
-
-    session()->put('cart', $cart);
-
-    return response()->json(['success' => true, 'message' => 'Product added to cart!', 'cart_count' => count($cart)]);
+    return view('cart', compact('cartItems'));
 }
+
+
+    public function addToCart(Request $request)
+{
+    $userId = auth()->id();
+
+    // Validate
+    $request->validate([
+        'p_id' => 'required|exists:products,p_id',
+        'size_id' => 'required|exists:sizes,size_id',
+        'color_id' => 'required|exists:colors,color_id',
+        'qty' => 'required|integer|min:1',
+    ]);
+
+    // Add to cart logic
+    $cart = AddToCart::where([
+        'user_id' => $userId,
+        'p_id' => $request->p_id,
+        'size_id' => $request->size_id,
+        'color_id' => $request->color_id,
+    ])->first();
+
+    if ($cart) {
+        $cart->increment('qty', $request->qty);
+    } else {
+        $product = Product::find($request->p_id);
+
+        $finalPrice = $product->p_price; // + size/color adjustment if any
+
+        AddToCart::create([
+            'user_id' => $userId,
+            'p_id' => $product->p_id,
+            'p_name' => $product->p_name,
+            'size_id' => $request->size_id,
+            'color_id' => $request->color_id,
+            'qty' => $request->qty,
+            'price' => $finalPrice,
+        ]);
+    }
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Product added to cart successfully',
+        'cart_count' => AddToCart::where('user_id', $userId)->count()
+    ]);
+}
+
 
 }
