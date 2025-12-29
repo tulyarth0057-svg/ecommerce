@@ -124,14 +124,12 @@
                     <!-- Product column Image-->
                      <div class="product-image-col">
                                 <div class="product-image">
-                                 <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="d-block ">
-    <img src="<?php echo e(asset('storage/colors/' . $product->img_path)); ?>"
-         alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
-         class="img-fluid img1"
-         style="height:400px; width:100%; object-fit:contain;">
-</a>
-
-
+                                <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="d-block ">
+                                    <img src="<?php echo e(asset('storage/colors/' . $product->img_path)); ?>"
+                                        alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
+                                        class="img-fluid img1"
+                                        style="height:400px; width:100%; object-fit:contain;">
+                                </a>
 
                                 </div>
                             </div>

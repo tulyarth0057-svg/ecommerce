@@ -12,12 +12,13 @@ class Addtocart extends Model
     protected $primaryKey = 'cart_id';
 
     protected $fillable = [
-        'user_id',
-        'p_id',
-        'size_id',
-        'color_id',
-        'qty',
-        'p_price',
+    'user_id',
+    'p_id',
+    'p_name',
+    'size_id',
+    'color_id',
+    'qty',
+    'p_price',
     ];
 
     public function product()
@@ -27,11 +28,11 @@ class Addtocart extends Model
 
     public function size()
     {
-        return $this->belongsTo(Size::class, 'size_id');
+        return $this->belongsTo(Size::class, 'size_id', 'size_id');
     }
 
     public function color()
     {
-        return $this->belongsTo(Color::class, 'color_id');
+        return $this->belongsTo(Color::class, 'color_id', 'color_id');
     }
 }

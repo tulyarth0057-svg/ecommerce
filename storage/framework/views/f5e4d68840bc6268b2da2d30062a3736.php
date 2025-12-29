@@ -41,9 +41,10 @@
                                                    
                                                 </div>
                                             </div>
+
+                                            <!-- start add-to-cart -->
                                            
-                                            
-                                          <div class="container py-4">
+ <div class="container py-4">
 
     <h3 class="mb-4">My Cart</h3>
 
@@ -59,25 +60,26 @@
     <?php $__empty_1 = true; $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
         <div class="card mb-3 shadow-sm">
             <div class="card-body">
-
                 <div class="row align-items-center">
 
                     
                     <div class="col-md-5 d-flex">
-                        <img src="<?php echo e(asset('storage/products/'.$item->product->p_image)); ?>"
-                             class="img-fluid rounded"
-                             style="width:80px"
-                             alt="<?php echo e($item->product->p_name); ?>">
+                    <div class="cart-item">
+    <img 
+        src="<?php echo e($item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png')); ?>"
+        alt="<?php echo e($item->img_alt_text ?? $item->p_name); ?>"
+        class="whistlist-img w-75">
+</div>
 
                         <div class="ms-3">
-                            <h6 class="mb-1"><?php echo e($item->product->p_name); ?></h6>
+                            <h6 class="mb-1"><?php echo e($item->p_name); ?></h6>
                             <small class="text-muted">
-                                Size: <?php echo e($item->size->size_name); ?> |
-                                Color: <?php echo e($item->color->color_name); ?>
+                                Size: <?php echo e($item->size_name); ?> |
+                                Color: <?php echo e($item->color_name); ?>
 
                             </small>
                             <div class="fw-bold mt-1">
-                                ₹<?php echo e(number_format($item->price, 2)); ?>
+                                ₹<?php echo e(number_format($item->p_price, 2)); ?>
 
                             </div>
                         </div>
@@ -85,49 +87,33 @@
 
                     
                     <div class="col-md-3 text-center">
-                        <form method="POST" action="<?php echo e(route('cart.update')); ?>" class="d-inline">
-                            <?php echo csrf_field(); ?>
-                            <input type="hidden" name="cart_id" value="<?php echo e($item->cart_id); ?>">
-                            <input type="hidden" name="type" value="minus">
-                            <button class="btn btn-sm btn-outline-secondary">-</button>
-                        </form>
+                        
 
-                        <span class="mx-2 fw-semibold"><?php echo e($item->qty); ?></span>
+                        
 
-                        <form method="POST" action="<?php echo e(route('cart.update')); ?>" class="d-inline">
-                            <?php echo csrf_field(); ?>
-                            <input type="hidden" name="cart_id" value="<?php echo e($item->cart_id); ?>">
-                            <input type="hidden" name="type" value="plus">
-                            <button class="btn btn-sm btn-outline-secondary">+</button>
-                        </form>
+                      
                     </div>
 
                     
                     <div class="col-md-2 text-center fw-bold">
-                        ₹<?php echo e(number_format($item->price * $item->qty, 2)); ?>
+                        ₹<?php echo e(number_format($item->p_price)); ?>
 
                     </div>
 
                     
                     <div class="col-md-2 text-end">
-                        <form method="POST" action="<?php echo e(route('cart.remove', $item->cart_id)); ?>">
-                            <?php echo csrf_field(); ?>
-                            <?php echo method_field('DELETE'); ?>
-                            <button class="btn btn-sm btn-danger">
-                                Remove
-                            </button>
-                        </form>
+                        
                     </div>
 
                 </div>
 
             </div>
         </div>
-    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-        <div class="alert alert-info text-center">
-            Your cart is empty
-        </div>
-    <?php endif; ?>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                <div class="alert alert-info text-center">
+                    Your cart is empty
+                </div>
+     <?php endif; ?>
 
                                         </div>
                                         <div class="cart-table-button d-flex flex-wrap justify-content-sm-between mst-30" data-animate="animate__fadeIn">

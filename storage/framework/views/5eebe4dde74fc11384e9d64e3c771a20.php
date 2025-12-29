@@ -103,6 +103,12 @@
         font-weight:700;
        }
 
+        .size-btn.active {
+            border: 2px solid #000;
+            background: #f1f1f1;
+        }
+
+
     </style>
 
     <?php $__env->stopPush(); ?>
@@ -118,12 +124,16 @@
         <div class="col-md-6 ">
            <div class="row g-3">
 
+
+
+
                 <!-- Thumbnails -->
             <div class="col-2 thumb-img ">
                    <?php $__currentLoopData = $images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-             <img src="<?php echo e(asset('storage/colors/'.$image->img_path)); ?>"
+              <img src="<?php echo e(asset('storage/colors/'.$image->img_path)); ?>"
              alt="<?php echo e($image->img_alt_text ?? $product->p_name); ?>"
-             class="img-fluid thumb mb-2"
+             class="img-fluid thumb mb-2 d-none"
+             data-color-id="<?php echo e($image->color_id); ?>"
              onclick="changeImage(this)">
                   <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
@@ -163,61 +173,76 @@
             </div>
 
             <!-- Colors -->
-            <div class="mb-3">
-                <label class="fw-semibold d-block mb-2">Color</label>
+            <div class="mb-3" id="colorsWrapper">
+    <label class="fw-semibold d-block mb-2">Color</label>
 
-                <?php $__currentLoopData = $product->colors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="color-dot"
-                              style="background-color: <?php echo e($color->color_code); ?>;"
-                              title="<?php echo e($color->color_name); ?>">
-                        </span>
-                        <span><?php echo e($color->color_name); ?></span>
-                    </div>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </div>
+    <?php $__currentLoopData = $product->colors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <div class="d-flex align-items-center gap-2 mb-2 color-item"
+             data-color-id="<?php echo e($color->color_id); ?>"
+             style="cursor:pointer">
+             
+            <span class="color-dot"
+                  style="background-color: <?php echo e($color->color_code); ?>;"
+                  title="<?php echo e($color->color_name); ?>">
+            </span>
+
+            <span><?php echo e($color->color_name); ?></span>
+        </div>
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+</div>
+
 
             <!-- Sizes -->
          <div class="mb-3">
     <label class="fw-semibold d-block mb-3">Sizes</label>
 
     <div id="sizeWrapper">
-          <?php $__currentLoopData = $product->colors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <?php $__currentLoopData = $color->sizes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $size): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <span 
-                class="custom-border p-2 me-2 size-btn"
-                data-price="<?php echo e($size->size_price_adjustment); ?>">
-                <?php echo e($size->size_name); ?>
+        <?php $__currentLoopData = $product->colors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php $__currentLoopData = $color->sizes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $size): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <span 
+                    class="custom-border p-2 me-2 size-btn d-none"
+                    data-color-id="<?php echo e($color->color_id); ?>"
+                    data-size-id="<?php echo e($size->size_id); ?>"
+                    data-price="<?php echo e($size->size_price_adjustment); ?>"
+                    style="cursor:pointer">
+                    <?php echo e($size->size_name); ?>
 
-            </span>
+                </span>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div>
 
-    <!-- hidden input to store selected size -->
-    <input type="hidden" id="selectedSize" name="size">
+    <input type="hidden" name="color_id" id="selectedColor">
+    <input type="hidden" name="size_id" id="selectedSize">
 </div>
+
 
 
             <!-- Quantity -->
-           <div class="mb-4">
-    <label class="fw-semibold d-block mb-3">Quantity</label>
-    <div class="d-inline-flex align-items-center border rounded px-2 qty-box">
-        <button class="btn btn-sm qty-minus">−</button>
-        <input type="text" id="qtyInput" value="1" readonly>
-        <button class="btn btn-sm qty-plus">+</button>
+     <div class="mb-4">
+    <label class="fw-semibold d-block mb-2">Quantity</label>
+    <div class="d-inline-flex align-items-center border rounded px-2">
+        <button type="button" class="btn btn-sm qty-minus">−</button>
+        <input type="text" id="qtyInput" value="1" readonly style="width:50px;text-align:center;border:none" >
+        <button type="button" class="btn btn-sm qty-plus">+</button>
+        </div>
     </div>
-</div>
 
 
             <div class="d-flex gap-2 ">
             <!-- Add to Cart -->
           
-            <button class="btn btn-cart mb-3 w-50 h-100 rounded-4"
-             data-product-id="<?php echo e($product->p_id); ?>"
-             data-redirect="<?php echo e(route('add-to-cart')); ?>">  
-            <i class="bi bi-cart"></i> Add to Cart
-            </button>
+           <button
+    type="button"
+    class="btn btn-cart mb-3 w-50 h-100 rounded-4"
+    data-product-id="<?php echo e($product->p_id); ?>"
+    data-url="<?php echo e(route('add-to-cart')); ?>"
+    data-redirect-after="<?php echo e(route('cart')); ?>">
+    <i class="bi bi-cart"></i> Add to Cart
+</button>
+
+
+
         
 
             <!-- Wishlist -->
@@ -350,65 +375,80 @@
 </div>
 
 
+
      <?php $__env->stopSection(); ?>
 
   <?php $__env->startPush('scripts'); ?>
 
-
-  <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const cartButtons = document.querySelectorAll('.btn-cart');
-
-    cartButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const productId = this.dataset.productId;
-            const url = this.dataset.redirect;
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
-                },
-                body: JSON.stringify({
-                    p_id: productId,
-                    size_id: 1,
-                    color_id: 1,
-                    qty: 1
-                })
-            })
-            .then(res => res.json())
-            .then(result => {
-                if(result.status) {
-                    alert(result.message);
-                    // Optional: update navbar cart count
-                    document.querySelector('#cart-count').innerText = result.cart_count;
-                } else {
-                    alert('Failed to add to cart');
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Something went wrong!');
-            });
-        });
-    });
-});
-</script>
-
-
-  
-
-  <!-- script of whistlist -->
         <!-- SweetAlert2 CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.querySelectorAll('.btn-cart').forEach(button => {
+
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const productId = this.dataset.productId;
+            const url = this.dataset.url; 
+            const redirectUrl = this.dataset.redirectAfter || '/cart';
+
+            // FormData
+            let formData = new FormData();
+            formData.append('p_id', productId);
+            formData.append('qty', 1);
+
+            // Optional fields
+            const size = document.querySelector('.size-btn.active')?.dataset.sizeId || '';
+            const color = document.querySelector('.color-dot.active')?.dataset.colorId || '';
+            formData.append('size_id', size);
+            formData.append('color_id', color);
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>', // only in blade file
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(result => {
+                if(result.status){
+                    alert(result.message ?? 'Product added to cart');
+                    if(redirectUrl) window.location.href = redirectUrl;
+                } else {
+                    alert(result.message ?? 'Failed to add product');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('JS / Network error');
+            });
+
+        });
+
+    });
+
+});
+</script>
+
+
+//   <!-- script of whistlist -->
+
         
 <script>
-           document.querySelectorAll('.add-to-wishlist').forEach(btn => {
+
+    document.querySelectorAll('.add-to-wishlist').forEach(btn => {
     btn.addEventListener('click', function(e){
         e.preventDefault(); // stop default link
 
@@ -462,49 +502,115 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 
-<!-- size and quantity-->
+
+
+
 <script>
-let productPriceEl = document.getElementById('productPrice');
-let basePrice = parseFloat(productPriceEl.dataset.basePrice);
 let selectedSizePrice = 0;
-let qtyInput = document.getElementById('qtyInput');
 
-function updateTotalPrice() {
-    let qty = parseInt(qtyInput.value) || 1;
-    let total = (basePrice + selectedSizePrice) * qty;
+document.addEventListener('DOMContentLoaded', function () {
 
-    productPriceEl.innerText = '₹' + total.toFixed(2);
-}
+    const colors    = document.querySelectorAll('.color-item');
+    const sizes     = document.querySelectorAll('.size-btn');
+    const thumbs    = document.querySelectorAll('.thumb');
+    const mainImage = document.getElementById('mainImage');
 
-// size click
-document.querySelectorAll('.size-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
+    const priceEl   = document.getElementById('productPrice');
+    const basePrice = parseFloat(priceEl.dataset.basePrice);
+    const qtyInput  = document.getElementById('qtyInput');
 
-        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
+    /* 💰 PRICE UPDATE FUNCTION */
+    function updateTotalPrice() {
+        let qty = parseInt(qtyInput.value) || 1;
+        let total = (basePrice + selectedSizePrice) * qty;
+        priceEl.innerText = '₹' + total.toFixed(2);
+    }
 
-        selectedSizePrice = parseFloat(this.dataset.price) || 0;
+    /* 🎨 COLOR CLICK */
+    colors.forEach(color => {
+        color.addEventListener('click', function () {
+
+            const colorId = this.dataset.colorId;
+
+            /* COLOR ACTIVE */
+            colors.forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            document.getElementById('selectedColor').value = colorId;
+
+            /* SIZE FILTER */
+            sizes.forEach(size => {
+                size.classList.add('d-none');
+                size.classList.remove('active');
+            });
+
+            document
+                .querySelectorAll('.size-btn[data-color-id="' + colorId + '"]')
+                .forEach(size => size.classList.remove('d-none'));
+
+            document.getElementById('selectedSize').value = '';
+
+            /* RESET SIZE PRICE */
+            selectedSizePrice = 0;
+            updateTotalPrice();
+
+            /* 🖼 IMAGE FILTER */
+            thumbs.forEach(img => img.classList.add('d-none'));
+
+            const colorImages = document.querySelectorAll(
+                '.thumb[data-color-id="' + colorId + '"]'
+            );
+
+            colorImages.forEach(img => img.classList.remove('d-none'));
+
+            if (colorImages.length > 0) {
+                mainImage.src = colorImages[0].src;
+            }
+        });
+    });
+
+    /* 🔥 AUTO SELECT FIRST COLOR */
+    if (colors.length > 0) {
+        colors[0].click();
+    }
+
+    /* 📏 SIZE CLICK */
+    sizes.forEach(size => {
+        size.addEventListener('click', function () {
+
+            sizes.forEach(s => s.classList.remove('active'));
+            this.classList.add('active');
+
+            document.getElementById('selectedSize').value = this.dataset.sizeId;
+
+            /* 💰 SIZE PRICE */
+            selectedSizePrice = parseFloat(this.dataset.price) || 0;
+            updateTotalPrice();
+        });
+    });
+
+    /* ➕ QUANTITY PLUS */
+    document.querySelector('.qty-plus').addEventListener('click', function () {
+        let qty = parseInt(qtyInput.value) || 1;
+        qtyInput.value = qty + 1;
         updateTotalPrice();
     });
+
+    /* ➖ QUANTITY MINUS */
+    document.querySelector('.qty-minus').addEventListener('click', function () {
+        let qty = parseInt(qtyInput.value) || 1;
+        if (qty > 1) {
+            qtyInput.value = qty - 1;
+            updateTotalPrice();
+        }
+    });
+
 });
 
-// qty plus
-document.querySelector('.qty-plus').addEventListener('click', function () {
-    qtyInput.value = parseInt(qtyInput.value) + 1;
-    updateTotalPrice();
-});
-
-// qty minus
-document.querySelector('.qty-minus').addEventListener('click', function () {
-    let current = parseInt(qtyInput.value);
-    if (current > 1) {
-        qtyInput.value = current - 1;
-        updateTotalPrice();
-    }
-});
+/* 🖼 THUMB CLICK → MAIN IMAGE */
+function changeImage(el) {
+    document.getElementById('mainImage').src = el.src;
+}
 </script>
-
-
 
 <!-- script of change image -->
 

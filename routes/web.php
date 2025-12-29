@@ -214,9 +214,13 @@ Route::get('/cart', [AddtocardController::class, 'index'])
      ->name('cart')
      ->middleware('auth');
 
+// Route::post('/add-to-cart', [AddtocardController::class, 'addToCart'])
+//      ->name('add-to-cart')
+//      ->middleware('auth');
+
 Route::post('/add-to-cart', [AddtocardController::class, 'addToCart'])
-     ->name('add-to-cart')
-     ->middleware('auth');
+    ->name('add-to-cart');
+
 
 
 

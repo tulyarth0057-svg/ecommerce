@@ -504,9 +504,6 @@ class showController extends Controller
     // product-view ----->
 public function productview($id)
 {
-
-
-
     // 1️⃣ Product + single image (listing style)
     $product = DB::table('products')
         ->leftJoin('color', 'products.p_id', '=', 'color.color_product_id')
@@ -540,11 +537,16 @@ public function productview($id)
     if (!$product) {
         abort(404);
     }
-     $images = DB::table('images')
-        ->join('color', 'images.img_color_id', '=', 'color.color_id')
-        ->where('color.color_product_id', $id)
-        ->select('images.img_path', 'images.img_alt_text')
-        ->get();
+    $images = DB::table('images')
+    ->join('color', 'images.img_color_id', '=', 'color.color_id')
+    ->where('color.color_product_id', $id)
+    ->select(
+        'images.img_path',
+        'images.img_alt_text',
+        'color.color_id as color_id'
+    )
+    ->get();
+
 
     // 2️⃣ Colors
     $colors = DB::table('color')

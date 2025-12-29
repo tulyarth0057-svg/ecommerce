@@ -43,9 +43,10 @@
                                                    
                                                 </div>
                                             </div>
+
+                                            <!-- start add-to-cart -->
                                            
-                                            
-                                          <div class="container py-4">
+ <div class="container py-4">
 
     <h3 class="mb-4">My Cart</h3>
 
@@ -60,72 +61,68 @@
     @forelse($cartItems as $item)
         <div class="card mb-3 shadow-sm">
             <div class="card-body">
-
                 <div class="row align-items-center">
 
                     {{-- PRODUCT --}}
                     <div class="col-md-5 d-flex">
-                        <img src="{{ asset('storage/products/'.$item->product->p_image) }}"
-                             class="img-fluid rounded"
-                             style="width:80px"
-                             alt="{{ $item->product->p_name }}">
+                    <div class="cart-item">
+    <img 
+        src="{{ $item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png') }}"
+        alt="{{ $item->img_alt_text ?? $item->p_name }}"
+        class="whistlist-img w-75">
+</div>
 
                         <div class="ms-3">
-                            <h6 class="mb-1">{{ $item->product->p_name }}</h6>
+                            <h6 class="mb-1">{{ $item->p_name }}</h6>
                             <small class="text-muted">
-                                Size: {{ $item->size->size_name }} |
-                                Color: {{ $item->color->color_name }}
+                                Size: {{ $item->size_name}} |
+                                Color: {{ $item->color_name}}
                             </small>
                             <div class="fw-bold mt-1">
-                                ₹{{ number_format($item->price, 2) }}
+                                ₹{{ number_format($item->p_price, 2) }}
                             </div>
                         </div>
                     </div>
 
                     {{-- QTY --}}
                     <div class="col-md-3 text-center">
-                        <form method="POST" action="{{ route('cart.update') }}" class="d-inline">
+                        {{-- <form method="POST" action="{{ route('cart.update') }}" class="d-inline">
                             @csrf
                             <input type="hidden" name="cart_id" value="{{ $item->cart_id }}">
                             <input type="hidden" name="type" value="minus">
                             <button class="btn btn-sm btn-outline-secondary">-</button>
-                        </form>
+                        </form> --}}
 
-                        <span class="mx-2 fw-semibold">{{ $item->qty }}</span>
+                        {{-- <span class="mx-2 fw-semibold">{{ $item->qty }}</span> --}}
 
-                        <form method="POST" action="{{ route('cart.update') }}" class="d-inline">
-                            @csrf
-                            <input type="hidden" name="cart_id" value="{{ $item->cart_id }}">
-                            <input type="hidden" name="type" value="plus">
-                            <button class="btn btn-sm btn-outline-secondary">+</button>
-                        </form>
+                      
                     </div>
 
                     {{-- TOTAL --}}
                     <div class="col-md-2 text-center fw-bold">
-                        ₹{{ number_format($item->price * $item->qty, 2) }}
+                        ₹{{ number_format($item->p_price) }}
                     </div>
 
                     {{-- REMOVE --}}
                     <div class="col-md-2 text-end">
-                        <form method="POST" action="{{ route('cart.remove', $item->cart_id) }}">
+                        {{-- <form method="POST" action="{{ route('cart.remove', $item->cart_id) }}">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-sm btn-danger">
                                 Remove
                             </button>
-                        </form>
+                        </form> --}}
                     </div>
 
                 </div>
 
             </div>
         </div>
-    @empty
-        <div class="alert alert-info text-center">
-            Your cart is empty
-        </div>
-    @endforelse
+            @empty
+                <div class="alert alert-info text-center">
+                    Your cart is empty
+                </div>
+     @endforelse
 
                                         </div>
                                         <div class="cart-table-button d-flex flex-wrap justify-content-sm-between mst-30" data-animate="animate__fadeIn">
