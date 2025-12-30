@@ -1,209 +1,262 @@
-<?php $__env->startSection('title', 'Add to cart'); ?>
+<?php $__env->startSection('title', 'My Cart'); ?>
+
+
+
+
+<?php $__env->startPush('styles'); ?>
+
+<style>
+.cart-box, .summary-box {
+    background:#fff;
+    border-radius:8px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+
+.cart-item {
+    display:flex;
+    gap:15px;
+    padding:15px 0;
+    border-bottom:1px solid #eee;
+}
+
+.cart-img img {
+    width:90px;
+    height:90px;
+    object-fit:cover;
+    border-radius:6px;
+}
+
+.cart-info h6 {
+    margin:0;
+    font-size:15px;
+}
+
+.cart-info small {
+    color:#777;
+}
+
+.price {
+    font-weight:600;
+    margin-top:5px;
+}
+
+.cart-action {
+    margin-left:auto;
+    text-align:right;
+}
+
+.remove-btn {
+    background:none;
+    border:none;
+    color:#dc3545;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.summary-row {
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+}
+
+.summary-row.total {
+    font-size:18px;
+    font-weight:700;
+}
+.qty-wrapper {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+    height:50px;
+}
+
+.qty-btn {
+    border: none;
+    background: #f5f5f5;
+    padding: 4px 7px;
+    font-size: 16px;
+    cursor: pointer;
+   
+}
+
+.qty-input {
+    width: 70px;
+    border: none;
+    text-align: center;
+    font-size: 14px;
+    background-color:white;
+
+
+}
+
+.qty-input:focus {
+    outline: none;
+}
+
+
+
+</style>
+
+<?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
 
         <!-- breadcrumb-area start -->
         <div class="breadcrumb-area ptb-30 bg-img text-center" data-bgimg="assets/image/other/breadcrumb-bgimg.jpg">
             <div class="container">
-                <span class="d-block extra-color"><a href="/" class="extra-color">Home</a> / Add To Cart</span>
-                <h2 class="extra-color font-24 font-xl-32 mst-5 mst-xl-9"> Add To Cart</h2>
+                <span class="d-block extra-color"><a href="/" class="extra-color">Home</a> / My Cart</span>
+                <h2 class="extra-color font-24 font-xl-32 mst-5 mst-xl-9"> My Cart</h2>
             </div>
         </div>
         <!-- breadcrumb-area end -->
 
         <!-- main start -->
         <main id="main">
+
+    
             <!-- cart start -->
-            <section class="cart-area section-pt">
-                <form method="post" action="javascript:void(0)">
-                    <div class="container">
-                        <div class="row row-mtm align-items-lg-start">
-                            <div class="col-12 col-lg-8 p-lg-sticky top-0">
-                                <div class="cart-itemview">
-                                    <div class="cart-title d-flex align-items-center justify-content-between peb-30 beb" data-animate="animate__fadeIn">
-                                        <h6 class="font-18">Shopping cart</h6>
-                                        <span class="cart-count"><span class="cart-counter">2</span> Items</span>
-                                    </div>
-                                    <div class="cart-table">
-                                        <div class="cart-table-heading d-none d-md-block ptb-30 beb" data-animate="animate__fadeIn">
-                                            <div class="row">
-                                                <div class="col-md-5 heading-color heading-weight">Product</div>
-                                                <div class="col-md-3 heading-color heading-weight">Qty</div>
-                                                <div class="col-md-2 heading-color heading-weight">Total</div>
-                                                <div class="col-md-2 heading-color heading-weight text-end">Option</div>
-                                            </div>
-                                        </div>
-                                        <div class="cart-table-data">
-                                            <div class="cart-table-info ptb-30 beb" data-animate="animate__fadeIn">
-                                                <div class="row row-mtm30">
-                                                   
-                                                   
-                                                   
-                                                </div>
-                                            </div>
+           <section class="cart-area py-5">
+        <form method="post" action="javascript:void(0)">
+        <div class="container">
+        <div class="row g-4 align-items-start">
 
-                                            <!-- start add-to-cart -->
-                                           
- <div class="container py-4">
+    <!-- LEFT : CART ITEMS -->
 
-    <h3 class="mb-4">My Cart</h3>
+    <div class="col-lg-8">
 
-    
-    <?php if(session('success')): ?>
-        <div class="alert alert-success">
-            <?php echo e(session('success')); ?>
+          <div class="cart-title d-flex mb-3">
+                    <h5>Shopping Cart</h5>
+                <span class="ms-auto"><?php echo e(count($cartItems)); ?> Items</span>
+            </div>
+            <hr>
 
+        <div class=" d-none d-md-block  ptb-30 beb" data-animate="animate__fadeIn">
+        <div class="container">
+        <div class="row justify-content-start align-item-start">
+        <div class="col-md-5 heading-color heading-weight">Product</div>
+         <div class="col-md-3 heading-color heading-weight">Qty</div>
+        <div class="col-md-2 heading-color heading-weight">Total</div>
+        <div class="col-md-2 heading-color heading-weight text-end">Option</div>
         </div>
-    <?php endif; ?>
+        </div>
+    </div>
 
-    
-    <?php $__empty_1 = true; $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-        <div class="card mb-3 shadow-sm">
-            <div class="card-body">
-                <div class="row align-items-center">
+        <div class="cart-box">
 
+            <?php if(session('success')): ?>
+                <div class="alert alert-success"><?php echo e(session('success')); ?></div>
+            <?php endif; ?>
+
+            <?php $__empty_1 = true; $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <div class="cart-item">
                     
-                    <div class="col-md-5 d-flex">
-                    <div class="cart-item">
-    <img 
-        src="<?php echo e($item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png')); ?>"
-        alt="<?php echo e($item->img_alt_text ?? $item->p_name); ?>"
-        class="whistlist-img w-75">
-</div>
+                    <!-- IMAGE -->
+                    <div class="cart-img">
+                        <img 
+                          src="<?php echo e($item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png')); ?>"
+                          alt="<?php echo e($item->img_alt_text ?? $item->p_name); ?>">
+                    </div>
 
-                        <div class="ms-3">
-                            <h6 class="mb-1"><?php echo e($item->p_name); ?></h6>
-                            <small class="text-muted">
-                                Size: <?php echo e($item->size_name); ?> |
-                                Color: <?php echo e($item->color_name); ?>
+                    <!-- INFO -->
+                    <div class="cart-info">
+                        <h6><?php echo e($item->p_name); ?></h6>
+                        <small>
+                            Size: <?php echo e($item->size_name); ?> <br>
+                            Color: <?php echo e($item->color_name); ?>
 
-                            </small>
-                            <div class="fw-bold mt-1">
-                                ₹<?php echo e(number_format($item->p_price, 2)); ?>
+                        </small>
+                     <div class="price">
+                    ₹<?php echo e(number_format($item->p_price, 2, '.', ',')); ?>
 
-                            </div>
-                        </div>
+                </div>
                     </div>
 
                     
-                    <div class="col-md-3 text-center">
-                        
-
-                        
+                   <div class="mb-4 ms-4 col-md-3">
+    <div class="d-inline-flex align-items-center border rounded px-2">
+        <button type="button" class="btn btn-sm qty-minus">−</button>
+        <input type="text" id="qtyInput" value="1" readonly style="width:50px;text-align:center;border:none" >
+        <button type="button" class="btn btn-sm qty-plus">+</button>
+        </div>
+    </div>
 
                       
-                    </div>
+                      <div class="ms-5">
+                       <strong>₹<?php echo e(number_format($item->p_price,2)); ?></strong>
+                      </div>
+                    <!-- remove -->
+                    <div class="cart-action">
+                     
 
-                    
-                    <div class="col-md-2 text-center fw-bold">
-                        ₹<?php echo e(number_format($item->p_price)); ?>
-
-                    </div>
-
-                    
-                    <div class="col-md-2 text-end">
-                        
+                        <form method="POST" action="<?php echo e(route('cart.remove', $item->cart_id)); ?>">
+                            <?php echo csrf_field(); ?>
+                            <?php echo method_field('DELETE'); ?>
+                            <button class="remove-btn">
+                                <i class="ri-close-large-line"></i>
+                            </button>
+                        </form>
                     </div>
 
                 </div>
-
-            </div>
-        </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                <div class="alert alert-info text-center">
-                    Your cart is empty
-                </div>
-     <?php endif; ?>
+                <div class="alert alert-info text-center">Your cart is empty</div>
+            <?php endif; ?>
 
-                                        </div>
-                                        <div class="cart-table-button d-flex flex-wrap justify-content-sm-between mst-30" data-animate="animate__fadeIn">
-                                            <a href="/" class="width-100 width-sm-auto btn-style quaternary-btn">Continue shopping</a>
-                                            <a href="cart-empty.html" class="width-100 width-sm-auto btn-style secondary-btn mst-15 mst-sm-0">Clear cart</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-4 p-lg-sticky top-0" data-animate="animate__fadeIn">
-                                <div class="row row-mtm">
-                                    <div class="col-12">
-                                        <div class="cart-coupan ptb-30 plr-15 plr-md-30 body-bg border-full border-radius">
-                                            <div class="cart-orderview">
-                                                <h6 class="font-18 meb-21">Have a coupan code?</h6>
-                                                <div class="cart-info">
-                                                    <div class="cart-discount-title d-flex align-items-center justify-content-between">
-                                                        <span>Use discount code</span>
-                                                        <button type="button" class="cart-code-edit d-none body-secondary-color icon-16" aria-label="Edit"><i class="ri-edit-2-line d-block lh-1"></i></button>
-                                                        <button type="button" class="cart-code-close body-secondary-color icon-16" aria-label="Close"><i class="ri-close-large-line d-block lh-1"></i></button>
-                                                    </div>
-                                                    <div class="cart-detail mst-12">
-                                                        <div class="cart-detail-info d-none">
-                                                            <!-- cart-info discount-code start -->
-                                                            <div class="ul-mt5 align-items-center heading-weight">
-                                                                <span class="text-danger"><i class="ri-price-tag-3-line d-block icon-16 lh-1"></i></span>
-                                                                <span class="text-danger">11%OFF</span>
-                                                                <span class="heading-color">applied</span>
-                                                            </div>
-                                                            <!-- cart-info discount-code end -->
-                                                        </div>
-                                                        <div class="cart-detail-form">
-                                                            <div class="cart-detail-field">
-                                                                <div class="row field-row">
-                                                                    <div class="col-12 field-col">
-                                                                        <label for="cart-discount" class="field-label">Discount code</label>
-                                                                        <div class="d-md-flex">
-                                                                            <input type="text" id="cart-discount" name="cart-discount" class="cart-dis-input width-100 height-md-auto text-center text-md-start" value="11%OFF" placeholder="Discount code" autocomplete="off" required>
-                                                                            <button type="submit" class="cart-dis-btn cart-dis-apply-btn width-100 width-md-auto btn-style secondary-btn mst-15 mst-md-0 text-nowrap">Apply</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="cart-summary ptb-30 plr-15 plr-md-30 extra-bg border-radius">
-                                            <div class="cart-costview">
-                                                <h6 class="font-18 meb-21">Order summary</h6>
-                                                <div class="cart-cost">
-                                                    <div class="row row-mtm20">
-                                                        <div class="col-12 d-flex justify-content-between">
-                                                            <span>Subtotal</span>
-                                                            <span class="heading-color heading-weight">$246.00</span>
-                                                        </div>
-                                                        <div class="col-12 d-flex justify-content-between">
-                                                            <span>Discount</span>
-                                                            <span class="text-danger heading-weight">$11.00</span>
-                                                        </div>
-                                                        <div class="col-12 d-flex justify-content-between">
-                                                            <span>Shipping</span>
-                                                            <span class="text-success heading-weight">$0.00</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="cart-cost mst-30 pst-30 bst">
-                                                    <div class="row row-mtm20">
-                                                        <div class="col-12 d-flex justify-content-between">
-                                                            <span>Total</span>
-                                                            <span class="heading-color heading-weight">$235.00</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="cart-button mst-30">
-                                                <a href="checkout.html" class="w-100 btn-style secondary-btn">Checkout</a>
-                                                <span class="d-block font-12 mst-13">Taxes excluded at checkout*</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </section>
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/" class="btn btn-outline-secondary">Continue shopping</a>
+                <a href="#" class="btn btn-outline-danger">Clear cart</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- RIGHT : CHECKOUT / SUMMARY -->
+    <div class="col-lg-4">
+        <div class="summary-box sticky-top">
+
+            <h5 class="mb-3">Order Summary</h5>
+
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>₹<?php echo e(number_format($subtotal ?? 0)); ?></span>
+            </div>
+
+            <div class="summary-row text-danger">
+                <span>Discount</span>
+                <span>- ₹<?php echo e(number_format($discount ?? 0)); ?></span>
+            </div>
+
+            <div class="summary-row">
+                <span>Shipping</span>
+                <span class="text-success">Free</span>
+            </div>
+
+            <hr>
+
+            <div class="summary-row total">
+                <span>Total</span>
+                <span>₹<?php echo e(number_format($total ?? 0)); ?></span>
+            </div>
+            
+                  <small class="d-block text-center mt-2">
+                Taxes calculated at checkout
+            </small>
+            
+            <a href="<?php echo e(route('cart')); ?>" class="btn btn-dark w-100 mt-3">
+                Proceed to Checkout
+            </a>
+
+      
+
+        </div>
+    </div>
+
+</div>
+</div>
+</form>
+</section>
+
             <!-- cart end -->
             <!-- cart-collection start -->
             <section class="cart-collection section-ptb">

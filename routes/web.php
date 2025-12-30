@@ -31,19 +31,19 @@ Route::get('/', function () {
 
 
 
-route ::get('/about',function (){
+route::get('/about',function (){
     return view('about');
 });
 
 
 
-route ::get('/checkout',function (){
+route::get('/checkout',function (){
     return view('checkout');
 });
 
-route ::get('/collectioncategory',function (){
-    return view('collection-category');
-});
+// route ::get('/collectioncategory',function (){
+//     return view('collection-category');
+// });
 
 
 
@@ -59,9 +59,9 @@ route ::get('/product',function (){
     return view('product');
 });
 
-route ::get('/register',function (){
-    return view('register');
-});
+// route ::get('/register',function (){
+//     return view('register');
+// });
 
 
 
@@ -221,6 +221,7 @@ Route::get('/cart', [AddtocardController::class, 'index'])
 Route::post('/add-to-cart', [AddtocardController::class, 'addToCart'])
     ->name('add-to-cart');
 
+    Route::delete('/cart/remove/{cart_id}', [AddtocardController::class, 'removeFromCart'])->name('cart.remove');
 
 
 

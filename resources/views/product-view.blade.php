@@ -172,6 +172,7 @@
             </div>
 
             <!-- Colors -->
+
             <div class="mb-3" id="colorsWrapper">
     <label class="fw-semibold d-block mb-2">Color</label>
 
@@ -210,21 +211,12 @@
         @endforeach
     </div>
 
-    <input type="hidden" name="color_id" id="selectedColor">
+    
     <input type="hidden" name="size_id" id="selectedSize">
+    <input type="hidden" name="color_id" id="selectedColor">
+    <input type="hidden" id="selectedSizePrice" name="size_price" value="0">
+
 </div>
-
-
-
-            <!-- Quantity -->
-     <div class="mb-4">
-    <label class="fw-semibold d-block mb-2">Quantity</label>
-    <div class="d-inline-flex align-items-center border rounded px-2">
-        <button type="button" class="btn btn-sm qty-minus">−</button>
-        <input type="text" id="qtyInput" value="1" readonly style="width:50px;text-align:center;border:none" >
-        <button type="button" class="btn btn-sm qty-plus">+</button>
-        </div>
-    </div>
 
 
             <div class="d-flex gap-2 ">
@@ -246,12 +238,11 @@
             <!-- Wishlist -->
              
             <button class="btn btn-outline-danger mb-3 w-50  h-100 rounded-4 add-to-wishlist"
-        data-product-id="{{ $product->p_id }}"
-        data-redirect="{{ route('wishlist.index') }}">
-    <i class="bi bi-heart"></i> Add to Wishlist
-</button>
-
-
+            data-product-id="{{ $product->p_id }}"
+            data-redirect="{{ route('wishlist.index') }}">
+            <i class="bi bi-heart"></i> Add to Wishlist
+           </button>
+           
             </div>
 
             <!-- Trust -->
@@ -403,18 +394,47 @@ document.addEventListener('DOMContentLoaded', function () {
             // FormData
             let formData = new FormData();
             formData.append('p_id', productId);
-            formData.append('qty', 1);
+formData.append('size_id', document.getElementById('selectedSize').value);
+formData.append('color_id', document.getElementById('selectedColor').value);
+formData.append(
+    'size_price',
+    document.getElementById('selectedSizePrice').value
+);
 
+console.log('ADD TO CART DATA:', {
+    size_price: document.getElementById('selectedSizePrice').value
+});
+
+          
             // Optional fields
-            const size = document.querySelector('.size-btn.active')?.dataset.sizeId || '';
-            const color = document.querySelector('.color-dot.active')?.dataset.colorId || '';
+          const color = document.getElementById('selectedColor').value;
+         const size  = document.getElementById('selectedSize').value;
+       
+
+
+            if (!color) {
+                alert('Please select a color');
+                return;
+            }
+
+            if (!size) {
+                alert('Please select a size');
+                return;
+            }
+
+
             formData.append('size_id', size);
             formData.append('color_id', color);
+         formData.append(
+    'size_price',
+    document.getElementById('selectedSizePrice').value
+);
+
 
             fetch(url, {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}', // only in blade file
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}', 
                     'Accept': 'application/json'
                 },
                 body: formData
@@ -503,6 +523,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 {{-- script of dynamic sizes and quantity and images and prices change --}}
+
+
 <script>
 let selectedSizePrice = 0;
 
@@ -515,102 +537,93 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const priceEl   = document.getElementById('productPrice');
     const basePrice = parseFloat(priceEl.dataset.basePrice);
-    const qtyInput  = document.getElementById('qtyInput');
 
     /* 💰 PRICE UPDATE FUNCTION */
     function updateTotalPrice() {
-        let qty = parseInt(qtyInput.value) || 1;
-        let total = (basePrice + selectedSizePrice) * qty;
+     
+        let total = (basePrice + selectedSizePrice);
         priceEl.innerText = '₹' + total.toFixed(2);
     }
 
     /* 🎨 COLOR CLICK */
-    colors.forEach(color => {
-        color.addEventListener('click', function () {
+   colors.forEach(color => {
 
-            const colorId = this.dataset.colorId;
+    console.log('hidden color value =', document.getElementById('selectedColor').value);
 
-            /* COLOR ACTIVE */
-            colors.forEach(c => c.classList.remove('active'));
-            this.classList.add('active');
-            document.getElementById('selectedColor').value = colorId;
+    color.addEventListener('click', function () {
 
-            /* SIZE FILTER */
-            sizes.forEach(size => {
-                size.classList.add('d-none');
-                size.classList.remove('active');
-            });
+        const colorId = this.getAttribute('data-color-id');
 
-            document
-                .querySelectorAll('.size-btn[data-color-id="' + colorId + '"]')
-                .forEach(size => size.classList.remove('d-none'));
+        // active
+        colors.forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
 
-            document.getElementById('selectedSize').value = '';
+        // 👇 hidden input (MOST IMPORTANT)
+        document.getElementById('selectedColor').value = colorId;
 
-            /* RESET SIZE PRICE */
-            selectedSizePrice = 0;
-            updateTotalPrice();
-
-            /* 🖼 IMAGE FILTER */
-            thumbs.forEach(img => img.classList.add('d-none'));
-
-            const colorImages = document.querySelectorAll(
-                '.thumb[data-color-id="' + colorId + '"]'
-            );
-
-            colorImages.forEach(img => img.classList.remove('d-none'));
-
-            if (colorImages.length > 0) {
-                mainImage.src = colorImages[0].src;
-            }
+        /* SIZE FILTER */
+        sizes.forEach(size => {
+            size.classList.add('d-none');
+            size.classList.remove('active');
         });
+
+        document
+            .querySelectorAll('.size-btn[data-color-id="' + colorId + '"]')
+            .forEach(size => size.classList.remove('d-none'));
+
+        document.getElementById('selectedSize').value = '';
+
+        selectedSizePrice = 0;
+        updateTotalPrice();
+
+        /* IMAGE FILTER */
+        thumbs.forEach(img => img.classList.add('d-none'));
+
+        const colorImages = document.querySelectorAll(
+            '.thumb[data-color-id="' + colorId + '"]'
+        );
+
+        colorImages.forEach(img => img.classList.remove('d-none'));
+
+        if (colorImages.length > 0) {
+            mainImage.src = colorImages[0].src;
+        }
+
+        console.log('color_id sent:', colorId); 
     });
+});
+
 
     /* 🔥 AUTO SELECT FIRST COLOR */
     if (colors.length > 0) {
         colors[0].click();
     }
 
-    /* 📏 SIZE CLICK */
-    sizes.forEach(size => {
-        size.addEventListener('click', function () {
+ 
+   /* 📏 SIZE CLICK */
+sizes.forEach(size => {
+    size.addEventListener('click', function () {
 
-            sizes.forEach(s => s.classList.remove('active'));
-            this.classList.add('active');
+        sizes.forEach(s => s.classList.remove('active'));
+        this.classList.add('active');
 
-            document.getElementById('selectedSize').value = this.dataset.sizeId;
+        document.getElementById('selectedSize').value = this.dataset.sizeId;
 
-            /* 💰 SIZE PRICE */
-            selectedSizePrice = parseFloat(this.dataset.price) || 0;
-            updateTotalPrice();
-        });
-    });
+        /* 💰 SIZE PRICE */
+        selectedSizePrice = parseFloat(this.dataset.price) || 0;
 
-    /* ➕ QUANTITY PLUS */
-    document.querySelector('.qty-plus').addEventListener('click', function () {
-        let qty = parseInt(qtyInput.value) || 1;
-        qtyInput.value = qty + 1;
+        // 👇 ADD THIS LINE
+        document.getElementById('selectedSizePrice').value = selectedSizePrice;
+
         updateTotalPrice();
     });
+});
 
-    /* ➖ QUANTITY MINUS */
-    document.querySelector('.qty-minus').addEventListener('click', function () {
-        let qty = parseInt(qtyInput.value) || 1;
-        if (qty > 1) {
-            qtyInput.value = qty - 1;
-            updateTotalPrice();
-        }
-    });
 
 });
 
-/* 🖼 THUMB CLICK → MAIN IMAGE */
-function changeImage(el) {
-    document.getElementById('mainImage').src = el.src;
-}
 </script>
-
-<!-- script of change image -->
+// <!-- script of change image -->
 
   <script>
 function changeImage(el) {

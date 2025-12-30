@@ -112,7 +112,7 @@
                                                     </div>
                                                 </div>
 
-            <!-- Total -->
+                                               <!-- Total -->
                                                     <div class="col-3 col-md-2">
                                                         <div class="wish-total-price heading-color heading-weight">
                                                         <label for="">total price :</label>
