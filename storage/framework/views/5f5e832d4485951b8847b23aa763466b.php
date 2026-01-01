@@ -141,21 +141,14 @@
                                         <div class="d-flex gap-2">
                                        <a href="javascript:void(0)"
                                             class="add-to-wishlist btn btn-light"
-                                            
                                             data-product-id="<?php echo e($product->p_id); ?>"data-redirect="<?php echo e(route('wishlist.index')); ?>">
                                             <i class="ri-heart-line"></i>
                                         </a>
-
-
-                                            <a href="javascript:void(0)" class="add-to-cart btn btn-light">
-                                                <i class="ri-shopping-bag-3-line"></i>
-                                            </a>
                                             <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="d-block quick-view btn btn-light">
                                                 <i class="ri-eye-line"></i>
                                             </a>
                                         </div>
                                     </div>
-                                    
                                 </div>
                             </div>
 

@@ -107,6 +107,33 @@
             border: 2px solid #000;
             background: #f1f1f1;
         }
+        #flip {
+            padding: 10px;
+            border-radius:5px;
+            border: solid 1px #db3700;
+            }
+
+        #panel {
+            padding: 10px;
+            display: none;
+             border: solid 1px #c3c3c3;
+
+        }
+        .desc-scroll{
+            max-height: 250px;   
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+          .desc-scroll::-webkit-scrollbar{
+            width: 6px;
+        }
+        .desc-scroll::-webkit-scrollbar-thumb{
+            background: #ccc;
+            border-radius: 10px;
+        }
+        
+
+
 
 
     </style>
@@ -123,10 +150,7 @@
         <!-- LEFT: Images -->
         <div class="col-md-6 ">
            <div class="row g-3">
-
-
-
-
+            
                 <!-- Thumbnails -->
             <div class="col-2 thumb-img ">
                    @foreach($images as $image)
@@ -219,25 +243,19 @@
 </div>
 
 
-            <div class="d-flex gap-2 ">
+            <div class="d-flex gap-2">
             <!-- Add to Cart -->
-          
            <button
-    type="button"
-    class="btn btn-cart mb-3 w-50 h-100 rounded-4"
-    data-product-id="{{ $product->p_id }}"
-    data-url="{{ route('add-to-cart') }}"
-    data-redirect-after="{{ route('cart') }}">
-    <i class="bi bi-cart"></i> Add to Cart
-</button>
-
-
-
-        
-
+                type="button"
+                class="btn btn-cart mb-1 w-50 h-100 mt-3 rounded-4"
+                data-product-id="{{ $product->p_id }}"
+                data-url="{{ route('add-to-cart') }}"
+                data-redirect-after="{{ route('cart') }}">
+                <i class="bi bi-cart"></i> Add to Cart
+            </button>
             <!-- Wishlist -->
              
-            <button class="btn btn-outline-danger mb-3 w-50  h-100 rounded-4 add-to-wishlist"
+            <button class="btn btn-outline-danger mb-3 w-50 mt-3 h-100 rounded-4 add-to-wishlist"
             data-product-id="{{ $product->p_id }}"
             data-redirect="{{ route('wishlist.index') }}">
             <i class="bi bi-heart"></i> Add to Wishlist
@@ -252,34 +270,20 @@
                 <li>💳 Secure Payment</li>
             </ul>
 
-<!-- Accordion -->
-<div class="accordion mt-4" id="productAccordion">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingOne">
-            <button class="accordion-button collapsed"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#details"
-                    aria-expanded="false"
-                    aria-controls="details">
-                Product Details
-            </button>
-        </h2>
-
-        <div id="details"
-             class="accordion-collapse collapse"
-             aria-labelledby="headingOne"
-             data-bs-parent="#productAccordion">
-            <div class="accordion-body">
-                <p>{{ $product->p_short_description }}</p>
-                <br>
-           <p>{!! ($product->p_long_description) !!}</p>
-            </div>
-        </div>
+            <!-- product description  -->
+            <div class="mt-3 mb-2">
+         <div id="flip" class="desc-header d-flex">
+        <span>Product description</span>
+        <i class="bi bi-chevron-down ms-auto" id="descIcon"></i>
     </div>
-</div>
+            <div id="panel" class="desc-scroll"><p>{{ $product->p_short_description }}</p>
+                <br><hr>
+            <p>{!! ($product->p_long_description) !!}</p>
+            </div>
+            </div>
 
-</div>
+
+           </div>
 
 
         </div>
@@ -288,7 +292,6 @@
 
 
    <!-- related all products sections -->
-
 
 <div class="container-fluid px-3 mt-5">
  <div class="row product-box">
@@ -369,16 +372,17 @@
 
   @push('scripts')
 
-        <!-- SweetAlert2 CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-<!-- SweetAlert2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
+  {{-- jqery of p_description --}}
+<script> 
+$(document).ready(function(){
+  $("#flip").click(function(){
+    $("#panel").slideToggle();
+  });
+});
+</script>
 
 {{-- script of add to cart --}}
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -391,45 +395,46 @@ document.addEventListener('DOMContentLoaded', function () {
             const url = this.dataset.url; 
             const redirectUrl = this.dataset.redirectAfter || '/cart';
 
+            // Get values
+            const colorId = document.getElementById('selectedColor').value;
+            const sizeId = document.getElementById('selectedSize').value;
+            const sizePrice = document.getElementById('selectedSizePrice').value || '0';
+
+            // Validation
+            if (!colorId) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Color Required',
+                    text: 'Please select a color',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+
+            if (!sizeId) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Size Required',
+                    text: 'Please select a size',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+
+            // Console check
+            console.log('ADD TO CART DATA:', {
+                p_id: productId,
+                color_id: colorId,
+                size_id: sizeId,
+                size_price: sizePrice
+            });
+
             // FormData
             let formData = new FormData();
             formData.append('p_id', productId);
-formData.append('size_id', document.getElementById('selectedSize').value);
-formData.append('color_id', document.getElementById('selectedColor').value);
-formData.append(
-    'size_price',
-    document.getElementById('selectedSizePrice').value
-);
-
-console.log('ADD TO CART DATA:', {
-    size_price: document.getElementById('selectedSizePrice').value
-});
-
-          
-            // Optional fields
-          const color = document.getElementById('selectedColor').value;
-         const size  = document.getElementById('selectedSize').value;
-       
-
-
-            if (!color) {
-                alert('Please select a color');
-                return;
-            }
-
-            if (!size) {
-                alert('Please select a size');
-                return;
-            }
-
-
-            formData.append('size_id', size);
-            formData.append('color_id', color);
-         formData.append(
-    'size_price',
-    document.getElementById('selectedSizePrice').value
-);
-
+            formData.append('color_id', colorId);
+            formData.append('size_id', sizeId);
+            formData.append('size_price', sizePrice);
 
             fetch(url, {
                 method: 'POST',
@@ -442,15 +447,29 @@ console.log('ADD TO CART DATA:', {
             .then(res => res.json())
             .then(result => {
                 if(result.status){
-                    alert(result.message ?? 'Product added to cart');
-                    if(redirectUrl) window.location.href = redirectUrl;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: result.message ?? 'Product added to cart',
+                        confirmButtonColor: '#28a745'
+                    });
                 } else {
-                    alert(result.message ?? 'Failed to add product');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed',
+                        text: result.message ?? 'Failed to add product',
+                        confirmButtonColor: '#d33'
+                    });
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert('JS / Network error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'JS / Network error',
+                    confirmButtonColor: '#d33'
+                });
             });
 
         });
@@ -459,7 +478,6 @@ console.log('ADD TO CART DATA:', {
 
 });
 </script>
-
 
 //   <!-- script of whistlist -->
 

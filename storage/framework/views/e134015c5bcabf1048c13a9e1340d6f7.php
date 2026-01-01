@@ -8,6 +8,10 @@
                 input{
                     border: 1px solid orangered;
                 }
+                .bi-box-arrow-right{
+                    margin-left:60px;
+                    color:orangered;
+                }
 
         </style>
 
@@ -480,11 +484,56 @@
                                             </div>
                                         </li>
                                         <li class="header-icon-wrap user-wrap d-md-block d-none">
-                                            <div class="header-icon-wrapper">
-                                                <a href="<?php echo e(route('signin')); ?>" class="d-block header-icon-user" aria-label="Login user" data-bs-toggle="modal" data-bs-target="#loginModal">
-                                                    <span class="d-block header-block-icon primary-link font-16 font-xl-20"><i class="ri-user-line"></i></span>
-                                                </a>
+                                         <div class="header-icon-wrapper">
+                                                <?php if(auth()->guard()->check()): ?>
+                                                    
+                                                    <div class="dropdown d-flex ">
+                                                        <a href="#"
+                                                        class="d-flex header-icon-user"
+                                                        data-bs-toggle="dropdown"
+                                                        aria-expanded="false">
+
+                                                            <span class="d-block header-block-icon primary-link font-16 font-xl-20">
+                                                                <i class="ri-user-line"></i>
+                                                            </span>
+                                                        </a>
+
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li class="dropdown-item-text fw-semibold">
+                                                                <?php echo e(Auth::user()->name); ?>
+
+                                                            </li>
+
+                                                            <li><hr class="dropdown-divider"></li>
+
+                                                            <li>
+                                                                <form method="POST" action="<?php echo e(route('logout')); ?>">
+                                                                    <?php echo csrf_field(); ?>
+                                                                    <button type="submit" class="dropdown-item text-secondary ">
+                                                                        Logout <i class="bi bi-box-arrow-right"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                <?php endif; ?>
+
+
+                                                <?php if(auth()->guard()->guest()): ?>
+                                                    
+                                                    <a href="javascript:void(0)"
+                                                    class="d-block header-icon-user"
+                                                    aria-label="Login user"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#loginModal">
+
+                                                        <span class="d-block header-block-icon primary-link font-16 font-xl-20">
+                                                            <i class="ri-user-line"></i>
+                                                        </span>
+                                                    </a>
+                                                <?php endif; ?>
                                             </div>
+
                                         </li>
                                         <li class="header-icon-wrap wishlist-wrap d-md-block d-none">
                                             <div class="header-icon-wrapper">
@@ -504,12 +553,17 @@
                                         </li>
                                         <li class="header-icon-wrap cart-wrap d-md-block d-none">
                                             <div class="header-icon-wrapper">
-                                                <a href="<?php echo e(route('cart')); ?>" class="d-block header-icon-cart js-cart-drawer" >
+                                              <a href="<?php echo e(route('cart')); ?>" 
+                                            class="d-block header-icon-cart check-login"
+                                            data-redirect="<?php echo e(route('cart')); ?>">
+
                                                     <span class="primary-link ul-mt5 flex-nowrap align-items-center">
                                                         <span class="d-block">
                                                             <span class="d-block header-block-icon-wrap position-relative per-8">
                                                                 <span class="d-block header-block-icon font-16 font-xl-20"><i class="ri-shopping-bag-3-line"></i></span>
-                                                                <span class="header-block-counter cart-counter extra-color font-10 position-absolute end-0 d-flex align-items-center justify-content-center primary-bg rounded-circle">4</span>
+                                                            <span class="header-block-counter cart-counter extra-color font-10 position-absolute end-0 d-flex align-items-center justify-content-center primary-bg rounded-circle">4
+                                                                </span>
+                                                                 
                                                             </span>
                                                         </span>
                                                         <span class="d-none d-xl-block header-text-content text-uppercase text-nowrap heading-weight">Cart</span>
@@ -521,6 +575,9 @@
                                 </div>
                             </div>
                             <!-- header-icon end -->
+
+   
+
                         </div>
                     </div>
                 </div>
@@ -537,9 +594,6 @@
            <!-- Login Modal -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-
-
-
     <form method="POST" action="<?php echo e(url('signin')); ?>">
       <?php echo csrf_field(); ?>
       <input type="hidden" name="redirect" value="<?php echo e(url()->current()); ?>">
@@ -555,17 +609,22 @@
           <label for="" class="mt-2">Enter your Email</label>
           <input type="text" class="form-control mb-3 mt-3" name="email" placeholder="Username"/>
           <label for="" class="mt-2">Enter your password</label>
-          <input type="password" name="password" class="form-control mb-3 mt-3" placeholder="Password" />
+           <div class="input-group mb-3 mt-3">
+            <input type="password" name="password"  id="password" class="form-control" placeholder="Enter your password">
+            <span class="input-group-text bg-white" id="togglePassword" style="cursor:pointer">
+                <i class="bi bi-eye-slash"></i>
+            </span>
         </div>
+        </div>
+        
         <div class="text-center justify-content-center flex-column">
           <button class="btn btn-dark w-75 text-center" type="submit">Login</button>
         </div>
         <hr>
-        <div class="text-center justify-content-center flex-column">
-          <h6 class="font-18">Don't have an account? 👇</h6>
-          <a href="javascript:void(0);" class="btn btn-dark text-white mt-3 w-75" id="openSignup">
-            Create Account
-          </a>
+        <div class="text-center justify-content-center flex-column md-3">
+          <h6 class="font-18">Don't have an account? <a href="javascript:void(0);" id="openSignup" class="text-secondary">  Create Account </a></h6>
+      
+           
         </div>
       </div>
     </form>
@@ -575,7 +634,7 @@
 <!-- Signup Modal -->
 <div class="modal fade" id="signupModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-    <form id="signupForm" action="<?php echo e(route('signup')); ?>" method="POST" >
+    <form id="signupForm" id="registerForm" action="<?php echo e(route('signup')); ?>" method="POST" >
       <?php echo csrf_field(); ?>
       <div class="modal-content p-3">
         <div class="d-flex text-center justify-content-center">
@@ -587,13 +646,26 @@
         </div>
         <div class="modal-body">
           <label>Name</label>
-          <input type="text" name="name" class="form-control mb-3 mt-3" placeholder="Enter your name" required>
+          <input type="text" name="name" class="form-control mb-3 mt-3" placeholder="Enter your name" >
           <label>Email</label>
-          <input type="email" name="email" class="form-control mb-3 mt-3" placeholder="Enter your email" required>
+          <input type="email" name="email" class="form-control mb-3 mt-3" placeholder="Enter your email">
+            <label>Mobile Number</label>
+          <input type="number" name="phone" class="form-control mb-3 mt-3" placeholder="Enter your number">
           <label>Password</label>
-          <input type="password" name="password" class="form-control mb-3 mt-3" placeholder="Enter your password" required>
+       <div class="input-group mb-3 mt-3">
+        <input 
+        type="password" 
+        name="password" 
+        id="password"
+        class="form-control"
+        placeholder="Enter your password">
+
+            <span class="input-group-text bg-white" id="togglePassword" style="cursor:pointer">
+                <i class="bi bi-eye-slash"></i>
+            </span>
+        </div>
           <div class="form-check mb-2 d-flex align-items-center">
-            <input class="fs-3" type="checkbox" required>
+            <input class="fs-3" type="checkbox" id="terms">
             <label class="form-check-label ms-3">I agree to the <a href="terms-condition.html">terms & guidelines</a></label>
           </div>
         </div>
@@ -601,11 +673,8 @@
           <button type="submit" class="btn btn-dark w-75">Signup</button>
         </div>
         <hr>
-         <div class="text-center justify-content-center flex-column">
-          <h6 class="font-18">You have an account signin 👇</h6>
-          <a href="javascript:void(0);" class="btn btn-dark text-white mt-3 w-75 " id="openLogin">
-            Sign In
-          </a>
+         <div class="text-center justify-content-center flex-column mb-3">
+          <h6 class="font-18">You have an account<a href="javascript:void(0);" id="openLogin" class="text-secondary"> signin  </a></h6>
         </div>
       </div>
     </form>
@@ -613,183 +682,229 @@
 </div>
 
 
-
 <!-- starting scripts -->
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-
 <script>
-const loginModalEl  = document.getElementById('loginModal');
-const signupModalEl = document.getElementById('signupModal');
+document.querySelectorAll('.check-login').forEach(link => {
 
+    link.addEventListener('click', function (e) {
 
-document.getElementById('openSignup').addEventListener('click', function () {
-    const loginModal = bootstrap.Modal.getOrCreateInstance(loginModalEl);
+        <?php if(!Auth::check()): ?>
+            e.preventDefault(); 
 
-    loginModalEl.addEventListener('hidden.bs.modal', function () {
-        bootstrap.Modal.getOrCreateInstance(signupModalEl).show();
-    }, { once: true });
+            Swal.fire({
+                icon: 'warning',
+                title: 'Login Required',
+                text: 'Please login to continue',
+                showCancelButton: true,
+                confirmButtonText: 'Login',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#ff5722'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                 
+                    const loginModal = bootstrap.Modal.getOrCreateInstance(
+                        document.getElementById('loginModal')
+                    );
+                    loginModal.show();
+                }
+            });
+        <?php endif; ?>
 
-    loginModal.hide();
-});
-
-
-document.getElementById('openLogin')?.addEventListener('click', function () {
-    const signupModal = bootstrap.Modal.getOrCreateInstance(signupModalEl);
-
-    signupModalEl.addEventListener('hidden.bs.modal', function () {
-        bootstrap.Modal.getOrCreateInstance(loginModalEl).show();
-    }, { once: true });
-
-    signupModal.hide();
-});
-
-[loginModalEl, signupModalEl].forEach(modal => {
-    modal.addEventListener('hidden.bs.modal', () => {
-        document.body.classList.remove('modal-open');
-        document.body.style.overflow = '';   // ⭐ ADD THIS LINE
-        document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
     });
-});
 
+});
 </script>
 
 
 
 
 
-<script>document.getElementById('signupForm').addEventListener('submit', function(e){
-    e.preventDefault();
 
-    const formData = new FormData(this);
 
-    fetch("<?php echo e(route('signup')); ?>", {
-        method: "POST",
-        headers: {
-            "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value,
-            "Accept": "application/json"
-        },
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if(data.status){
-            // Close signup modal
-            const signupModal = bootstrap.Modal.getInstance(document.getElementById('signupModal'))
-                                 || bootstrap.Modal.getOrCreateInstance(document.getElementById('signupModal'),500);
-            // signupModal.hide();
+<script>
+const togglePassword = document.getElementById('togglePassword');
+const passwordInput = document.getElementById('password');
 
-            // SweetAlert success
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: data.message,
-                timer: 2500,
-                showConfirmButton: false
-            });
-        } else {
+togglePassword.addEventListener('click', () => {
+    const icon = togglePassword.querySelector('i');
+
+    if(passwordInput.type === 'password'){
+        passwordInput.type = 'text';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    }
+});
+</script>
+ 
+
+<!-- Login ↔ Signup Modal Switching -->
+<script>
+    const loginModalEl  = document.getElementById('loginModal');
+    const signupModalEl = document.getElementById('signupModal');
+
+    // Open Signup from Login
+    document.getElementById('openSignup')?.addEventListener('click', () => {
+        const loginModal = bootstrap.Modal.getInstance(loginModalEl) || bootstrap.Modal.getOrCreateInstance(loginModalEl);
+        
+        loginModalEl.addEventListener('hidden.bs.modal', () => {
+            bootstrap.Modal.getOrCreateInstance(signupModalEl).show();
+        }, { once: true });
+
+        loginModal.hide();
+    });
+
+    // Open Login from Signup
+    document.getElementById('openLogin')?.addEventListener('click', () => {
+        const signupModal = bootstrap.Modal.getInstance(signupModalEl) || bootstrap.Modal.getOrCreateInstance(signupModalEl);
+        
+        signupModalEl.addEventListener('hidden.bs.modal', () => {
+            bootstrap.Modal.getOrCreateInstance(loginModalEl).show();
+        }, { once: true });
+
+        signupModal.hide();
+    });
+
+    // Clean up modal backdrop & body scroll on any modal hide
+    [loginModalEl, signupModalEl].forEach(modalEl => {
+        if (!modalEl) return;
+        modalEl.addEventListener('hidden.bs.modal', () => {
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+        });
+    });
+</script>
+
+<!-- Signup Form AJAX Submission -->
+<script>
+    document.getElementById('signupForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch("<?php echo e(route('signup')); ?>", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('input[name="_token"]')?.value || '',
+                "Accept": "application/json"
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            const signupModal = bootstrap.Modal.getInstance(signupModalEl) || bootstrap.Modal.getOrCreateInstance(signupModalEl);
+
+            if (data.status) {
+                signupModal.hide();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: data.message || 'Registration successful!',
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: data.message || 'Signup failed!',
+                });
+            }
+        })
+        .catch(err => {
+            console.error(err);
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
-                text: data.message || 'Signup failed!',
+                title: 'Server Error',
+                text: 'Please try again later.',
             });
+        });
+    });
+</script>
+
+<!-- Session-based SweetAlert Messages -->
+<?php if(session('success') || session('error')): ?>
+<script>
+    Swal.fire({
+        icon: '<?php echo e(session('success') ? 'success' : 'error'); ?>',
+        title: '<?php echo e(session('success') ? 'Success!' : 'Oops...'); ?>',
+        text: "<?php echo e(session('success') ?? session('error')); ?>",
+        timer: 2500,
+        showConfirmButton: false
+    });
+</script>
+<?php endif; ?>
+
+<!-- Wishlist Button – Show Login Modal if not authenticated -->
+<script>
+    document.getElementById('wishlistBtn')?.addEventListener('click', function(e) {
+        <?php if(!Auth::check()): ?>
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Login Required',
+                text: 'Please login first to access your wishlist!',
+                showCancelButton: true,
+                confirmButtonText: 'Login',
+                cancelButtonText: 'Cancel',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    bootstrap.Modal.getOrCreateInstance(loginModalEl).show();
+                }
+            });
+        <?php endif; ?>
+    });
+</script>
+
+<!-- Client-side Registration Form Validation -->
+<script>
+    document.getElementById('registerForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const name     = document.querySelector('[name="name"]')?.value.trim()     || '';
+        const email    = document.querySelector('[name="email"]')?.value.trim()    || '';
+        const phone    = document.querySelector('[name="phone"]')?.value.trim()    || '';
+        const password = document.querySelector('[name="password"]')?.value.trim() || '';
+        const terms    = document.getElementById('terms')?.checked || false;
+
+        if (!name) {
+            return Swal.fire('Error', 'Please enter your name', 'error');
         }
-    })
-    .catch(err=>{
-        console.error(err);
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            return Swal.fire('Error', 'Please enter a valid email address', 'error');
+        }
+
+        if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+            return Swal.fire('Error', 'Mobile number must be exactly 10 digits', 'error');
+        }
+
+        if (password.length < 6) {
+            return Swal.fire('Error', 'Password must be at least 6 characters', 'error');
+        }
+
+        if (!terms) {
+            return Swal.fire('Error', 'Please accept terms & guidelines', 'error');
+        }
+
+        
         Swal.fire({
-            icon: 'error',
-            title: 'Server Error',
-            text: 'Please try again later.',
+            title: 'Success 🎉',
+            text: 'Registration successful',
+            icon: 'success',
+            confirmButtonText: 'OK'
         });
-    });
-});
-
-</script>
-
-
-
-
-
-
-<?php if(session('success')): ?>
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: "<?php echo e(session('success')); ?>",
-        timer: 2000,
-        showConfirmButton: false
+      
     });
 </script>
-<?php endif; ?>
-
-<?php if(session('error')): ?>
-<script>
-    Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: "<?php echo e(session('error')); ?>",
-        timer: 2000,
-        showConfirmButton: false
-    });
-</script>
-<?php endif; ?>
-
-        <?php if(session('success')): ?>
-<script>
-    Swal.fire({
-        title: 'Success!',
-        text: "<?php echo e(session('success')); ?>",
-        icon: 'success',
-        confirmButtonText: 'OK'
-    });
-</script>
-
-
-<?php endif; ?>
-
-
-
-
-<script>document.getElementById('wishlistBtn').addEventListener('click', function(e){
-    <?php if(!Auth::check()): ?>
-        e.preventDefault(); // prevent redirect
-
-        Swal.fire({
-            icon: 'warning',
-            title: 'Login Required',
-            text: 'Please login first to access your wishlist!',
-            showCancelButton: true,
-            confirmButtonText: 'Login',
-            cancelButtonText: 'Cancel',
-        }).then((result) => {
-            if(result.isConfirmed){
-                // Open Login Modal
-                const loginModalEl = document.getElementById('loginModal');
-                const loginModal = bootstrap.Modal.getOrCreateInstance(loginModalEl);
-                loginModal.show();
-            }
-        });
-    <?php endif; ?>
-});
-loginModalEl.addEventListener('hidden.bs.modal', () => {
-    document.body.classList.remove('modal-open');
-    document.body.style.overflow = '';
-    document.body.style.paddingRight = '';
-    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
-});
-
-</script>
-
-
-
-
-</body>
-
-                
 
 
 

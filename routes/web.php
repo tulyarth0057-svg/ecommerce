@@ -59,16 +59,6 @@ route ::get('/product',function (){
     return view('product');
 });
 
-// route ::get('/register',function (){
-//     return view('register');
-// });
-
-
-
-
-
-
-
 
 Route::get('/sign-up', [AuthController::class, 'showsignup'])->name('signup');
 
@@ -79,10 +69,19 @@ Route::get('/signin', [AuthController::class, 'signin'])->name('signin');
 
 Route::post('/signin', [AuthController::class, 'post_signin'])->name('signin');
 
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('admin/dashboard', function () {
-    return view('admin.dashboard');
-})->middleware('auth')->name('admin.dashboard');
+
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('admin.dashboard');
+
+    });
+
+
 
 
 
@@ -183,26 +182,26 @@ Route::get('/Kidscategroy', [showController::class, 'KidsMaincollection'])->name
 // whistlist route---->
 
 // ADD to wishlist (button / form)
-Route::post('/wishlist', [WhistlistController::class, 'addToWishlist'])
+Route::post('/wishlist', [WhistlistController::class, 'store'])
     ->name('wishlist.store');
+
 
 // SHOW wishlist page
 Route::get('/wishlist', [WhistlistController::class, 'wishlist'])
     ->name('wishlist.index')
     ->middleware('auth');
 
-// CLEAR wishlist
-Route::delete('/wishlist/clear', [WhistlistController::class, 'clearWishlist'])
-    ->name('wishlist.clear');
-
 // REMOVE single item
 Route::delete('/wishlist/{id}', [WhistlistController::class, 'removeWishlist'])
     ->name('wishlist.remove');
 
 
-// add to card route
+Route::post('/wishlist/add-to-cart', [WhistlistController::class, 'addToCart'])
+     ->name('wishlist.addToCart');
 
-Route::post('/wishlist/add-to-cart', [AddtocardController::class, 'addFromWishlist'])->name('wishlist.addToCart');
+// add to card route
+Route::post('/cart/add-from-wishlist', [AddtocartController::class, 'addFromWishlist'])->name('cart.add.from.wishlist');
+
 
 
 // product view route--->
@@ -214,14 +213,13 @@ Route::get('/cart', [AddtocardController::class, 'index'])
      ->name('cart')
      ->middleware('auth');
 
-// Route::post('/add-to-cart', [AddtocardController::class, 'addToCart'])
-//      ->name('add-to-cart')
-//      ->middleware('auth');
-
 Route::post('/add-to-cart', [AddtocardController::class, 'addToCart'])
     ->name('add-to-cart');
 
     Route::delete('/cart/remove/{cart_id}', [AddtocardController::class, 'removeFromCart'])->name('cart.remove');
+
+    Route::post('/cart/clear', [AddtocardController::class, 'clear'])->name('cart.clear');
+
 
 
 

@@ -63,8 +63,6 @@
                                 </div>
                                 <div class="wish-table-data">
                                     <div class="wish-table-info ptb-30 beb" data-animate="animate__fadeIn">
-                                       
-
                                         <?php $__currentLoopData = $wishlists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $wishlist): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>                               
                                     <div class="row row-mtm w-750 m-auto mb-4 p-4 border">
                                         <div class="wish-table-item">
@@ -74,7 +72,7 @@
                                                 <div class="col-12 col-md-8">
                                                     <div class="wish-item-content d-flex flex-wrap">
                                                         <div class="wish-item-image ">
-                                                            <a href="<?php echo e(route('wishlist.index', $wishlist->product->p_id)); ?>" class="d-block br-hidden">
+                                                                <a href="<?php echo e(url('product-view/'.$wishlist->p_id)); ?>" class="d-block" class="d-block br-hidden">
                                                             <img src="<?php echo e(asset('storage/colors/' . $wishlist->product->colors->first()->images->first()->img_path)); ?>"
                                                             alt="<?php echo e($wishlist->product->img_alt_text ?? $wishlist->product->p_name); ?>" class="whistlist-img"
                                                             >
@@ -82,7 +80,8 @@
                                                         </div>
 
                                                         <div class="wish-item-info p-2 ms-3 ">
-                                                            <a href="<?php echo e(route('wishlist.index', $wishlist->product->p_id)); ?>" class="primary-link heading-weight">
+                                                            <a href="<?php echo e(url('product-view/'.$wishlist->p_id)); ?>" class="primary-link heading-weight">
+                                    
                                                                 <label for="">Product name:</label><br>
                                                                 <?php echo e($wishlist->product->p_name); ?>
 
@@ -94,17 +93,7 @@
                                                                 
                                                             </div>
 
-                                                            <div class="wish-item-sizes heading-color heading-weight mst-7 gap-2 pt-2">
-                                                                <label for="">Available sizes:</label><br><br>
-
-                                                            <?php $__currentLoopData = $wishlist->product->colors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <?php $__currentLoopData = $color->sizes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $size): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-
-                                                            <span class="custom-border mt-3 p-1"><?php echo e($size->size_name); ?></span>
-                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-                                                            </div>
+                                            
                                                         </div>
                                                     </div>
                                                 </div>
@@ -118,25 +107,31 @@
                                                     </div>
 
                                                     <!-- Remove -->
-                                                    <div class="col-3 col-md-2 text-end">
-                                                        <form action="<?php echo e(route('wishlist.remove', $wishlist->w_id)); ?>" method="POST">
-                                                            <?php echo csrf_field(); ?>
-                                                            <?php echo method_field('DELETE'); ?>
-                                                            <button type="submit" class="wish-remove text-danger icon-16">
-                                                                <i class="ri-close-large-line"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
+                                                <div class="col-3 col-md-2 text-end">
+                                                    <form action="<?php echo e(route('wishlist.remove', $wishlist->w_id)); ?>" 
+                                                        method="POST" 
+                                                        class="delete-wishlist-form">
+                                                        <?php echo csrf_field(); ?>
+                                                        <?php echo method_field('DELETE'); ?>
+
+                                                        <button type="button" class="wish-remove text-danger icon-16">
+                                                            <i class="ri-close-large-line"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+
 
                                                 </div>
                                             </div>
 
                                             <!-- Add to Cart -->
                                             <div class="wish-note-cart">
-                                                <button class="w-100 btn-style secondary-btn add-to-cart" 
-                                                    data-product="<?php echo e($wishlist->product->p_id); ?>">
-                                                    Add to cart
-                                                </button>
+                                    <button class="btn btn-cart bg-dark p-2 text-white w-100 add-wishlist-to-cart"
+                                        data-product-id="<?php echo e($wishlist->product->p_id); ?>">
+                                        Add to Cart
+                                    </button>
+
+
                                             </div>
                                         </div>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -836,290 +831,7 @@
 
 
         <!-- Add to card drawer start -->
-        <div class="cart-drawer position-fixed top-0 bottom-0 body-bg z-index-5 invisible box-shadow" id="cart-drawer">
-            <form method="post" action="javascript:void(0)" class="drawer-contents d-flex flex-column">
-                <div class="drawer-fixed-header ptb-10 plr-15 beb">
-                    <div class="drawer-header d-flex align-items-center justify-content-between">
-                        <h6 class="font-18">My shopping cart</h6>
-                        <div class="drawer-close">
-                            <button type="button" class="drawer-close-btn body-secondary-color icon-16" aria-label="Close"><i class="ri-close-large-line d-block lh-1"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="pst-10 plr-15 text-center">
-                    <div class="extra-color font-14 ptb-6 plr-15 primary-bg">First order? Get 10% off with code <span class="heading-weight blinking">10% OFF</span>.</div>
-                </div>
-                <div class="drawer-cart-empty d-none h-100 ptb-30 plr-15">
-                    <div class="drawer-scrollable h-100 d-flex flex-column align-items-center justify-content-center text-center">
-                        <span class="heading-color icon-32 meb-24"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                        <h2 class="font-24">No items in your shopping cart - yet!</h2>
-                        <a href="collection.html" class="btn-style secondary-btn mst-24">Continue shopping</a>
-                    </div>
-                </div>
-                <div class="drawer-inner h-100 d-flex flex-column justify-content-between overflow-hidden">
-                    <div class="drawer-scrollable h-100 overflow-auto">
-                        <div class="cart-drawer-table plr-15">
-                            <div class="cart-drawer-info ptb-15 bst">
-                                <div class="cart-drawer-content d-flex flex-wrap">
-                                    <div class="cart-drawer-image width-88">
-                                        <a href="product.html" class="d-block br-hidden"><img src="assets/image/cart/cart-1.jpg" class="w-100 img-fluid" alt="cart-1"></a>
-                                    </div>
-                                    <div class="cart-drawer-info width-calc-88 psl-15">
-                                        <div class="cart-drawer-detail">
-                                            <a href="product.html" class="primary-link heading-weight">Pleated skater skirt</a>
-                                            <span class="d-block mst-7">XS / Aliceblue</span>
-                                            <span class="d-block mst-7">Polyester</span>
-                                        </div>
-                                        <div class="heading-color heading-weight mst-7">$79.00</div>
-                                        <div class="cart-drawer-qty-remove d-flex align-items-end justify-content-between mst-16">
-                                            <div class="js-qty-wrapper">
-                                                <div class="js-qty-wrap d-flex body-bg border-full br-hidden">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-minus body-color icon-16" aria-label="Remove item"><i class="ri-subtract-line d-block lh-1"></i></button>
-                                                    <input type="number" name="pleated-skater-skirt-xs-aliceblue" class="js-qty-num p-0 text-center border-0" value="1" min="1">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-plus body-color icon-16" aria-label="Add item"><i class="ri-add-line d-block lh-1"></i></button>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="cart-drawer-remove text-danger icon-16" aria-label="Remove item"><i class="ri-delete-bin-line d-block lh-1"></i></button>
-                                        </div>
-                                        <div class="text-danger font-14 mst-7"><i class="ri-error-warning-line mer-4"></i>Hurry! Only <span class="heading-weight">15</span> in stock.</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cart-drawer-info ptb-15 bst">
-                                <div class="cart-drawer-content d-flex flex-wrap">
-                                    <div class="cart-drawer-image width-88">
-                                        <a href="product.html" class="d-block br-hidden"><img src="assets/image/cart/cart-2.jpg" class="w-100 img-fluid" alt="cart-2"></a>
-                                    </div>
-                                    <div class="cart-drawer-info width-calc-88 psl-15">
-                                        <div class="cart-drawer-detail">
-                                            <a href="product.html" class="primary-link heading-weight">Tailored blazer jacket</a>
-                                            <span class="d-block mst-7">38 / Azure</span>
-                                            <span class="d-block mst-7">Wool blend</span>
-                                        </div>
-                                        <div class="heading-color heading-weight mst-7">$49.00</div>
-                                        <div class="cart-drawer-qty-remove d-flex align-items-end justify-content-between mst-16">
-                                            <div class="js-qty-wrapper">
-                                                <div class="js-qty-wrap d-flex body-bg border-full br-hidden">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-minus body-color icon-16" aria-label="Remove item"><i class="ri-subtract-line d-block lh-1"></i></button>
-                                                    <input type="number" name="tailored-blazer-jacket-38-azure" class="js-qty-num p-0 text-center border-0" value="1" min="1">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-plus body-color icon-16" aria-label="Add item"><i class="ri-add-line d-block lh-1"></i></button>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="cart-drawer-remove text-danger icon-16" aria-label="Remove item"><i class="ri-delete-bin-line d-block lh-1"></i></button>
-                                        </div>
-                                        <div class="text-danger font-14 mst-7"><i class="ri-error-warning-line mer-4"></i>Hurry! Only <span class="heading-weight">9</span> in stock.</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cart-drawer-info ptb-15 bst">
-                                <div class="cart-drawer-content d-flex flex-wrap">
-                                    <div class="cart-drawer-image width-88">
-                                        <a href="product.html" class="d-block br-hidden"><img src="assets/image/cart/cart-3.jpg" class="w-100 img-fluid" alt="cart-3"></a>
-                                    </div>
-                                    <div class="cart-drawer-info width-calc-88 psl-15">
-                                        <div class="cart-drawer-detail">
-                                            <a href="product.html" class="primary-link heading-weight">Girls floral ruffle top</a>
-                                            <span class="d-block mst-7">2Y / Aliceblue</span>
-                                            <span class="d-block mst-7">Cotton</span>
-                                        </div>
-                                        <div class="heading-color heading-weight mst-7">$69.00</div>
-                                        <div class="cart-drawer-qty-remove d-flex align-items-end justify-content-between mst-16">
-                                            <div class="js-qty-wrapper">
-                                                <div class="js-qty-wrap d-flex body-bg border-full br-hidden">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-minus body-color icon-16" aria-label="Remove item"><i class="ri-subtract-line d-block lh-1"></i></button>
-                                                    <input type="number" name="girls-floral-ruffle-top-2y-aliceblue" class="js-qty-num p-0 text-center border-0" value="1" min="1">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-plus body-color icon-16" aria-label="Add item"><i class="ri-add-line d-block lh-1"></i></button>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="cart-drawer-remove text-danger icon-16" aria-label="Remove item"><i class="ri-delete-bin-line d-block lh-1"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cart-drawer-info ptb-15 bst">
-                                <div class="cart-drawer-content d-flex flex-wrap">
-                                    <div class="cart-drawer-image width-88">
-                                        <a href="product.html" class="d-block br-hidden"><img src="assets/image/cart/cart-4.jpg" class="w-100 img-fluid" alt="cart-4"></a>
-                                    </div>
-                                    <div class="cart-drawer-info width-calc-88 psl-15">
-                                        <div class="cart-drawer-detail">
-                                            <a href="product.html" class="primary-link heading-weight">Classic cotton t-shirt</a>
-                                            <span class="d-block mst-7">S / Azure</span>
-                                            <span class="d-block mst-7">Cotton</span>
-                                        </div>
-                                        <div class="heading-color heading-weight mst-7">$49.00</div>
-                                        <div class="cart-drawer-qty-remove d-flex align-items-end justify-content-between mst-16">
-                                            <div class="js-qty-wrapper">
-                                                <div class="js-qty-wrap d-flex body-bg border-full br-hidden">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-minus body-color icon-16" aria-label="Remove item"><i class="ri-subtract-line d-block lh-1"></i></button>
-                                                    <input type="number" name="classic-cotton-t-shirt-s-azure" class="js-qty-num p-0 text-center border-0" value="1" min="1">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-plus body-color icon-16" aria-label="Add item"><i class="ri-add-line d-block lh-1"></i></button>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="cart-drawer-remove text-danger icon-16" aria-label="Remove item"><i class="ri-delete-bin-line d-block lh-1"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="drawer-recommended-product ptb-15 plr-15 bst">
-                            <div class="d-flex flex-wrap align-items-center justify-content-between">
-                                <div class="heading-color"><i class="ri-thumb-up-line icon-16 mer-4"></i>Recommended for you</div>
-                                <div class="swiper-buttons lh-1">
-                                    <div class="swiper-buttons-wrap">
-                                        <button type="button" class="swiper-prev swiper-prev-drawer-recommended-product primary-link icon-16" aria-label="Arrow previous"><i class="ri-arrow-left-line d-block lh-1"></i></button>
-                                        <button type="button" class="swiper-next swiper-next-drawer-recommended-product primary-link icon-16" aria-label="Arrow next"><i class="ri-arrow-right-line d-block lh-1"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="drawer-recommended-product-wrap pst-15">
-                                <div class="drawer-recommended-product-slider swiper" id="drawer-recommended-product-slider">
-                                    <div class="swiper-wrapper">
-                                        <div class="swiper-slide">
-                                            <div class="drawer-recommended-product">
-                                                <div class="row drawer-recommended-single-product-wrap">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img"><img src="assets/image/product/p-1.jpg" class="w-100 img-fluid" alt="p-1"></a>
-                                                    </div>
-                                                    <div class="product-content">
-                                                        <div class="pro-content">
-                                                            <div class="product-title">
-                                                                <span class="d-block font-14"><a href="product.html" class="d-block w-100 text-truncate heading-weight">Pleated skater skirt</a></span>
-                                                            </div>
-                                                            <div class="product-price">
-                                                                <div class="price-box font-14 heading-weight">
-                                                                    <span class="new-price primary-color">$79.00</span>
-                                                                    <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$89.00</span></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <div class="drawer-recommended-product">
-                                                <div class="row drawer-recommended-single-product-wrap">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img"><img src="assets/image/product/p-3.jpg" class="w-100 img-fluid" alt="p-3"></a>
-                                                    </div>
-                                                    <div class="product-content">
-                                                        <div class="pro-content">
-                                                            <div class="product-title">
-                                                                <span class="d-block font-14"><a href="product.html" class="d-block w-100 text-truncate heading-weight">Tailored blazer jacket</a></span>
-                                                            </div>
-                                                            <div class="product-price">
-                                                                <div class="price-box font-14 heading-weight">
-                                                                    <span class="new-price primary-color">$49.00</span>
-                                                                    <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$59.00</span></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <div class="drawer-recommended-product">
-                                                <div class="row drawer-recommended-single-product-wrap">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img"><img src="assets/image/product/p-5.jpg" class="w-100 img-fluid" alt="p-5"></a>
-                                                    </div>
-                                                    <div class="product-content">
-                                                        <div class="pro-content">
-                                                            <div class="product-title">
-                                                                <span class="d-block font-14"><a href="product.html" class="d-block w-100 text-truncate heading-weight">Girls floral ruffle top</a></span>
-                                                            </div>
-                                                            <div class="product-price">
-                                                                <div class="price-box font-14 heading-weight">
-                                                                    <span class="new-price primary-color">$69.00</span>
-                                                                    <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$79.00</span></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <div class="drawer-recommended-product">
-                                                <div class="row drawer-recommended-single-product-wrap">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img"><img src="assets/image/product/p-7.jpg" class="w-100 img-fluid" alt="p-7"></a>
-                                                    </div>
-                                                    <div class="product-content">
-                                                        <div class="pro-content">
-                                                            <div class="product-title">
-                                                                <span class="d-block font-14"><a href="product.html" class="d-block w-100 text-truncate heading-weight">Classic cotton t-shirt</a></span>
-                                                            </div>
-                                                            <div class="product-price">
-                                                                <div class="price-box font-14 heading-weight">
-                                                                    <span class="new-price primary-color">$49.00</span>
-                                                                    <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$54.00</span></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="drawer-instruction ptb-15 plr-15 bst">
-                            <a href="#collapse-drawer-note" class="d-flex flex-wrap align-items-center justify-content-between" data-bs-toggle="collapse" aria-expanded="true">
-                                <span class="drawer-instruction-title width-calc-16"><i class="ri-edit-line icon-16 mer-4"></i>Type a note for the seller</span>
-                                <span class="drawer-instruction-icon width-16 icon-16"><i class="ri-arrow-down-s-line"></i></span>
-                            </a>
-                            <div class="collapse show" id="collapse-drawer-note">
-                                <div class="pst-15">
-                                    <textarea rows="3" id="drawernote" name="drawernote" class="w-100" placeholder="Write your message..." autocomplete="off"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="drawer-instruction ptb-15 plr-15 bst">
-                            <a href="#collapse-drawer-discount" class="d-flex flex-wrap align-items-center justify-content-between" data-bs-toggle="collapse" aria-expanded="true">
-                                <span class="drawer-instruction-title width-calc-16"><i class="ri-discount-percent-line icon-16 mer-4"></i>Have a code? Apply here</span>
-                                <span class="drawer-instruction-icon width-16 icon-16"><i class="ri-arrow-down-s-line"></i></span>
-                            </a>
-                            <div class="collapse show" id="collapse-drawer-discount">
-                                <div class="pst-15">
-                                    <div class="d-flex flex-wrap height-48 extra-bg br-hidden">
-                                        <input type="text" id="drawerdiscount" name="drawerdiscount" class="width-calc-48 h-auto rounded-0" placeholder="Type your code here" autocomplete="off" required>
-                                        <button type="button" class="width-48 icon-16 primary-link drawer-dis-btn" aria-label="Discount code button"><i class="ri-arrow-right-up-line"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="drawer-footer ptb-15 plr-15 bst">
-                        <div class="drawer-total d-flex justify-content-between">
-                            <span>Subtotal</span>
-                            <span class="heading-color heading-weight">$246.00</span>
-                        </div>
-                        <div class="font-12 mst-8">Shipping, taxes, and discount codes calculated at checkout</div>
-                        <div class="drawer-cart-checkout mst-12">
-                            <div class="drawer-cart-box meb-11">
-                                <label class="cust-checkbox-label checkbox-agree">
-                                    <input type="checkbox" id="drawer-terms" name="drawer-terms" class="cust-checkbox checkboxbtn">
-                                    <span class="d-block cust-check"></span>
-                                    <span class="login-read">I have agree with the <a href="terms-condition.html" class="body-secondary-color text-decoration-underline">terms & conditions</a>.</span>
-                                </label>
-                            </div>
-                            <div class="row btn-row15">
-                                <div class="col-12 col-md-6">
-                                    <a href="cart-page.html" class="w-100 btn-style quaternary-btn">View cart</a>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <a href="checkout.html" class="w-100 btn-style secondary-btn hide-btn opacity-50 disabled pe-none">Checkout</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
+        
         <!-- cart-drawer end -->
         <!-- bottom-menu start -->
         <div class="bottom-menu d-md-none position-sticky bottom-0 body-bg z-1 box-shadow">
@@ -1162,45 +874,59 @@
                 </div>
             </div>
         </div>
-
-   <div class="bg-screen">
-            <div class="bg-back position-fixed top-0 end-0 bottom-0 start-0 bg-black z-index-4 opacity-0 invisible"></div>
-            <div class="bg-shop position-fixed top-0 end-0 bottom-0 start-0 bg-black z-index-4 opacity-0 invisible"></div>
-        </div>
-        <!-- bg-screen end -->
-
-
         <?php $__env->startPush('scripts'); ?>
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function(){
-    $('.add-to-cart').click(function(){
-        let productId = $(this).data('product');
-        let button = $(this);
 
-        $.ajax({
-            url: '<?php echo e(route("wishlist.addToCart")); ?>',
-            type: 'POST',
-            data: {
-                _token: '<?php echo e(csrf_token()); ?>',
-                product_id: productId
-            },
-            success: function(response){
-                if(response.success){
-                    alert(response.message); // You can replace this with a nicer toast notification
-                    button.text('Added'); // Update button text
-                    button.prop('disabled', true);
-                } else {
-                    alert('Something went wrong!');
-                }
-            },
-            error: function(){
-                alert('Error adding product to cart.');
+
+
+
+ <script>
+document.querySelectorAll('.add-wishlist-to-cart').forEach(btn => {
+
+    btn.addEventListener('click', function () {
+
+        const productId = this.dataset.productId;
+
+        Swal.fire({
+            icon: 'info',
+            title: 'Select Size & Color',
+            text: 'Please select size & color on product page',
+            confirmButtonText: 'Continue'
+        }).then(() => {
+            window.location.href = `/product-view/${productId}`;
+        });
+
+    });
+
+});
+</script>
+
+      
+
+
+<script>
+document.querySelectorAll('.delete-wishlist-form .wish-remove').forEach(button => {
+    button.addEventListener('click', function () {
+        let form = this.closest('form');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This item will be removed from wishlist!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
             }
         });
     });
 });
 </script>
+
+
         <?php $__env->stopPush(); ?>
 
 

@@ -107,6 +107,33 @@
             border: 2px solid #000;
             background: #f1f1f1;
         }
+        #flip {
+            padding: 10px;
+            border-radius:5px;
+            border: solid 1px #db3700;
+            }
+
+        #panel {
+            padding: 10px;
+            display: none;
+             border: solid 1px #c3c3c3;
+
+        }
+        .desc-scroll{
+            max-height: 250px;   
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+          .desc-scroll::-webkit-scrollbar{
+            width: 6px;
+        }
+        .desc-scroll::-webkit-scrollbar-thumb{
+            background: #ccc;
+            border-radius: 10px;
+        }
+        
+
+
 
 
     </style>
@@ -123,10 +150,7 @@
         <!-- LEFT: Images -->
         <div class="col-md-6 ">
            <div class="row g-3">
-
-
-
-
+            
                 <!-- Thumbnails -->
             <div class="col-2 thumb-img ">
                    <?php $__currentLoopData = $images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -216,28 +240,24 @@
     
     <input type="hidden" name="size_id" id="selectedSize">
     <input type="hidden" name="color_id" id="selectedColor">
+    <input type="hidden" id="selectedSizePrice" name="size_price" value="0">
+
 </div>
 
 
-            <div class="d-flex gap-2 ">
+            <div class="d-flex gap-2">
             <!-- Add to Cart -->
-          
            <button
-    type="button"
-    class="btn btn-cart mb-3 w-50 h-100 rounded-4"
-    data-product-id="<?php echo e($product->p_id); ?>"
-    data-url="<?php echo e(route('add-to-cart')); ?>"
-    data-redirect-after="<?php echo e(route('cart')); ?>">
-    <i class="bi bi-cart"></i> Add to Cart
-</button>
-
-
-
-        
-
+                type="button"
+                class="btn btn-cart mb-1 w-50 h-100 mt-3 rounded-4"
+                data-product-id="<?php echo e($product->p_id); ?>"
+                data-url="<?php echo e(route('add-to-cart')); ?>"
+                data-redirect-after="<?php echo e(route('cart')); ?>">
+                <i class="bi bi-cart"></i> Add to Cart
+            </button>
             <!-- Wishlist -->
              
-            <button class="btn btn-outline-danger mb-3 w-50  h-100 rounded-4 add-to-wishlist"
+            <button class="btn btn-outline-danger mb-3 w-50 mt-3 h-100 rounded-4 add-to-wishlist"
             data-product-id="<?php echo e($product->p_id); ?>"
             data-redirect="<?php echo e(route('wishlist.index')); ?>">
             <i class="bi bi-heart"></i> Add to Wishlist
@@ -252,34 +272,20 @@
                 <li>💳 Secure Payment</li>
             </ul>
 
-<!-- Accordion -->
-<div class="accordion mt-4" id="productAccordion">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingOne">
-            <button class="accordion-button collapsed"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#details"
-                    aria-expanded="false"
-                    aria-controls="details">
-                Product Details
-            </button>
-        </h2>
-
-        <div id="details"
-             class="accordion-collapse collapse"
-             aria-labelledby="headingOne"
-             data-bs-parent="#productAccordion">
-            <div class="accordion-body">
-                <p><?php echo e($product->p_short_description); ?></p>
-                <br>
-           <p><?php echo ($product->p_long_description); ?></p>
-            </div>
-        </div>
+            <!-- product description  -->
+            <div class="mt-3 mb-2">
+         <div id="flip" class="desc-header d-flex">
+        <span>Product description</span>
+        <i class="bi bi-chevron-down ms-auto" id="descIcon"></i>
     </div>
-</div>
+            <div id="panel" class="desc-scroll"><p><?php echo e($product->p_short_description); ?></p>
+                <br><hr>
+            <p><?php echo ($product->p_long_description); ?></p>
+            </div>
+            </div>
 
-</div>
+
+           </div>
 
 
         </div>
@@ -288,7 +294,6 @@
 
 
    <!-- related all products sections -->
-
 
 <div class="container-fluid px-3 mt-5">
  <div class="row product-box">
@@ -369,14 +374,15 @@
 
   <?php $__env->startPush('scripts'); ?>
 
-        <!-- SweetAlert2 CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-<!-- SweetAlert2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-
+  
+<script> 
+$(document).ready(function(){
+  $("#flip").click(function(){
+    $("#panel").slideToggle();
+  });
+});
+</script>
 
 
 <script>
@@ -391,29 +397,46 @@ document.addEventListener('DOMContentLoaded', function () {
             const url = this.dataset.url; 
             const redirectUrl = this.dataset.redirectAfter || '/cart';
 
+            // Get values
+            const colorId = document.getElementById('selectedColor').value;
+            const sizeId = document.getElementById('selectedSize').value;
+            const sizePrice = document.getElementById('selectedSizePrice').value || '0';
+
+            // Validation
+            if (!colorId) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Color Required',
+                    text: 'Please select a color',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+
+            if (!sizeId) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Size Required',
+                    text: 'Please select a size',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+
+            // Console check
+            console.log('ADD TO CART DATA:', {
+                p_id: productId,
+                color_id: colorId,
+                size_id: sizeId,
+                size_price: sizePrice
+            });
+
             // FormData
             let formData = new FormData();
             formData.append('p_id', productId);
-          
-            // Optional fields
-          const color = document.getElementById('selectedColor').value;
-         const size  = document.getElementById('selectedSize').value;
-
-            if (!color) {
-                alert('Please select a color');
-                return;
-            }
-
-            if (!size) {
-                alert('Please select a size');
-                return;
-            }
-
-
-            formData.append('size_id', size);
-            formData.append('color_id', color);
-
-             formData.append('size_price', selectedSizePrice);
+            formData.append('color_id', colorId);
+            formData.append('size_id', sizeId);
+            formData.append('size_price', sizePrice);
 
             fetch(url, {
                 method: 'POST',
@@ -426,15 +449,29 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(res => res.json())
             .then(result => {
                 if(result.status){
-                    alert(result.message ?? 'Product added to cart');
-                    if(redirectUrl) window.location.href = redirectUrl;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: result.message ?? 'Product added to cart',
+                        confirmButtonColor: '#28a745'
+                    });
                 } else {
-                    alert(result.message ?? 'Failed to add product');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed',
+                        text: result.message ?? 'Failed to add product',
+                        confirmButtonColor: '#d33'
+                    });
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert('JS / Network error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'JS / Network error',
+                    confirmButtonColor: '#d33'
+                });
             });
 
         });
@@ -443,7 +480,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
-
 
 //   <!-- script of whistlist -->
 
@@ -573,7 +609,7 @@ document.addEventListener('DOMContentLoaded', function () {
             mainImage.src = colorImages[0].src;
         }
 
-        console.log('color_id sent:', colorId); // 🔍 debug
+        console.log('color_id sent:', colorId); 
     });
 });
 
@@ -583,30 +619,31 @@ document.addEventListener('DOMContentLoaded', function () {
         colors[0].click();
     }
 
-    /* 📏 SIZE CLICK */
-    sizes.forEach(size => {
-        size.addEventListener('click', function () {
+ 
+   /* 📏 SIZE CLICK */
+sizes.forEach(size => {
+    size.addEventListener('click', function () {
 
-            sizes.forEach(s => s.classList.remove('active'));
-            this.classList.add('active');
+        sizes.forEach(s => s.classList.remove('active'));
+        this.classList.add('active');
 
-            document.getElementById('selectedSize').value = this.dataset.sizeId;
+        document.getElementById('selectedSize').value = this.dataset.sizeId;
 
-            /* 💰 SIZE PRICE */
-            selectedSizePrice = parseFloat(this.dataset.price) || 0;
-            updateTotalPrice();
-        });
+        /* 💰 SIZE PRICE */
+        selectedSizePrice = parseFloat(this.dataset.price) || 0;
+
+        // 👇 ADD THIS LINE
+        document.getElementById('selectedSizePrice').value = selectedSizePrice;
+
+        updateTotalPrice();
     });
+});
+
 
 });
 
-/* 🖼 THUMB CLICK → MAIN IMAGE */
-function changeImage(el) {
-    document.getElementById('mainImage').src = el.src;
-}
 </script>
-
-<!-- script of change image -->
+// <!-- script of change image -->
 
   <script>
 function changeImage(el) {

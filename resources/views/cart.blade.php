@@ -17,8 +17,7 @@
 
 .cart-item {
     display:flex;
-    gap:15px;
-    padding:15px 0;
+    padding:10px 0;
     border-bottom:1px solid #eee;
 }
 
@@ -43,15 +42,12 @@
     margin-top:5px;
 }
 
-.cart-action {
-    margin-left:auto;
-    text-align:right;
-}
+
 
 .remove-btn {
     background:none;
     border:none;
-    color:#dc3545;
+    color:orangered;
     font-size:18px;
     cursor:pointer;
 }
@@ -95,6 +91,9 @@
 .qty-input:focus {
     outline: none;
 }
+.remove-icon{
+ 
+}
 
 
 
@@ -116,12 +115,11 @@
         <!-- main start -->
         <main id="main">
 
-    
             <!-- cart start -->
            <section class="cart-area py-5">
         <form method="post" action="javascript:void(0)">
         <div class="container">
-        <div class="row g-4 align-items-start">
+        <div class="row align-items-start">
 
     <!-- LEFT : CART ITEMS -->
 
@@ -133,12 +131,12 @@
             </div>
             <hr>
 
-        <div class=" d-none d-md-block  ptb-30 beb" data-animate="animate__fadeIn">
+        <div class=" d-none d-md-block  ptb-30 beb gap-2" data-animate="animate__fadeIn">
         <div class="container">
         <div class="row justify-content-start align-item-start">
         <div class="col-md-5 heading-color heading-weight">Product</div>
          <div class="col-md-3 heading-color heading-weight">Qty</div>
-        <div class="col-md-2 heading-color heading-weight">Total</div>
+        <div class="col-md-2 heading-color heading-weight">Total <p>(color+size)</p></div>
         <div class="col-md-2 heading-color heading-weight text-end">Option</div>
         </div>
         </div>
@@ -151,52 +149,76 @@
             @endif
 
             @forelse($cartItems as $item)
-                <div class="cart-item">
+                <div class="cart-item col-md-12" data-cart-id="{{ $item->cart_id }}"
+         data-unit-price="{{ $item->final_price }}">
+
                     
                     <!-- IMAGE -->
-                    <div class="cart-img">
+                    <div class="cart-img col-md-2 text-center">
+
+                          <a href="{{ url('product-view/'.$item->p_id) }}" class="d-block">
                         <img 
                           src="{{ $item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png') }}"
                           alt="{{ $item->img_alt_text ?? $item->p_name }}">
                     </div>
+                </a>
 
                     <!-- INFO -->
-                    <div class="cart-info">
-                        <h6>{{ $item->p_name }}</h6>
-                        <small>
-                            Size: {{ $item->size_name }} <br>
-                            Color: {{ $item->color_name }}
-                        </small>
-                     <div class="price">
-                    ₹{{ number_format($item->p_price, 2, '.', ',') }}
-                </div>
-                    </div>
+                    <div class="col-md-3">
+            <h6>{{ $item->p_name }}</h6>
+            <small>
+                Size: {{ $item->size_name }} <br>
+                Color: {{ $item->color_name }}
+            </small>
+            <div class="price">
+                ₹{{ number_format($item->p_price, 2, '.', ',') }}
+            </div>
+        </div>
+
 
                     {{-- quantity --}}
-                   <div class="mb-4 ms-4 col-md-3">
-    <div class="d-inline-flex align-items-center border rounded px-2">
-        <button type="button" class="btn btn-sm qty-minus">−</button>
-        <input type="text" id="qtyInput" value="1" readonly style="width:50px;text-align:center;border:none" >
-        <button type="button" class="btn btn-sm qty-plus">+</button>
+                   <div class="mb-4 col-md-2">
+    <div class="d-inline-flex align-items-center border rounded px-2" >
+<button type="button" class="btn btn-sm qty-minus" data-cart-id="{{ $item->cart_id }}">−</button>
+                <input type="text"
+                       class="qty-input text-center"
+                       id="qtyInput-{{ $item->cart_id }}"
+                       value="{{ $item->quantity ?? 1 }}"
+                       readonly
+                       style="width:60px; border:none; background:#f8f9fa;">
+                <button type="button" class="btn btn-sm qty-plus" data-cart-id="{{ $item->cart_id }}">+</button>
         </div>
     </div>
 
                       {{-- total --}}
-                      <div class="ms-5">
-                       <strong>₹{{ number_format($item->p_price,2) }}</strong>
-                      </div>
+                        <div class="ms-5 col-md-2 text-center" id="itemTotal-{{ $item->cart_id }}">
+            <strong class="item-total" id="itemTotal-{{ $item->cart_id }}">
+                ₹{{ number_format(($item->final_price * ($item->quantity ?? 1)), 2) }}
+            </strong>
+                    </div>
                     <!-- remove -->
-                    <div class="cart-action">
+                    <div class="col-md-2 remove-icon">
                      
 
                         <form method="POST" action="{{ route('cart.remove', $item->cart_id) }}">
                             @csrf
                             @method('DELETE')
-                            <button class="remove-btn">
+                        <button type="button" 
+                                class="btn btn-sm ms-auto d-flex remove-btn delete-cart-item" 
+                                data-cart-id="{{ $item->cart_id }}"
+                                data-product-name="{{ $item->p_name }}">
                                 <i class="ri-close-large-line"></i>
-                            </button>
+                        </button>
                         </form>
-                    </div>
+                            </div>
+
+                    <form id="delete-form-{{ $item->cart_id }}" 
+                        action="{{ route('cart.remove', $item->cart_id) }}" 
+                        method="POST" 
+                        style="display:none;">
+                        @csrf
+                        @method('DELETE')
+                    </form>
 
                 </div>
             @empty
@@ -205,7 +227,14 @@
 
             <div class="d-flex justify-content-between mt-4">
                 <a href="/" class="btn btn-outline-secondary">Continue shopping</a>
-                <a href="#" class="btn btn-outline-danger">Clear cart</a>
+              <form action="{{ route('cart.clear') }}" method="POST" style="display:inline;">
+    @csrf
+    <!-- Optional: confirm dialog -->
+    <button type="submit" class="btn btn-outline-danger"
+            onclick="return confirm('Are you sure you want to clear the cart?')">
+        Clear cart
+    </button>
+</form>
             </div>
 
         </div>
@@ -213,13 +242,13 @@
 
     <!-- RIGHT : CHECKOUT / SUMMARY -->
     <div class="col-lg-4">
-        <div class="summary-box sticky-top">
+        <div class="summary-box ">
 
             <h5 class="mb-3">Order Summary</h5>
 
             <div class="summary-row">
                 <span>Subtotal</span>
-                <span>₹{{ number_format($subtotal ?? 0) }}</span>
+          <strong id="cartSubtotal">₹{{ number_format($subtotal ?? 0, 2) }}</strong>
             </div>
 
             <div class="summary-row text-danger">
@@ -236,7 +265,7 @@
 
             <div class="summary-row total">
                 <span>Total</span>
-                <span>₹{{ number_format($total ?? 0) }}</span>
+              <strong id="cartTotal">₹{{ number_format($total ?? 0, 2) }}</strong>
             </div>
             
                   <small class="d-block text-center mt-2">
@@ -800,5 +829,141 @@
         <!-- bg-screen end -->
       
 @endsection
+
+@push('scripts')
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Delete cart item with confirmation
+    document.querySelectorAll('.delete-cart-item').forEach(button => {
+        button.addEventListener('click', function() {
+            
+            const cartId = this.dataset.cartId;
+            const productName = this.dataset.productName;
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `Remove "${productName}" from cart?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, remove it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the hidden form
+                    document.getElementById('delete-form-' + cartId).submit();
+                }
+            });
+            
+        });
+    });
+    
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Sab items ko select karo
+    const cartItems = document.querySelectorAll('.cart-item');
+
+    // Subtotal update function (poora cart recalculate)
+    function updateCartSubtotal() {
+        let grandTotal = 0;
+
+        cartItems.forEach(item => {
+            const qtyInput = item.querySelector('.qty-input');
+            const unitPrice = parseFloat(item.dataset.unitPrice) || 0;
+            const qty = parseInt(qtyInput.value) || 1;
+
+            const itemTotal = qty * unitPrice;
+            grandTotal += itemTotal;
+
+            // Item ka apna total update
+            const itemTotalEl = item.querySelector('.item-total');
+            if (itemTotalEl) {
+                itemTotalEl.innerHTML = '₹' + itemTotal.toLocaleString('en-IN', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+        });
+
+        // Global subtotal update
+        const subtotalEl = document.getElementById('cartSubtotal');
+        if (subtotalEl) {
+            subtotalEl.innerHTML = '₹' + grandTotal.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+        // ─── Total update (naya code yahan se) ───
+    const totalEl = document.getElementById('cartTotal');
+    if (totalEl) {
+        // Agar discount fixed hai aur shipping free hai to:
+        const discount = {{ $discount ?? 0 }};  // Blade se value le rahe hain (static)
+        const finalTotal = grandTotal - discount;  // shipping free hai to subtract nahi karna
+
+        totalEl.textContent = '₹' + finalTotal.toLocaleString('en-IN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    }
+
+    // Plus button handler
+    document.querySelectorAll('.qty-plus').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const cartId = this.dataset.cartId;
+            const input = document.getElementById('qtyInput-' + cartId);
+            let qty = parseInt(input.value) || 1;
+            
+            input.value = qty + 1;
+            updateCartSubtotal();
+
+            // Agar future mein AJAX chahiye to yahan daal dena
+        });
+    });
+
+    // Minus button handler
+    document.querySelectorAll('.qty-minus').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const cartId = this.dataset.cartId;
+            const input = document.getElementById('qtyInput-' + cartId);
+            let qty = parseInt(input.value) || 1;
+
+            if (qty > 1) {
+                input.value = qty - 1;
+                updateCartSubtotal();
+            } else {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Minimum Quantity',
+                        text: 'Quantity cannot be less than 1',
+                        confirmButtonColor: '#3085d6'
+                    });
+                } else {
+                    alert('Quantity cannot be less than 1');
+                }
+            }
+        });
+    });
+
+    // Page load pe initial calculation (safety ke liye)
+    updateCartSubtotal();
+});
+</script>
+
+
+
+
+@endpush
       
 

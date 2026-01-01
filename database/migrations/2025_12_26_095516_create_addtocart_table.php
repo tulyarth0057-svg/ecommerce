@@ -15,21 +15,14 @@ return new class extends Migration
 
             $table->bigIncrements('cart_id'); // primary key
 
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
-
-            $table->unsignedBigInteger('p_id'); // product reference
-            $table->foreign('p_id')->references('p_id')->on('products')->onDelete('cascade');
-
-               $table->bigIncrements('size_id');  
-                $table->bigIncrements('color_id');
-
-            $table->integer('qty')->default(1);   
-            $table->decimal('p_price', 10, 2);    
-
+              $table->unsignedBigInteger('user_id')->nullable();
+                $table->unsignedBigInteger('p_id');
+                $table->unsignedBigInteger('size_id');
+                $table->unsignedBigInteger('color_id');
             $table->timestamps();
 
-            // unique constraint to avoid duplicate same product+size+color for user
-            $table->unique(['user_id', 'p_id', 'size_id', 'color_id','p_price']);
+    
+            $table->unique(['user_id', 'p_id', 'size_id', 'color_id']);
         });
     }
 

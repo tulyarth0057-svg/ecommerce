@@ -67,8 +67,6 @@
                                 </div>
                                 <div class="wish-table-data">
                                     <div class="wish-table-info ptb-30 beb" data-animate="animate__fadeIn">
-                                       
-
                                         @foreach($wishlists as $wishlist)                               
                                     <div class="row row-mtm w-750 m-auto mb-4 p-4 border">
                                         <div class="wish-table-item">
@@ -78,7 +76,7 @@
                                                 <div class="col-12 col-md-8">
                                                     <div class="wish-item-content d-flex flex-wrap">
                                                         <div class="wish-item-image ">
-                                                            <a href="{{ route('wishlist.index', $wishlist->product->p_id) }}" class="d-block br-hidden">
+                                                                <a href="{{ url('product-view/'.$wishlist->p_id) }}" class="d-block" class="d-block br-hidden">
                                                             <img src="{{ asset('storage/colors/' . $wishlist->product->colors->first()->images->first()->img_path) }}"
                                                             alt="{{ $wishlist->product->img_alt_text ?? $wishlist->product->p_name }}" class="whistlist-img"
                                                             >
@@ -86,7 +84,8 @@
                                                         </div>
 
                                                         <div class="wish-item-info p-2 ms-3 ">
-                                                            <a href="{{ route('wishlist.index', $wishlist->product->p_id) }}" class="primary-link heading-weight">
+                                                            <a href="{{ url('product-view/'.$wishlist->p_id) }}" class="primary-link heading-weight">
+                                    
                                                                 <label for="">Product name:</label><br>
                                                                 {{ $wishlist->product->p_name }}
                                                             </a>
@@ -97,17 +96,7 @@
                                                                 
                                                             </div>
 
-                                                            <div class="wish-item-sizes heading-color heading-weight mst-7 gap-2 pt-2">
-                                                                <label for="">Available sizes:</label><br><br>
-
-                                                            @foreach($wishlist->product->colors as $color)
-                                                            @foreach($color->sizes as $size)
-
-                                                            <span class="custom-border mt-3 p-1">{{ $size->size_name }}</span>
-                                                            @endforeach
-                                                            @endforeach
-
-                                                            </div>
+                                            
                                                         </div>
                                                     </div>
                                                 </div>
@@ -121,25 +110,31 @@
                                                     </div>
 
                                                     <!-- Remove -->
-                                                    <div class="col-3 col-md-2 text-end">
-                                                        <form action="{{ route('wishlist.remove', $wishlist->w_id) }}" method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="wish-remove text-danger icon-16">
-                                                                <i class="ri-close-large-line"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
+                                                <div class="col-3 col-md-2 text-end">
+                                                    <form action="{{ route('wishlist.remove', $wishlist->w_id) }}" 
+                                                        method="POST" 
+                                                        class="delete-wishlist-form">
+                                                        @csrf
+                                                        @method('DELETE')
+
+                                                        <button type="button" class="wish-remove text-danger icon-16">
+                                                            <i class="ri-close-large-line"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+
 
                                                 </div>
                                             </div>
 
                                             <!-- Add to Cart -->
                                             <div class="wish-note-cart">
-                                                <button class="w-100 btn-style secondary-btn add-to-cart" 
-                                                    data-product="{{ $wishlist->product->p_id }}">
-                                                    Add to cart
-                                                </button>
+                                    <button class="btn btn-cart bg-dark p-2 text-white w-100 add-wishlist-to-cart"
+                                        data-product-id="{{ $wishlist->product->p_id }}">
+                                        Add to Cart
+                                    </button>
+
+
                                             </div>
                                         </div>
                                         @endforeach
@@ -839,7 +834,7 @@
 
 
         <!-- Add to card drawer start -->
-        <div class="cart-drawer position-fixed top-0 bottom-0 body-bg z-index-5 invisible box-shadow" id="cart-drawer">
+        {{-- <div class="cart-drawer position-fixed top-0 bottom-0 body-bg z-index-5 invisible box-shadow" id="cart-drawer">
             <form method="post" action="javascript:void(0)" class="drawer-contents d-flex flex-column">
                 <div class="drawer-fixed-header ptb-10 plr-15 beb">
                     <div class="drawer-header d-flex align-items-center justify-content-between">
@@ -1122,7 +1117,7 @@
                     </div>
                 </div>
             </form>
-        </div>
+        </div> --}}
         <!-- cart-drawer end -->
         <!-- bottom-menu start -->
         <div class="bottom-menu d-md-none position-sticky bottom-0 body-bg z-1 box-shadow">
@@ -1165,45 +1160,59 @@
                 </div>
             </div>
         </div>
-
-   <div class="bg-screen">
-            <div class="bg-back position-fixed top-0 end-0 bottom-0 start-0 bg-black z-index-4 opacity-0 invisible"></div>
-            <div class="bg-shop position-fixed top-0 end-0 bottom-0 start-0 bg-black z-index-4 opacity-0 invisible"></div>
-        </div>
-        <!-- bg-screen end -->
-
-
         @push('scripts')
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function(){
-    $('.add-to-cart').click(function(){
-        let productId = $(this).data('product');
-        let button = $(this);
 
-        $.ajax({
-            url: '{{ route("wishlist.addToCart") }}',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                product_id: productId
-            },
-            success: function(response){
-                if(response.success){
-                    alert(response.message); // You can replace this with a nicer toast notification
-                    button.text('Added'); // Update button text
-                    button.prop('disabled', true);
-                } else {
-                    alert('Something went wrong!');
-                }
-            },
-            error: function(){
-                alert('Error adding product to cart.');
+
+
+
+ <script>
+document.querySelectorAll('.add-wishlist-to-cart').forEach(btn => {
+
+    btn.addEventListener('click', function () {
+
+        const productId = this.dataset.productId;
+
+        Swal.fire({
+            icon: 'info',
+            title: 'Select Size & Color',
+            text: 'Please select size & color on product page',
+            confirmButtonText: 'Continue'
+        }).then(() => {
+            window.location.href = `/product-view/${productId}`;
+        });
+
+    });
+
+});
+</script>
+
+      
+
+{{-- comformation script of delet --}}
+<script>
+document.querySelectorAll('.delete-wishlist-form .wish-remove').forEach(button => {
+    button.addEventListener('click', function () {
+        let form = this.closest('form');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This item will be removed from wishlist!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
             }
         });
     });
 });
 </script>
+
+
         @endpush
 
 

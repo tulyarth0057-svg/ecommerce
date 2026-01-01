@@ -7,7 +7,7 @@
                         <div class="col-12 col-md-6 col-lg-3">
                             <div class="footer-info">
                                 <div class="footer-theme-logo">
-                                    <a href="index.html" class="d-inline-block theme-logo">
+                                    <a href="/" class="d-inline-block theme-logo">
    <img src="<?php echo e(asset('assetsofdash/images/Red and Black Modern Creative Agency Logo-old.png')); ?>" class="rounded-1" style="margin-top:-70px;" width="180px" height="80px">                                    </a>
                                 </div>
                                 <div class="footer-company-detail mst-23">
