@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- Mirrored from spacingtech.com/html/erona/template/order.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 29 Oct 2025 07:45:24 GMT -->
-<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+
 <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">

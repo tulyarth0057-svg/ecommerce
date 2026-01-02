@@ -7,6 +7,38 @@
 
 @section('content')
 
+@push('styles')
+
+<style>
+
+.product-image a {
+    overflow: hidden;
+    display: block;
+}
+
+.product-img-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.product-image a:hover .product-img-hover {
+    opacity: 1;
+}
+
+.product-image a:hover .product-img-main {
+    opacity: 0;
+}
+
+.product-img-main {
+    transition: opacity 0.4s ease;
+}
+</style>
+
+@endpush
+
         <!-- main start -->
         <main id="main">
 
@@ -122,17 +154,21 @@
                         <div class="row single-product-wrap">
 
                             <!-- Product Image Column -->
-                            <div class="product-image-col">
+                                                       <div class="product-image-col">
                                 <div class="product-image">
-                                 <a href="{{ url('product-view/'.$product->p_id) }}" class="d-block ">
-    <img src="{{ asset('storage/colors/' . $product->img_path) }}"
-         alt="{{ $product->img_alt_text ?? $product->p_name }}"
-         class="img-fluid img1"
-         style="height:400px; width:100%; object-fit:contain;">
-</a>
-
-
-
+                                    <a href="{{ url('product-view/'.$product->p_id) }}" class="d-block position-relative">
+                                        <img src="{{ asset('storage/colors/' . $product->img_path) }}"
+                                            alt="{{ $product->img_alt_text ?? $product->p_name }}"
+                                            class="img-fluid img1 product-img-main"
+                                            style="height:400px; width:100%; object-fit:contain;">
+                                        
+                                        @if(isset($product->hover_img_path))
+                                        <img src="{{ asset('storage/colors/' . $product->hover_img_path) }}"
+                                            alt="{{ $product->img_alt_text ?? $product->p_name }}"
+                                            class="img-fluid img2 product-img-hover"
+                                            style="height:400px; width:100%; object-fit:contain;">
+                                        @endif
+                                    </a>
                                 </div>
                             </div>
 
@@ -143,9 +179,9 @@
                                         <a href="{{ url('product-view/'.$product->p_id) }}" class="primary-link">{{ $product->p_name }}</a>
                                     </div>
                                     <div class="product-price mb-1">
-                                        <span class="new-price primary-color">${{ number_format($product->p_price, 2) }}</span>
+                                        <span class="new-price primary-color">₹{{ number_format($product->p_price, 2) }}</span>
                                         @if($product->p_old_price)
-                                            <span class="old-price text-decoration-line-through ms-3">${{ number_format($product->p_old_price, 2) }}</span>
+                                            <span class="old-price text-decoration-line-through ms-3">₹{{ number_format($product->p_old_price, 2) }}</span>
                                         @endif
                                     </div>
 
@@ -196,12 +232,6 @@
 
         @push('scripts')
 
-
-        <!-- SweetAlert2 CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
-<!-- SweetAlert2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         
 <script>
            document.querySelectorAll('.add-to-wishlist').forEach(btn => {
@@ -257,9 +287,6 @@
 });
 
 </script>
-
-
-
 
         @endpush
 

@@ -7,11 +7,8 @@
 
 @section('content')
 
-
-
         <!-- main start -->
         <main id="main">
-
 
                <div class="breadcrumb-area ptb-100 text-center overflow-hidden"
      style="background-image: url('{{ asset('category_banners/1764658050_kids asscoriesbanner.webp') }}');
@@ -43,13 +40,6 @@
                                         <div class="collection-title">
                                             <h6 class="font-18">Collection left (12)</h6>
                                         </div>
-                                        <!-- collection-title end -->
-                                        <!-- collection-img start -->
-                                        {{-- <div class="collection-img">
-                                            <img src="{{ asset('category_banners/1763550549_banner of shirt.png') }}" class="w-100 img-fluid border-radius" alt="collection-banner">
-                                        </div> --}}
-                                        <!-- collection-img end -->
-                                        <!-- shop-top-bar start -->
                                         <div class="shop-top-bar">
                                             <div class="row row-mtm15 align-items-md-center">
                                                 <div class="col-12 col-sm-6 col-md-7 col-lg-8">
@@ -133,8 +123,7 @@
                                         <!-- shop-grid start -->
                                         <div class="row row-mtm">
 
-
-                                                                                      <!-- shop-grid start -->
+  <!-- shop-grid start -->
       <div class="row row-mtm">
       <div class="row">
     @forelse($products as $product)
@@ -162,9 +151,9 @@
                                         <a href="{{ url('product-view/'.$product->p_id) }}" class="primary-link">{{ $product->p_name }}</a>
                                     </div>
                                     <div class="product-price mb-1">
-                                        <span class="new-price primary-color">${{ number_format($product->p_price, 2) }}</span>
+                                        <span class="new-price primary-color">₹{{ number_format($product->p_price, 2) }}</span>
                                         @if($product->p_old_price)
-                                            <span class="old-price text-decoration-line-through ms-3">${{ number_format($product->p_old_price, 2) }}</span>
+                                            <span class="old-price text-decoration-line-through ms-3">₹{{ number_format($product->p_old_price, 2) }}</span>
                                         @endif
                                     </div>
 
@@ -277,6 +266,9 @@
 });
 
 </script>
+
+
+
 
         @endpush
 

@@ -675,5 +675,8 @@ function moveZoom(e) {
 }
 </script>
 
+
+
+
     @endpush
 

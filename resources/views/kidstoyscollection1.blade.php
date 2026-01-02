@@ -8,10 +8,8 @@
 @section('content')
 
 
-
         <!-- main start -->
         <main id="main">
-
 
                <div class="breadcrumb-area ptb-100 text-center overflow-hidden"
      style="background-image: url('{{ asset('category_banners/1764654522_baby-items-banner.webp') }}');
@@ -166,9 +164,9 @@
                                         <a href="{{ url('product-view/'.$product->p_id) }}" class="primary-link">{{ $product->p_name }}</a>
                                     </div>
                                     <div class="product-price mb-1">
-                                        <span class="new-price primary-color">${{ number_format($product->p_price, 2) }}</span>
+                                        <span class="new-price primary-color">₹{{ number_format($product->p_price, 2) }}</span>
                                         @if($product->p_old_price)
-                                            <span class="old-price text-decoration-line-through ms-3">${{ number_format($product->p_old_price, 2) }}</span>
+                                            <span class="old-price text-decoration-line-through ms-3">₹{{ number_format($product->p_old_price, 2) }}</span>
                                         @endif
                                     </div>
 
@@ -285,8 +283,6 @@
 });
 
 </script>
-
-
 
 
         @endpush

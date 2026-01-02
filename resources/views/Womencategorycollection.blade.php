@@ -100,10 +100,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-
-
-
                                 </div>
                             </div>
                             <div class="swiper-buttons">
@@ -126,6 +122,9 @@
 
 
         </main>
+
+
+        
 
     @endsection
 

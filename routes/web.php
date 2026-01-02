@@ -11,6 +11,7 @@ use App\Http\Controllers\SizeController;
 use App\Http\Controllers\MainCategoryController;
 use App\Http\Controllers\showController;
 use App\Http\Controllers\AddtocardController;
+use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -219,6 +220,15 @@ Route::post('/add-to-cart', [AddtocardController::class, 'addToCart'])
     Route::delete('/cart/remove/{cart_id}', [AddtocardController::class, 'removeFromCart'])->name('cart.remove');
 
     Route::post('/cart/clear', [AddtocardController::class, 'clear'])->name('cart.clear');
+
+
+
+
+    // search route---->
+Route::get('/search-products', [ProductController::class, 'search'])->name('products.search');
+
+
+
 
 
 

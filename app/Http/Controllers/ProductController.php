@@ -328,6 +328,24 @@ public function getProductsByMainCategory($main_id)
 
 
 
+// search bar controller start--->
+public function search(Request $request)
+{
+    $query = $request->get('query', '');
+
+    if (!$query) {
+        return response()->json([]);
+    }
+
+    $products = Product::where('p_name', 'like', "%{$query}%")
+        ->limit(8)
+        ->get(['p_id', 'p_name']);
+
+    return response()->json($products);
+}
+
+
+// search bar controller end--->
 
 }
 

@@ -871,7 +871,7 @@
                 </div>
             </section>
             <!-- category-product end -->
-            <!-- deal-banner start -->
+            <!-- deal-banner-start -->
             <section class="deal-banner section-ptb bg-img text-center" data-bgimg="assets/image/index/deal-banner-bgimg.jpg" data-animate="animate__fadeIn">
                 <div class="container">
                     <div class="row">
@@ -3169,397 +3169,9 @@
             </div>
         </div>
         <!-- mobile-menu end -->
-        <!-- search-modal start -->
-        <div class="search-modal modal fade" id="searchmodal">
-            <div class="modal-dialog mw-100 m-0">
-                <div class="modal-content body-bg border-0 rounded-0">
-                    <div class="modal-body p-0">
-                        <div class="container">
-                            <div class="search-content ptb-30">
-                                <div class="search-box d-flex flex-row-reverse">
-                                    <button type="button" class="d-block search-close body-secondary-color icon-16" data-bs-dismiss="modal" aria-label="Close"><i class="ri-close-large-line d-block lh-1"></i></button>
-                                    <form method="get" action="javascript:void(0)" class="search-form w-100">
-                                        <div class="search-bar position-relative">
-                                            <div class="form-search d-flex flex-row-reverse">
-                                                <input type="search" name="search-input" class="search-input w-100 h-auto ptb-0 plr-15 bg-transparent border-0" value="" placeholder="Search here" required>
-                                                <button type="submit" onclick="window.location.href='search-product.html'" class="d-block search-btn body-secondary-color icon-16" aria-label="Go to search" disabled><i class="ri-search-line d-block lh-1"></i></button>
-                                            </div>
-                                            <div class="d-none search-results position-absolute top-100 start-0 end-0 body-bg z-1 border-full border-radius box-shadow">
-                                                <div class="search-for ptb-10 plr-15 beb">Search for <span class="search-text">a</span></div>
-                                                <ul class="search-ul">
-                                                    <li class="search-li ptb-5 plr-15 bst">
-                                                        <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                            <span class="width-48"><img src="assets/image/search/search-product1.jpg" class="w-100 img-fluid border-radius" alt="search-product1"></span>
-                                                            <span class="width-calc-48 psl-15 text-truncate">Pleated skater skirt</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="search-li ptb-5 plr-15 bst">
-                                                        <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                            <span class="width-48"><img src="assets/image/search/search-product2.jpg" class="w-100 img-fluid border-radius" alt="search-product2"></span>
-                                                            <span class="width-calc-48 psl-15 text-truncate">Tailored blazer jacket</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="search-li ptb-5 plr-15 bst">
-                                                        <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                            <span class="width-48"><img src="assets/image/search/search-product3.jpg" class="w-100 img-fluid border-radius" alt="search-product3"></span>
-                                                            <span class="width-calc-48 psl-15 text-truncate">Girls floral ruffle top</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="search-li ptb-5 plr-15 bst">
-                                                        <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                            <span class="width-48"><img src="assets/image/search/search-product4.jpg" class="w-100 img-fluid border-radius" alt="search-product4"></span>
-                                                            <span class="width-calc-48 psl-15 text-truncate">Classic cotton t-shirt</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="search-li ptb-5 plr-15 bst">
-                                                        <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                            <span class="width-48"><img src="assets/image/search/search-product5.jpg" class="w-100 img-fluid border-radius" alt="search-product5"></span>
-                                                            <span class="width-calc-48 psl-15 text-truncate">Slim fit linen shirt</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="search-li ptb-5 plr-15 bst">
-                                                        <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                            <span class="width-48"><img src="assets/image/search/search-product6.jpg" class="w-100 img-fluid border-radius" alt="search-product6"></span>
-                                                            <span class="width-calc-48 psl-15 text-truncate">Flowy midi dress</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="search-li ptb-5 plr-15 bst">
-                                                        <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                            <span class="width-48"><img src="assets/image/search/search-product7.jpg" class="w-100 img-fluid border-radius" alt="search-product7"></span>
-                                                            <span class="width-calc-48 psl-15 text-truncate">Distressed skinny jeans</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="search-li ptb-5 plr-15 bst">
-                                                        <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                            <span class="width-48"><img src="assets/image/search/search-product8.jpg" class="w-100 img-fluid border-radius" alt="search-product8"></span>
-                                                            <span class="width-calc-48 psl-15 text-truncate">Hooded puffer jacket</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="search-li ptb-5 plr-15 bst">
-                                                        <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                            <span class="width-48"><img src="assets/image/search/search-product9.jpg" class="w-100 img-fluid border-radius" alt="search-product9"></span>
-                                                            <span class="width-calc-48 psl-15 text-truncate">Chunky sole sneakers</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="search-li ptb-5 plr-15 bst">
-                                                        <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                            <span class="width-48"><img src="assets/image/search/search-product10.jpg" class="w-100 img-fluid border-radius" alt="search-product10"></span>
-                                                            <span class="width-calc-48 psl-15 text-truncate">Quilted crossbody bag</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="search-li ptb-5 plr-15 bst">
-                                                        <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                            <span class="width-48"><img src="assets/image/search/search-product11.jpg" class="w-100 img-fluid border-radius" alt="search-product11"></span>
-                                                            <span class="width-calc-48 psl-15 text-truncate">Stretch active leggings</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="search-li ptb-5 plr-15 bst">
-                                                        <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                            <span class="width-48"><img src="assets/image/search/search-product12.jpg" class="w-100 img-fluid border-radius" alt="search-product12"></span>
-                                                            <span class="width-calc-48 psl-15 text-truncate">Relaxed fit joggers</span>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                                <div class="search-more ptb-10 plr-15 bst"><a href="search-product.html" class="body-secondary-color text-decoration-underline">See all results (12)</a></div>
-                                                <div class="search-fail ptb-10 plr-15">Search not found</div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="search-example-text mst-15">Trending search: a, e, cotton...</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- search-modal end -->
-        <!-- cart-drawer start -->
-        <div class="cart-drawer position-fixed top-0 bottom-0 body-bg z-index-5 invisible box-shadow" id="cart-drawer">
-            <form method="post" action="javascript:void(0)" class="drawer-contents d-flex flex-column">
-                <div class="drawer-fixed-header ptb-10 plr-15 beb">
-                    <div class="drawer-header d-flex align-items-center justify-content-between">
-                        <h6 class="font-18">My shopping cart</h6>
-                        <div class="drawer-close">
-                            <button type="button" class="drawer-close-btn body-secondary-color icon-16" aria-label="Close"><i class="ri-close-large-line d-block lh-1"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="pst-10 plr-15 text-center">
-                    <div class="extra-color font-14 ptb-6 plr-15 primary-bg">First order? Get 11% off with code <span class="heading-weight blinking">11%OFF</span>.</div>
-                </div>
-                <div class="drawer-cart-empty d-none h-100 ptb-30 plr-15">
-                    <div class="drawer-scrollable h-100 d-flex flex-column align-items-center justify-content-center text-center">
-                        <span class="heading-color icon-32 meb-24"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                        <h2 class="font-24">No items in your shopping cart - yet!</h2>
-                        <a href="collection.html" class="btn-style secondary-btn mst-24">Continue shopping</a>
-                    </div>
-                </div>
-                <div class="drawer-inner h-100 d-flex flex-column justify-content-between overflow-hidden">
-                    <div class="drawer-scrollable h-100 overflow-auto">
-                        <div class="cart-drawer-table plr-15">
-                            <div class="cart-drawer-info ptb-15 bst">
-                                <div class="cart-drawer-content d-flex flex-wrap">
-                                    <div class="cart-drawer-image width-88">
-                                        <a href="product.html" class="d-block br-hidden"><img src="assets/image/cart/cart-1.jpg" class="w-100 img-fluid" alt="cart-1"></a>
-                                    </div>
-                                    <div class="cart-drawer-info width-calc-88 psl-15">
-                                        <div class="cart-drawer-detail">
-                                            <a href="product.html" class="primary-link heading-weight">Pleated skater skirt</a>
-                                            <span class="d-block mst-7">XS / Aliceblue</span>
-                                            <span class="d-block mst-7">Polyester</span>
-                                        </div>
-                                        <div class="heading-color heading-weight mst-7">$79.00</div>
-                                        <div class="cart-drawer-qty-remove d-flex align-items-end justify-content-between mst-16">
-                                            <div class="js-qty-wrapper">
-                                                <div class="js-qty-wrap d-flex body-bg border-full br-hidden">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-minus body-color icon-16" aria-label="Remove item"><i class="ri-subtract-line d-block lh-1"></i></button>
-                                                    <input type="number" name="pleated-skater-skirt-xs-aliceblue" class="js-qty-num p-0 text-center border-0" value="1" min="1">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-plus body-color icon-16" aria-label="Add item"><i class="ri-add-line d-block lh-1"></i></button>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="cart-drawer-remove text-danger icon-16" aria-label="Remove item"><i class="ri-delete-bin-line d-block lh-1"></i></button>
-                                        </div>
-                                        <div class="text-danger font-14 mst-7"><i class="ri-error-warning-line mer-4"></i>Hurry! Only <span class="heading-weight">15</span> in stock.</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cart-drawer-info ptb-15 bst">
-                                <div class="cart-drawer-content d-flex flex-wrap">
-                                    <div class="cart-drawer-image width-88">
-                                        <a href="product.html" class="d-block br-hidden"><img src="assets/image/cart/cart-2.jpg" class="w-100 img-fluid" alt="cart-2"></a>
-                                    </div>
-                                    <div class="cart-drawer-info width-calc-88 psl-15">
-                                        <div class="cart-drawer-detail">
-                                            <a href="product.html" class="primary-link heading-weight">Tailored blazer jacket</a>
-                                            <span class="d-block mst-7">38 / Azure</span>
-                                            <span class="d-block mst-7">Wool blend</span>
-                                        </div>
-                                        <div class="heading-color heading-weight mst-7">$49.00</div>
-                                        <div class="cart-drawer-qty-remove d-flex align-items-end justify-content-between mst-16">
-                                            <div class="js-qty-wrapper">
-                                                <div class="js-qty-wrap d-flex body-bg border-full br-hidden">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-minus body-color icon-16" aria-label="Remove item"><i class="ri-subtract-line d-block lh-1"></i></button>
-                                                    <input type="number" name="tailored-blazer-jacket-38-azure" class="js-qty-num p-0 text-center border-0" value="1" min="1">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-plus body-color icon-16" aria-label="Add item"><i class="ri-add-line d-block lh-1"></i></button>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="cart-drawer-remove text-danger icon-16" aria-label="Remove item"><i class="ri-delete-bin-line d-block lh-1"></i></button>
-                                        </div>
-                                        <div class="text-danger font-14 mst-7"><i class="ri-error-warning-line mer-4"></i>Hurry! Only <span class="heading-weight">9</span> in stock.</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cart-drawer-info ptb-15 bst">
-                                <div class="cart-drawer-content d-flex flex-wrap">
-                                    <div class="cart-drawer-image width-88">
-                                        <a href="product.html" class="d-block br-hidden"><img src="assets/image/cart/cart-3.jpg" class="w-100 img-fluid" alt="cart-3"></a>
-                                    </div>
-                                    <div class="cart-drawer-info width-calc-88 psl-15">
-                                        <div class="cart-drawer-detail">
-                                            <a href="product.html" class="primary-link heading-weight">Girls floral ruffle top</a>
-                                            <span class="d-block mst-7">2Y / Aliceblue</span>
-                                            <span class="d-block mst-7">Cotton</span>
-                                        </div>
-                                        <div class="heading-color heading-weight mst-7">$69.00</div>
-                                        <div class="cart-drawer-qty-remove d-flex align-items-end justify-content-between mst-16">
-                                            <div class="js-qty-wrapper">
-                                                <div class="js-qty-wrap d-flex body-bg border-full br-hidden">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-minus body-color icon-16" aria-label="Remove item"><i class="ri-subtract-line d-block lh-1"></i></button>
-                                                    <input type="number" name="girls-floral-ruffle-top-2y-aliceblue" class="js-qty-num p-0 text-center border-0" value="1" min="1">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-plus body-color icon-16" aria-label="Add item"><i class="ri-add-line d-block lh-1"></i></button>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="cart-drawer-remove text-danger icon-16" aria-label="Remove item"><i class="ri-delete-bin-line d-block lh-1"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cart-drawer-info ptb-15 bst">
-                                <div class="cart-drawer-content d-flex flex-wrap">
-                                    <div class="cart-drawer-image width-88">
-                                        <a href="product.html" class="d-block br-hidden"><img src="assets/image/cart/cart-4.jpg" class="w-100 img-fluid" alt="cart-4"></a>
-                                    </div>
-                                    <div class="cart-drawer-info width-calc-88 psl-15">
-                                        <div class="cart-drawer-detail">
-                                            <a href="product.html" class="primary-link heading-weight">Classic cotton t-shirt</a>
-                                            <span class="d-block mst-7">S / Azure</span>
-                                            <span class="d-block mst-7">Cotton</span>
-                                        </div>
-                                        <div class="heading-color heading-weight mst-7">$49.00</div>
-                                        <div class="cart-drawer-qty-remove d-flex align-items-end justify-content-between mst-16">
-                                            <div class="js-qty-wrapper">
-                                                <div class="js-qty-wrap d-flex body-bg border-full br-hidden">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-minus body-color icon-16" aria-label="Remove item"><i class="ri-subtract-line d-block lh-1"></i></button>
-                                                    <input type="number" name="classic-cotton-t-shirt-s-azure" class="js-qty-num p-0 text-center border-0" value="1" min="1">
-                                                    <button type="button" class="js-qty-adjust js-qty-adjust-plus body-color icon-16" aria-label="Add item"><i class="ri-add-line d-block lh-1"></i></button>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="cart-drawer-remove text-danger icon-16" aria-label="Remove item"><i class="ri-delete-bin-line d-block lh-1"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="drawer-recommended-product ptb-15 plr-15 bst">
-                            <div class="d-flex flex-wrap align-items-center justify-content-between">
-                                <div class="heading-color"><i class="ri-thumb-up-line icon-16 mer-4"></i>Recommended for you</div>
-                                <div class="swiper-buttons lh-1">
-                                    <div class="swiper-buttons-wrap">
-                                        <button type="button" class="swiper-prev swiper-prev-drawer-recommended-product primary-link icon-16" aria-label="Arrow previous"><i class="ri-arrow-left-line d-block lh-1"></i></button>
-                                        <button type="button" class="swiper-next swiper-next-drawer-recommended-product primary-link icon-16" aria-label="Arrow next"><i class="ri-arrow-right-line d-block lh-1"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="drawer-recommended-product-wrap pst-15">
-                                <div class="drawer-recommended-product-slider swiper" id="drawer-recommended-product-slider">
-                                    <div class="swiper-wrapper">
-                                        <div class="swiper-slide">
-                                            <div class="drawer-recommended-product">
-                                                <div class="row drawer-recommended-single-product-wrap">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img"><img src="assets/image/product/p-1.jpg" class="w-100 img-fluid" alt="p-1"></a>
-                                                    </div>
-                                                    <div class="product-content">
-                                                        <div class="pro-content">
-                                                            <div class="product-title">
-                                                                <span class="d-block font-14"><a href="product.html" class="d-block w-100 text-truncate heading-weight">Pleated skater skirt</a></span>
-                                                            </div>
-                                                            <div class="product-price">
-                                                                <div class="price-box font-14 heading-weight">
-                                                                    <span class="new-price primary-color">$79.00</span>
-                                                                    <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$89.00</span></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <div class="drawer-recommended-product">
-                                                <div class="row drawer-recommended-single-product-wrap">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img"><img src="assets/image/product/p-3.jpg" class="w-100 img-fluid" alt="p-3"></a>
-                                                    </div>
-                                                    <div class="product-content">
-                                                        <div class="pro-content">
-                                                            <div class="product-title">
-                                                                <span class="d-block font-14"><a href="product.html" class="d-block w-100 text-truncate heading-weight">Tailored blazer jacket</a></span>
-                                                            </div>
-                                                            <div class="product-price">
-                                                                <div class="price-box font-14 heading-weight">
-                                                                    <span class="new-price primary-color">$49.00</span>
-                                                                    <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$59.00</span></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <div class="drawer-recommended-product">
-                                                <div class="row drawer-recommended-single-product-wrap">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img"><img src="assets/image/product/p-5.jpg" class="w-100 img-fluid" alt="p-5"></a>
-                                                    </div>
-                                                    <div class="product-content">
-                                                        <div class="pro-content">
-                                                            <div class="product-title">
-                                                                <span class="d-block font-14"><a href="product.html" class="d-block w-100 text-truncate heading-weight">Girls floral ruffle top</a></span>
-                                                            </div>
-                                                            <div class="product-price">
-                                                                <div class="price-box font-14 heading-weight">
-                                                                    <span class="new-price primary-color">$69.00</span>
-                                                                    <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$79.00</span></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <div class="drawer-recommended-product">
-                                                <div class="row drawer-recommended-single-product-wrap">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img"><img src="assets/image/product/p-7.jpg" class="w-100 img-fluid" alt="p-7"></a>
-                                                    </div>
-                                                    <div class="product-content">
-                                                        <div class="pro-content">
-                                                            <div class="product-title">
-                                                                <span class="d-block font-14"><a href="product.html" class="d-block w-100 text-truncate heading-weight">Classic cotton t-shirt</a></span>
-                                                            </div>
-                                                            <div class="product-price">
-                                                                <div class="price-box font-14 heading-weight">
-                                                                    <span class="new-price primary-color">$49.00</span>
-                                                                    <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$54.00</span></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="drawer-instruction ptb-15 plr-15 bst">
-                            <a href="#collapse-drawer-note" class="d-flex flex-wrap align-items-center justify-content-between" data-bs-toggle="collapse" aria-expanded="true">
-                                <span class="drawer-instruction-title width-calc-16"><i class="ri-edit-line icon-16 mer-4"></i>Type a note for the seller</span>
-                                <span class="drawer-instruction-icon width-16 icon-16"><i class="ri-arrow-down-s-line"></i></span>
-                            </a>
-                            <div class="collapse show" id="collapse-drawer-note">
-                                <div class="pst-15">
-                                    <textarea rows="3" id="drawernote" name="drawernote" class="w-100" placeholder="Write your message..." autocomplete="off"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="drawer-instruction ptb-15 plr-15 bst">
-                            <a href="#collapse-drawer-discount" class="d-flex flex-wrap align-items-center justify-content-between" data-bs-toggle="collapse" aria-expanded="true">
-                                <span class="drawer-instruction-title width-calc-16"><i class="ri-discount-percent-line icon-16 mer-4"></i>Have a code? Apply here</span>
-                                <span class="drawer-instruction-icon width-16 icon-16"><i class="ri-arrow-down-s-line"></i></span>
-                            </a>
-                            <div class="collapse show" id="collapse-drawer-discount">
-                                <div class="pst-15">
-                                    <div class="d-flex flex-wrap height-48 extra-bg br-hidden">
-                                        <input type="text" id="drawerdiscount" name="drawerdiscount" class="width-calc-48 h-auto rounded-0" placeholder="Type your code here" autocomplete="off" required>
-                                        <button type="button" class="width-48 icon-16 primary-link drawer-dis-btn" aria-label="Discount code button"><i class="ri-arrow-right-up-line"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="drawer-footer ptb-15 plr-15 bst">
-                        <div class="drawer-total d-flex justify-content-between">
-                            <span>Subtotal</span>
-                            <span class="heading-color heading-weight">$246.00</span>
-                        </div>
-                        <div class="font-12 mst-8">Shipping, taxes, and discount codes calculated at checkout</div>
-                        <div class="drawer-cart-checkout mst-12">
-                            <div class="drawer-cart-box meb-11">
-                                <label class="cust-checkbox-label checkbox-agree">
-                                    <input type="checkbox" id="drawer-terms" name="drawer-terms" class="cust-checkbox checkboxbtn">
-                                    <span class="d-block cust-check"></span>
-                                    <span class="login-read">I have agree with the <a href="terms-condition.html" class="body-secondary-color text-decoration-underline">terms & conditions</a>.</span>
-                                </label>
-                            </div>
-                            <div class="row btn-row15">
-                                <div class="col-12 col-md-6">
-                                    <a href="cart-page.html" class="w-100 btn-style quaternary-btn">View cart</a>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <a href="checkout.html" class="w-100 btn-style secondary-btn hide-btn opacity-50 disabled pe-none">Checkout</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <!-- cart-drawer end -->
+        
+       
+     
         <!-- bottom-menu start -->
         <div class="bottom-menu d-md-none position-sticky bottom-0 body-bg z-1 box-shadow">
             <div class="bottom-menu-element d-flex flex-wrap align-items-center">
@@ -3602,16 +3214,10 @@
             </div>
         </div>
         <!-- bottom-menu end -->
-        <!-- bg-screen start -->
-        <div class="bg-screen">
-            <div class="bg-back position-fixed top-0 end-0 bottom-0 start-0 bg-black z-index-4 opacity-0 invisible"></div>
-            <div class="bg-shop position-fixed top-0 end-0 bottom-0 start-0 bg-black z-index-4 opacity-0 invisible"></div>
-        </div>
-        <!-- bg-screen end -->
+    
         <!-- plugin js -->
   @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+       
         @if(session('swal_success'))
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -3625,6 +3231,47 @@
 </script>
 @endif
 
+
+{{-- search scripts --}}
+{{-- <script>
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const searchTextSpan = searchResults.querySelector('.search-text');
+    const searchList = searchResults.querySelector('.search-ul');
+    const searchButton = document.querySelector('.search-form button');
+
+    async function fetchProducts(query) {
+        if (!query) {
+            searchResults.classList.add('d-none');
+            return;
+        }
+
+        const url = `{{ route('products.search') }}?query=${encodeURIComponent(query)}`;
+        const response = await fetch(url);
+        const products = await response.json();
+
+        searchList.innerHTML = products.length
+            ? products.map(p => `<li><a href="/product-view/${p.p_id}">${p.p_name}</a></li>`).join('')
+            : '<li>No results found</li>';
+
+        searchTextSpan.textContent = query;
+        searchResults.classList.remove('d-none');
+    }
+
+    searchInput.addEventListener('input', () => {
+        fetchProducts(searchInput.value.trim());
+    });
+
+    searchButton.addEventListener('click', () => {
+        fetchProducts(searchInput.value.trim());
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!searchResults.contains(e.target) && e.target !== searchInput) {
+            searchResults.classList.add('d-none');
+        }
+    });
+</script> --}}
 
         @endpush
 

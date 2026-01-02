@@ -9,7 +9,6 @@
 
         <main id="main">
 
-
                <div class="breadcrumb-area ptb-100 text-center overflow-hidden"
      style="background-image: url('{{ asset('category_banners/mainbanner.jpg') }}');
             background-size: cover;
@@ -122,14 +121,9 @@
                 </div>
             </section>
 
-
-
-
-
-
-
-
         </main>
+
+        
 
     @endsection
 

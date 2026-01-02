@@ -4,8 +4,57 @@
 @section('title', 'shirt-collection')
 
 
-
 @section('content')
+
+
+@push('styles')
+
+<style>
+
+.product-image a {
+    overflow: hidden;
+    display:block;
+}
+
+.product-img-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.product-image a:hover .product-img-hover {
+    opacity: 1;
+}
+
+.product-image a:hover .product-img-main {
+    opacity: 0;
+}
+
+.product-img-main {
+    transition: opacity 0.4s ease;
+}
+.product-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-actions {
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.product-actions a {
+    pointer-events: all;
+}
+
+.product-image:hover .product-actions {
+    opacity: 1 !important;
+}
+</style>
+
+@endpush
 
         <!-- main start -->
         <main id="main">
@@ -114,18 +163,37 @@
                         <div class="row single-product-wrap">
 
                             <!-- Product Image Column -->
-                            <div class="product-image-col">
-                                <div class="product-image">
-                                    
-                            <a href="{{ url('product-view/'.$product->p_id) }}" class="d-block ">
-                            <img src="{{ asset('storage/colors/' . $product->img_path) }}"
-                                alt="{{ $product->img_alt_text ?? $product->p_name }}"
-                                class="img-fluid img1"
-                                style="height:400px; width:100%; object-fit:contain;">
+                           <div class="product-image-col">
+                        <div class="product-image position-relative">
+                            <a href="{{ url('product-view/'.$product->p_id) }}" class="d-block position-relative">
+                                <img src="{{ asset('storage/colors/' . $product->img_path) }}"
+                                    alt="{{ $product->img_alt_text ?? $product->p_name }}"
+                                    class="img-fluid img1 product-img-main"
+                                    style="height:400px; width:100%; object-fit:contain;">
+                                
+                                @if(isset($product->hover_img_path))
+                                <img src="{{ asset('storage/colors/' . $product->hover_img_path) }}"
+                                    alt="{{ $product->img_alt_text ?? $product->p_name }}"
+                                    class="img-fluid img2 product-img-hover"
+                                    style="height:400px; width:100%; object-fit:contain;">
+                                @endif
                             </a>
-
+                                    {{-- whistlist or view icon  --}}
+                            <div class="product-actions position-absolute top-50 start-50  opacity-0 transition-3">
+                                <div class="d-flex gap-2 ">
+                                    <a href="javascript:void(0)"
+                                        class="add-to-wishlist btn btn-light"
+                                        data-product-id="{{ $product->p_id }}"
+                                        data-redirect="{{ route('wishlist.index') }}">
+                                        <i class="ri-heart-line"></i>
+                                    </a>
+                                    {{-- <a href="{{ url('product-view/'.$product->p_id) }}" class="d-block quick-view btn btn-light">
+                                        <i class="ri-eye-line"></i>
+                                    </a> --}}
                                 </div>
                             </div>
+    </div>
+</div>
 
                             <!-- Product Content Column -->
                             <div class="product-content mt-2">
@@ -140,7 +208,7 @@
                                         @endif
                                     </div>
 
-                                     <div class=" align-items-center justify-content-center w-100 h-100 mt-3  transition-3 text-center d-flex">
+                                     {{-- <div class=" align-items-center justify-content-center w-100 h-100 mt-3  transition-3 text-center d-flex">
                                         <div class="d-flex gap-2">
                                        <a href="javascript:void(0)"
                                             class="add-to-wishlist btn btn-light"
@@ -151,7 +219,7 @@
                                                 <i class="ri-eye-line"></i>
                                             </a>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
 
@@ -239,7 +307,6 @@
 });
 
 </script>
-
 
 
 

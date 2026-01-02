@@ -156,7 +156,7 @@
                                                 </div>
                                             </li>
                                             <li class="menu-li">
-                                                <a href="collection.html" class="menu-link d-flex align-items-center ptb-5 plr-15">
+                                                <a href="/" class="menu-link d-flex align-items-center ptb-5 plr-15">
                                                     <span class="menu-title text-uppercase heading-weight">Product</span>
                                                     <span class="icon-16 fw-normal"><i class="ri-arrow-down-s-line d-block lh-1"></i></span>
                                                 </a>
@@ -378,93 +378,26 @@
                                     <!-- header-search start -->
                                     <div class="header-search w-100 d-none d-xxl-block per-15">
                                         <div class="header-theme-search w-100">
-                                            <form method="get" action="javascript:void(0)" class="search-form w-100">
-                                                <div class="search-bar position-relative">
-                                                    <div class="form-search d-flex">
-                                                        <input type="search" name="search-input" class="w-100 search-input" value="" placeholder="Search product..." required>
-                                                        <button type="submit" onclick="window.location.href='search-product.html'" class="d-block tertiary-btn plr-15 text-uppercase text-nowrap heading-weight" disabled>Search</button>
-                                                    </div>
-                                                    <div class="d-none search-results position-absolute top-auto start-0 end-0 body-bg z-2 border-full border-radius box-shadow">
-                                                        <div class="search-for ptb-10 plr-15 beb">Search for <span class="search-text">a</span></div>
-                                                        <ul class="search-ul">
-                                                            <li class="search-li ptb-5 plr-15 bst">
-                                                                <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                                    <span class="width-48"><img src="assets/image/search/search-product1.jpg" class="w-100 img-fluid border-radius" alt="search-product1"></span>
-                                                                    <span class="width-calc-48 psl-15 text-truncate">Pleated skater skirt</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="search-li ptb-5 plr-15 bst">
-                                                                <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                                    <span class="width-48"><img src="assets/image/search/search-product2.jpg" class="w-100 img-fluid border-radius" alt="search-product2"></span>
-                                                                    <span class="width-calc-48 psl-15 text-truncate">Tailored blazer jacket</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="search-li ptb-5 plr-15 bst">
-                                                                <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                                    <span class="width-48"><img src="assets/image/search/search-product3.jpg" class="w-100 img-fluid border-radius" alt="search-product3"></span>
-                                                                    <span class="width-calc-48 psl-15 text-truncate">Girls floral ruffle top</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="search-li ptb-5 plr-15 bst">
-                                                                <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                                    <span class="width-48"><img src="assets/image/search/search-product4.jpg" class="w-100 img-fluid border-radius" alt="search-product4"></span>
-                                                                    <span class="width-calc-48 psl-15 text-truncate">Classic cotton t-shirt</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="search-li ptb-5 plr-15 bst">
-                                                                <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                                    <span class="width-48"><img src="assets/image/search/search-product5.jpg" class="w-100 img-fluid border-radius" alt="search-product5"></span>
-                                                                    <span class="width-calc-48 psl-15 text-truncate">Slim fit linen shirt</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="search-li ptb-5 plr-15 bst">
-                                                                <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                                    <span class="width-48"><img src="assets/image/search/search-product6.jpg" class="w-100 img-fluid border-radius" alt="search-product6"></span>
-                                                                    <span class="width-calc-48 psl-15 text-truncate">Flowy midi dress</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="search-li ptb-5 plr-15 bst">
-                                                                <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                                    <span class="width-48"><img src="assets/image/search/search-product7.jpg" class="w-100 img-fluid border-radius" alt="search-product7"></span>
-                                                                    <span class="width-calc-48 psl-15 text-truncate">Distressed skinny jeans</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="search-li ptb-5 plr-15 bst">
-                                                                <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                                    <span class="width-48"><img src="assets/image/search/search-product8.jpg" class="w-100 img-fluid border-radius" alt="search-product8"></span>
-                                                                    <span class="width-calc-48 psl-15 text-truncate">Hooded puffer jacket</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="search-li ptb-5 plr-15 bst">
-                                                                <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                                    <span class="width-48"><img src="assets/image/search/search-product9.jpg" class="w-100 img-fluid border-radius" alt="search-product9"></span>
-                                                                    <span class="width-calc-48 psl-15 text-truncate">Chunky sole sneakers</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="search-li ptb-5 plr-15 bst">
-                                                                <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                                    <span class="width-48"><img src="assets/image/search/search-product10.jpg" class="w-100 img-fluid border-radius" alt="search-product10"></span>
-                                                                    <span class="width-calc-48 psl-15 text-truncate">Quilted crossbody bag</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="search-li ptb-5 plr-15 bst">
-                                                                <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                                    <span class="width-48"><img src="assets/image/search/search-product11.jpg" class="w-100 img-fluid border-radius" alt="search-product11"></span>
-                                                                    <span class="width-calc-48 psl-15 text-truncate">Stretch active leggings</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="search-li ptb-5 plr-15 bst">
-                                                                <a href="product.html" class="body-primary-color d-flex flex-wrap align-items-center">
-                                                                    <span class="width-48"><img src="assets/image/search/search-product12.jpg" class="w-100 img-fluid border-radius" alt="search-product12"></span>
-                                                                    <span class="width-calc-48 psl-15 text-truncate">Relaxed fit joggers</span>
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                        <div class="search-more ptb-10 plr-15 bst"><a href="search-product.html" class="body-secondary-color text-decoration-underline">See all results (12)</a></div>
-                                                        <div class="search-fail ptb-10 plr-15">Search not found</div>
-                                                    </div>
+                                         {{-- <form class="search-form w-100" onsubmit="return false;">
+                                            <div class="search-bar position-relative">
+                                                <div class="form-search d-flex">
+                                                    <input 
+                                                        type="search"  
+                                                        class="w-100 search-input"    
+                                                        id="searchInput" 
+                                                        placeholder="Search product..."
+                                                        autocomplete="off"
+                                                    >
+                                                    <button type="button" class="d-block tertiary-btn plr-15 text-uppercase text-nowrap heading-weight">
+                                                        Search
+                                                    </button>
                                                 </div>
-                                            </form>
+                                                <div id="searchResults" class="d-none search-results position-absolute top-auto start-0 end-0 body-bg z-2 border-full border-radius box-shadow">
+                                                    <div class="search-for ptb-10 plr-15 beb">Search for <span class="search-text"></span></div>
+                                                    <ul class="search-ul"></ul>
+                                                </div>
+                                            </div>
+                                        </form> --}}
                                         </div>
                                     </div>
                                     <!-- header-search end -->
@@ -906,6 +839,12 @@ togglePassword.addEventListener('click', () => {
 </script>
 
 
+
+
+
+
+
+</body>
 
 
 

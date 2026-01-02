@@ -56,6 +56,45 @@
         </div>
     </div>
 
+        <!-- search-modal start -->
+        <div class="search-modal modal fade" id="searchmodal">
+            <div class="modal-dialog mw-100 m-0">
+                <div class="modal-content body-bg border-0 rounded-0">
+                    <div class="modal-body p-0">
+                        <div class="container">
+                            <div class="search-content ptb-30">
+                                <div class="search-box d-flex flex-row-reverse">
+                                    <button type="button" class="d-block search-close body-secondary-color icon-16" data-bs-dismiss="modal" aria-label="Close"><i class="ri-close-large-line d-block lh-1 ms-5 fs-3 text-danger"></i></button>
+                                       <form class="search-form w-100" onsubmit="return false;">
+                                        <div class="search-bar position-relative">
+                                            <div class="form-search d-flex">
+                                                <input 
+                                                    type="search"  
+                                                    class="w-100 search-input"    
+                                                    id="searchInput" 
+                                                    placeholder="Search product..."
+                                                    autocomplete="off"
+                                                >
+                                                <button type="button" class="d-block tertiary-btn plr-15 text-uppercase text-nowrap heading-weight">
+                                                    Search
+                                                </button>
+                                            </div>
+                                            <div id="searchResults" class="d-none search-results position-absolute top-auto start-0 end-0 body-bg z-2 border-full border-radius box-shadow">
+                                                <div class="search-for ptb-10 plr-15 beb">Search for <span class="search-text"></span></div>
+                                                <ul class="search-ul"></ul>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- search-modal end -->
+     
+
     
     <?php echo $__env->yieldContent('content'); ?>
 
@@ -91,10 +130,51 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+     
+
+    
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const searchTextSpan = searchResults.querySelector('.search-text');
+    const searchList = searchResults.querySelector('.search-ul');
+    const searchButton = document.querySelector('.search-form button');
+
+    async function fetchProducts(query) {
+        if (!query) {
+            searchResults.classList.add('d-none');
+            return;
+        }
+
+        const url = `<?php echo e(route('products.search')); ?>?query=${encodeURIComponent(query)}`;
+        const response = await fetch(url);
+        const products = await response.json();
+
+        searchList.innerHTML = products.length
+            ? products.map(p => `<li class="p-2"><a href="/product-view/${p.p_id}">${p.p_name}</a></li>`).join('')
+            : '<li>No results found</li>';
+
+        searchTextSpan.textContent = query;
+        searchResults.classList.remove('d-none');
+    }
+
+    searchInput.addEventListener('input', () => {
+        fetchProducts(searchInput.value.trim());
+    });
+
+    searchButton.addEventListener('click', () => {
+        fetchProducts(searchInput.value.trim());
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!searchResults.contains(e.target) && e.target !== searchInput) {
+            searchResults.classList.add('d-none');
+        }
+    });
+</script>
 
     
 
-    
     <?php echo $__env->yieldPushContent('scripts'); ?>
 
 </body>

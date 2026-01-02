@@ -11,7 +11,7 @@ class showController extends Controller
 {
 
 
-  public function getMenShirtCollection() {
+public function getMenShirtCollection() {
     $category = Category::where('c_name', 'men Shirts')->first();
 
     if (!$category) {
@@ -36,7 +36,12 @@ class showController extends Controller
             'products.created_at',
             'products.updated_at',
             DB::raw('MIN(images.img_path) as img_path'),
-            DB::raw('MIN(images.img_alt_text) as img_alt_text')
+            DB::raw('MIN(images.img_alt_text) as img_alt_text'),
+            DB::raw('(SELECT img_path FROM images 
+                      INNER JOIN color c ON images.img_color_id = c.color_id
+                      WHERE c.color_product_id = products.p_id
+                      ORDER BY images.img_id 
+                      LIMIT 1 OFFSET 1) as hover_img_path')
         )
         ->where('products.main_category_id', 1)
         ->where('products.p_category_id', $category->c_id)
@@ -57,8 +62,9 @@ class showController extends Controller
         )
         ->get();
 
-
     return view('menshirtcollection', compact('products', 'category'));
+
+
 }
 
 
@@ -72,43 +78,48 @@ class showController extends Controller
         }
 
         $products = DB::table('products')
-            ->leftJoin('color', 'products.p_id', '=', 'color.color_product_id')
-            ->leftJoin('images', 'color.color_id', '=', 'images.img_color_id')
-            ->select(
-                'products.p_id',
-                'products.p_name',
-                'products.main_category_id',
-                'products.p_category_id',
-                'products.p_short_description',
-                'products.p_long_description',
-                'products.p_price',
-                'products.p_old_price',
-                'products.p_visibility_status',
-                'products.p_stock',
-                'products.p_type',
-                'products.created_at',
-                'products.updated_at',
-                DB::raw('MIN(images.img_path) as img_path'),
-                DB::raw('MIN(images.img_alt_text) as img_alt_text')
-            )
-            ->where('products.main_category_id', 1)
-            ->where('products.p_category_id', $category->c_id)
-            ->groupBy(
-                'products.p_id',
-                'products.p_name',
-                'products.main_category_id',
-                'products.p_category_id',
-                'products.p_short_description',
-                'products.p_long_description',
-                'products.p_price',
-                'products.p_old_price',
-                'products.p_visibility_status',
-                'products.p_stock',
-                'products.p_type',
-                'products.created_at',
-                'products.updated_at'
-            )
-            ->get();
+        ->leftJoin('color', 'products.p_id', '=', 'color.color_product_id')
+        ->leftJoin('images', 'color.color_id', '=', 'images.img_color_id')
+        ->select(
+            'products.p_id',
+            'products.p_name',
+            'products.main_category_id',
+            'products.p_category_id',
+            'products.p_short_description',
+            'products.p_long_description',
+            'products.p_price',
+            'products.p_old_price',
+            'products.p_visibility_status',
+            'products.p_stock',
+            'products.p_type',
+            'products.created_at',
+            'products.updated_at',
+            DB::raw('MIN(images.img_path) as img_path'),
+            DB::raw('MIN(images.img_alt_text) as img_alt_text'),
+            DB::raw('(SELECT img_path FROM images 
+                      INNER JOIN color c ON images.img_color_id = c.color_id
+                      WHERE c.color_product_id = products.p_id
+                      ORDER BY images.img_id 
+                      LIMIT 1 OFFSET 1) as hover_img_path')
+        )
+        ->where('products.main_category_id', 1)
+        ->where('products.p_category_id', $category->c_id)
+        ->groupBy(
+            'products.p_id',
+            'products.p_name',
+            'products.main_category_id',
+            'products.p_category_id',
+            'products.p_short_description',
+            'products.p_long_description',
+            'products.p_price',
+            'products.p_old_price',
+            'products.p_visibility_status',
+            'products.p_stock',
+            'products.p_type',
+            'products.created_at',
+            'products.updated_at'
+        )
+        ->get();
 
   return view('menformalpantcollection', compact('products', 'category'));
 

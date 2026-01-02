@@ -26,9 +26,6 @@
 </style>
 <?php $__env->stopPush(); ?>
 
-
-
-
         <!-- breadcrumb-area start -->
         <div class="breadcrumb-area ptb-30 bg-img text-center" data-bgimg="assets/image/other/breadcrumb-bgimg.jpg">
             <div class="container">
@@ -925,6 +922,9 @@ document.querySelectorAll('.delete-wishlist-form .wish-remove').forEach(button =
     });
 });
 </script>
+
+
+
 
 
         <?php $__env->stopPush(); ?>
