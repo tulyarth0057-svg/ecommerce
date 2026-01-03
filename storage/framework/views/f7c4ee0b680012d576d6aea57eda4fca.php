@@ -5,52 +5,63 @@
 <?php $__env->startSection('content'); ?>
 
 
+<?php $__env->startPush('styles'); ?>
 
- <!-- search-modal start -->
-        <div class="search-modal modal fade" id="searchmodal">
-            <div class="modal-dialog mw-100 m-0">
-                <div class="modal-content body-bg border-0 rounded-0">
-                    <div class="modal-body p-0">
-                        <div class="container">
-                            <div class="search-content ptb-30">
-                                <div class="search-box d-flex flex-row-reverse">
-                                    <button type="button" class="d-block search-close body-secondary-color icon-16" data-bs-dismiss="modal" aria-label="Close"><i class="ri-close-large-line d-block lh-1"></i></button>
-                                       <form class="search-form w-100" onsubmit="return false;">
-                                        <div class="search-bar position-relative">
-                                            <div class="form-search d-flex">
-                                                <input 
-                                                    type="search"  
-                                                    class="w-100 search-input"    
-                                                    id="searchInput" 
-                                                    placeholder="Search product..."
-                                                    autocomplete="off"
-                                                >
-                                                <button type="button" class="d-block tertiary-btn plr-15 text-uppercase text-nowrap heading-weight">
-                                                    Search
-                                                </button>
-                                            </div>
+<style>
+.product-image a {
+    overflow: hidden;
+    display: block;
+   
+}
 
-                                            <div id="searchResults" class="d-none search-results position-absolute top-auto start-0 end-0 body-bg z-2 border-full border-radius box-shadow">
-                                                <div class="search-for ptb-10 plr-15 beb">Search for <span class="search-text"></span></div>
-                                                <ul class="search-ul"></ul>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- search-modal end -->
+.product-img-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+ 
+}
 
+.product-image a:hover .product-img-hover {
+    opacity: 1;
+}
 
+.product-image a:hover .product-img-main {
+    opacity: 0;
+}
 
+.product-img-main {
+    transition: opacity 0.4s ease;
+ 
+}
+
+.product-image {
+    position: relative;
+    overflow: hidden;
+
+}
+
+.product-actions {
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.product-actions a {
+    pointer-events: all;
+  
+}
+
+.product-image:hover .product-actions {
+    opacity: 1 !important;
+}
+</style>
+
+<?php $__env->stopPush(); ?>
 
         <!-- main start -->
         <main id="main">
-
 
                <div class="breadcrumb-area ptb-100 text-center overflow-hidden"
      style="background-image: url('<?php echo e(asset('category_banners/1764657243_kidsclothingbanneer.jpg')); ?>');
@@ -166,19 +177,35 @@
             <div class="single-product">
                 <div class="row single-product-wrap">
 
-                   <!-- Product column Image-->
-                     <div class="product-image-col">
-                                <div class="product-image">
-                                <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="d-block ">
-                                    <img src="<?php echo e(asset('storage/colors/' . $product->img_path)); ?>"
-                                        alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
-                                        class="img-fluid img1"
-                                        style="height:400px; width:100%; object-fit:contain;">
-                                </a>
-
+    <!-- Product Image Column -->
+                        <div class="product-image-col">
+                        <div class="product-image position-relative ">
+                            <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="d-block position-relative">
+                                <img src="<?php echo e(asset('storage/colors/' . $product->img_path)); ?>"
+                                    alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
+                                    class="img-fluid img1 product-img-main"
+                                    style="height:400px; width:100%; object-fit:contain;">
+                                
+                                <?php if(isset($product->hover_img_path)): ?>
+                                <img src="<?php echo e(asset('storage/colors/' . $product->hover_img_path)); ?>"
+                                    alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
+                                    class="img-fluid img2 product-img-hover "
+                                    style="height:400px; width:100%; object-fit:contain;">
+                                <?php endif; ?>
+                            </a>
+                                    
+                                <div class="product-actions position-absolute top-0 start-0 mx-4 mb-3 opacity-0 transition-3">
+                                <div class="d-flex gap-2 whistlist-icon">
+                                    <a href="javascript:void(0)"
+                                        class="add-to-wishlist btn btn-light"
+                                        data-product-id="<?php echo e($product->p_id); ?>"
+                                        data-redirect="<?php echo e(route('wishlist.index')); ?>">
+                                        <i class="ri-heart-line"></i>
+                                    </a>
                                 </div>
                             </div>
-
+                                </div>
+                            </div>
                             <!-- Product Content Column -->
                             <div class="product-content mt-2">
                                 <div class="pro-content">
@@ -192,26 +219,7 @@
                                         <?php endif; ?>
                                     </div>
 
-                                     <div class=" align-items-center justify-content-center w-100 h-100 mt-3  transition-3 text-center d-flex">
-                                        <div class="d-flex gap-2">
-                                       <a href="javascript:void(0)"
-                                            class="add-to-wishlist btn btn-light"
-                                            
-                                            data-product-id="<?php echo e($product->p_id); ?>"data-redirect="<?php echo e(route('wishlist.index')); ?>">
-                                            <i class="ri-heart-line"></i>
-                                        </a>
-
-
-                                            <a href="javascript:void(0)" class="add-to-cart btn btn-light">
-                                                <i class="ri-shopping-bag-3-line"></i>
-                                            </a>
-                                            <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="d-block quick-view btn btn-light">
-                                                <i class="ri-eye-line"></i>
-                                            </a>
-                                        </div>
-                                    </div>
                                     
-                                </div>
                             </div>
 
                         </div>
@@ -301,45 +309,6 @@
 
 </script>
 
-<script>
-    const searchInput = document.getElementById('searchInput');
-    const searchResults = document.getElementById('searchResults');
-    const searchTextSpan = searchResults.querySelector('.search-text');
-    const searchList = searchResults.querySelector('.search-ul');
-    const searchButton = document.querySelector('.search-form button');
-
-    async function fetchProducts(query) {
-        if (!query) {
-            searchResults.classList.add('d-none');
-            return;
-        }
-
-        const url = `<?php echo e(route('products.search')); ?>?query=${encodeURIComponent(query)}`;
-        const response = await fetch(url);
-        const products = await response.json();
-
-        searchList.innerHTML = products.length
-            ? products.map(p => `<li><a href="/product-view/${p.p_id}">${p.p_name}</a></li>`).join('')
-            : '<li>No results found</li>';
-
-        searchTextSpan.textContent = query;
-        searchResults.classList.remove('d-none');
-    }
-
-    searchInput.addEventListener('input', () => {
-        fetchProducts(searchInput.value.trim());
-    });
-
-    searchButton.addEventListener('click', () => {
-        fetchProducts(searchInput.value.trim());
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!searchResults.contains(e.target) && e.target !== searchInput) {
-            searchResults.classList.add('d-none');
-        }
-    });
-</script>
 
         <?php $__env->stopPush(); ?>
 

@@ -6,11 +6,12 @@
 
 <?php $__env->startPush('styles'); ?>
 
-<style>
 
+<style>
 .product-image a {
     overflow: hidden;
     display: block;
+   
 }
 
 .product-img-hover {
@@ -19,6 +20,7 @@
     left: 0;
     opacity: 0;
     transition: opacity 0.4s ease;
+ 
 }
 
 .product-image a:hover .product-img-hover {
@@ -31,6 +33,32 @@
 
 .product-img-main {
     transition: opacity 0.4s ease;
+ 
+}
+
+.product-image {
+    position: relative;
+    overflow: hidden;
+
+}
+
+.product-actions {
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.product-actions a {
+    pointer-events: all;
+  
+}
+
+.product-image:hover .product-actions {
+    opacity: 1 !important;
+}
+.whistlist-icon{
+   background:orangered;
+
 }
 </style>
 
@@ -149,21 +177,32 @@
                         <div class="row single-product-wrap">
 
                             <!-- Product Image Column -->
-                                                       <div class="product-image-col">
-                                <div class="product-image">
-                                    <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="d-block position-relative">
-                                        <img src="<?php echo e(asset('storage/colors/' . $product->img_path)); ?>"
-                                            alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
-                                            class="img-fluid img1 product-img-main"
-                                            style="height:400px; width:100%; object-fit:contain;">
-                                        
-                                        <?php if(isset($product->hover_img_path)): ?>
-                                        <img src="<?php echo e(asset('storage/colors/' . $product->hover_img_path)); ?>"
-                                            alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
-                                            class="img-fluid img2 product-img-hover"
-                                            style="height:400px; width:100%; object-fit:contain;">
-                                        <?php endif; ?>
+                        <div class="product-image-col">
+                        <div class="product-image position-relative ">
+                            <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="d-block position-relative">
+                                <img src="<?php echo e(asset('storage/colors/' . $product->img_path)); ?>"
+                                    alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
+                                    class="img-fluid img1 product-img-main"
+                                    style="height:400px; width:100%; object-fit:contain;">
+                                
+                                <?php if(isset($product->hover_img_path)): ?>
+                                <img src="<?php echo e(asset('storage/colors/' . $product->hover_img_path)); ?>"
+                                    alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
+                                    class="img-fluid img2 product-img-hover "
+                                    style="height:400px; width:100%; object-fit:contain;">
+                                <?php endif; ?>
+                            </a>
+                                    
+                                <div class="product-actions position-absolute top-0 start-0 mx-4 mb-3 opacity-0 transition-3">
+                                <div class="d-flex gap-2 whistlist-icon">
+                                    <a href="javascript:void(0)"
+                                        class="add-to-wishlist btn btn-light"
+                                        data-product-id="<?php echo e($product->p_id); ?>"
+                                        data-redirect="<?php echo e(route('wishlist.index')); ?>">
+                                        <i class="ri-heart-line"></i>
                                     </a>
+                                </div>
+                            </div>
                                 </div>
                             </div>
 
@@ -179,26 +218,6 @@
                                             <span class="old-price text-decoration-line-through ms-3">₹<?php echo e(number_format($product->p_old_price, 2)); ?></span>
                                         <?php endif; ?>
                                     </div>
-
-                                     <div class=" align-items-center justify-content-center w-100 h-100 mt-3  transition-3 text-center d-flex">
-                                        <div class="d-flex gap-2">
-                                       <a href="javascript:void(0)"
-                                            class="add-to-wishlist btn btn-light"
-                                            
-                                            data-product-id="<?php echo e($product->p_id); ?>"data-redirect="<?php echo e(route('wishlist.index')); ?>">
-                                            <i class="ri-heart-line"></i>
-                                        </a>
-
-
-                                            <a href="javascript:void(0)" class="add-to-cart btn btn-light">
-                                                <i class="ri-shopping-bag-3-line"></i>
-                                            </a>
-                                            <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="d-block quick-view btn btn-light">
-                                                <i class="ri-eye-line"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    
                                 </div>
                             </div>
 

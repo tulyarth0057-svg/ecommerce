@@ -17,7 +17,7 @@ class Addtocart extends Model
     'p_name',
     'size_id',
     'color_id',
-    'qty',
+    'p_quantity', 
     'p_price',
     ];
 

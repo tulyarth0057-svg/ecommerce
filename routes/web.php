@@ -37,17 +37,6 @@ route::get('/about',function (){
 });
 
 
-
-route::get('/checkout',function (){
-    return view('checkout');
-});
-
-// route ::get('/collectioncategory',function (){
-//     return view('collection-category');
-// });
-
-
-
 route ::get('/order',function (){
     return view('order');
 });
@@ -221,6 +210,11 @@ Route::post('/add-to-cart', [AddtocardController::class, 'addToCart'])
 
     Route::post('/cart/clear', [AddtocardController::class, 'clear'])->name('cart.clear');
 
+//  Route::post('/cart/update-quantity', [AddtocardController::class, 'updateQuantity'])
+//     ->name('cart.updateQuantity');
+
+    Route::post('/cart/set-quantity', [AddtocardController::class, 'setQuantity'])
+    ->name('cart.setQuantity');
 
 
 
@@ -228,6 +222,15 @@ Route::post('/add-to-cart', [AddtocardController::class, 'addToCart'])
 Route::get('/search-products', [ProductController::class, 'search'])->name('products.search');
 
 
+
+// checkout route in cart controller---->
+
+  // routes/web.php
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout', [AddtocardController::class, 'getCheckout'])->name('checkout');
+    Route::post('/checkout/process', [AddtocardController::class, 'processCheckout'])->name('checkout.process');
+});
 
 
 

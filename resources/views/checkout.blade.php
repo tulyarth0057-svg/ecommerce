@@ -9,8 +9,9 @@
     .checkout-breadcrumb { color: #ff6b35; margin-bottom: 20px; font-size: 14px; }
     .checkout-title { color: #ff6b35; font-size: 36px; margin-bottom: 30px; }
     .checkout-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-    .checkout-box { background: white; padding: 25px; border-radius: 8px; }
-    .order-box { border: 2px solid #ff6b35; }
+    .checkout-box { background: white; padding: 25px; border-radius: 8px; height: auto; }
+    .order-box { border: 2px solid #ff6b35;  }
+    .order{height: auto;}
     .checkout-h2 { color: #ff6b35; font-size: 22px; margin-bottom: 20px; }
     .checkout-input, .checkout-btn { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ffb380; border-radius: 20px; font-size: 14px; }
     .checkout-input:focus { outline: none; border-color: #ff6b35; }
@@ -22,6 +23,9 @@
     .checkout-btn { background: #ff6b35; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; }
     .checkout-btn:hover { background: #ff5722; }
     @media(max-width: 768px) { .checkout-grid { grid-template-columns: 1fr; } .checkout-row { grid-template-columns: 1fr; } }
+    .product-name{
+        color:#ff6b35;
+    }
 </style>
 @endpush
 
@@ -40,75 +44,106 @@
 <main id="main">
     <div class="checkout-container">
         <div class="checkout-grid">
-            <div class="checkout-box">
-                <h2 class="checkout-h2">Billing details</h2>
-                {{-- <form action="{{ route('checkout.process') }}" method="POST"> --}}
-                    @csrf
-                    <label>Email address *</label>
-                    <input type="email" name="email" class="checkout-input" placeholder="user@gmail.com" required>
-                    
-                    <label>Name *</label>
-                    <input type="text" name="name" class="checkout-input" placeholder="user" required>
-                    
-                    <label>Street address *</label>
-                    <input type="text" name="address" class="checkout-input" placeholder="House number and street name" required>
-                    
-                    <div class="checkout-row">
-                        <div>
-                            <label>Town / City *</label>
-                            <input type="text" name="city" class="checkout-input" required>
-                        </div>
-                        <div>
-                            <label>Postcode *</label>
-                            <input type="text" name="postcode" class="checkout-input" required>
-                        </div>
-                    </div>
-                    
-                    <label>State</label>
-                    <input type="text" name="state" class="checkout-input">
-                    
-                    <label>Location</label>
-                    <input type="text" name="location" class="checkout-input" id="locationInput" placeholder="📍 Click here to auto-fill GPS location" readonly onclick="getLocation()">
-                    
-                    <label>Phone *</label>
-                    <input type="tel" name="phone" class="checkout-input" placeholder="1234567890" required>
-                </form>
+    <div class="checkout-box">
+        <h2 class="checkout-h2">Billing details</h2>
+        <form action="{{ route('checkout.process') }}" method="POST">
+            @csrf
+            <label>Email address *</label>
+            <input type="email" name="email" class="checkout-input" 
+                   value="{{ auth()->user()->email ?? old('email') }}" 
+                   placeholder="Enter your email" required>
+            
+            <label>Name *</label>
+            <input type="text" name="name" class="checkout-input" 
+                   value="{{ auth()->user()->name ?? old('name') }}" 
+                   placeholder="Enter your name" required>
+            
+            <label>Street address *</label>
+            <input type="text" name="address" class="checkout-input" 
+                   value="{{ old('address') }}" 
+                   placeholder="House number and street name" required>
+            
+            <div class="checkout-row">
+                <div>
+                    <label>Town / City *</label>
+                    <input type="text" name="city" class="checkout-input" 
+                           value="{{ old('city') }}" required>
+                </div>
+                <div>
+                    <label>Postcode *</label>
+                    <input type="text" name="postcode" class="checkout-input" 
+                           value="{{ old('postcode') }}" required>
+                </div>
             </div>
+            
+            <label>State</label>
+            <input type="text" name="state" class="checkout-input" value="{{ old('state') }}">
+            
+            <label>Location</label>
+            <input type="text" name="location" class="checkout-input" 
+                   id="locationInput" value="{{ old('location') }}"
+                   placeholder="📍 Click here to auto-fill GPS location" 
+                   readonly onclick="getLocation()">
+            
+            <label>Phone *</label>
+            <input type="tel" name="phone" class="checkout-input" 
+                    value="{{ auth()->user()->phone ?? old('phone') }}"
+                   placeholder="1234567890" required>
+            
+    </div>
 
-            <div class="checkout-box order-box">
-                <h2 class="checkout-h2">Your order</h2>
-                
-                <div class="order-item">
-                    <div>
-                        <strong>Mehndi georgette suit x 5</strong><br>
-                        <small>Size: XL | Price: ₹0.00</small>
-                    </div>
-                    <strong>₹0.00</strong>
+    <div class="checkout-box order-box order">
+        <h2 class="checkout-h2 text-center">Your order</h2>
+      <div class="d-flex justify-content-between align-items-center">
+    <label class="fw-bold fs-5 product-name">Product Name</label>
+    <label class="fw-bold fs-5 product-name">Price</label>
+    </div>
+        @forelse($cartItems as $item)
+
+        <div class="order-item col-md-12 gap-4"> 
+                <div class="col-md-9">
+                    <strong>{{ $item->p_name }} x{{ $item->p_quantity }}</strong><br>
+                    <small>Size: {{ $item->size_name }} <br> Color: {{ $item->color_name }}<br>Price: ₹{{ number_format($item->final_price, 2) }}</small>
                 </div>
-                
-                <div class="order-item">
-                    <div>
-                        <strong>Green Lehenga x 5</strong><br>
-                        <small>Size: M | Price: ₹0.00</small>
-                    </div>
-                    <strong>₹0.00</strong>
-                </div>
-                
-                <div class="order-item">
-                    <span>Subtotal</span>
-                    <span>₹0.00</span>
-                </div>
-                
-                <div class="order-item">
-                    <span>Shipping</span>
-                    <span>₹10.00</span>
-                </div>
-                
-                <div class="order-item order-total">
-                    <span>Total</span>
-                    <span>₹10.00</span>
-                </div>
-                
+
+                 <div class="col-md-3">
+                <strong>₹{{ number_format($item->final_price * $item->p_quantity, 2) }}</strong>
+            </div>
+        </div>
+
+        @empty
+            <div class="alert alert-warning">Your cart is empty!</div>
+        @endforelse
+        
+   
+        <h5 class="text-center mb-3 mt-3">Total price with taxes</h5>
+           
+        <div class="order-item">
+            <span>Subtotal</span>
+            <span>₹{{ number_format($subtotal, 2) }}</span>
+        </div>
+        
+        @if($discount > 0)
+        <div class="order-item text-danger">
+            <span>Discount</span>
+            <span>- ₹{{ number_format($discount, 2) }}</span>
+        </div>
+        @endif
+        
+        <div class="order-item">
+            <span>Shipping</span>
+            <span>₹{{ number_format($shipping, 2) }}</span>
+        </div>
+        
+        <div class="order-item order-total">
+            <span>Total</span>
+            <span>₹{{ number_format($total, 2) }}</span>
+        </div>
+    </div>
+</div>
+ </div>
+
+            <div class=" card container p-3 mb-5">
                 <h2 class="checkout-h2" style="margin-top: 20px;">Payment Method</h2>
                 
                 <div class="payment-option payment-selected" onclick="selectPayment(this)">
@@ -127,32 +162,63 @@
                 </div>
                 
                 <button type="submit" class="checkout-btn">Place Order</button>
+             
+
             </div>
-        </div>
-    </div>
+    </form>
+   
+   
 </main>
 <!-- main end -->
 
 @push('scripts')
-<script>
-    function selectPayment(element) {
-        document.querySelectorAll('.payment-option').forEach(p => p.classList.remove('payment-selected'));
-        element.classList.add('payment-selected');
-        element.querySelector('input').checked = true;
-    }
 
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                document.getElementById('locationInput').value = position.coords.latitude + ', ' + position.coords.longitude;
-            }, function() {
-                alert('Unable to retrieve location');
-            });
-        } else {
-            alert('Geolocation is not supported by this browser');
-        }
+<script>
+function getLocation() {
+    const locationInput = document.getElementById('locationInput');
+    
+    if (navigator.geolocation) {
+        locationInput.value = 'Fetching location...';
+        
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const lat = position.coords.latitude.toFixed(6); // 6 decimals
+                const lon = position.coords.longitude.toFixed(6);
+                
+                // Google Maps friendly format
+                locationInput.value = `${lat}, ${lon}`;
+            },
+            function(error) {
+                let errorMsg = 'Unable to retrieve location';
+                
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMsg = 'Location permission denied. Please allow location access.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMsg = 'Location information unavailable';
+                        break;
+                    case error.TIMEOUT:
+                        errorMsg = 'Location request timed out';
+                        break;
+                }
+                
+                alert(errorMsg);
+                locationInput.value = '';
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    } else {
+        alert('Geolocation is not supported by this browser');
     }
+}
+
 </script>
+
 @endpush
 
 @endsection

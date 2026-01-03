@@ -27,24 +27,16 @@ class HomeController extends Controller{
 
 
 
-     public function cartpage()
-    {
-        return view('cart-page');
-    }
+    //  public function cartpage()
+    // {
+    //     return view('cart-page');
+    // }
 
 
-
-     public function checkout()
-    {
-        return view('checkout');
-    }
-
-
-
-     public function colllectioncategory()
-    {
-        return view('collection-category');
-    }
+    //  public function colllectioncategory()
+    // {
+    //     return view('collection-category');
+    // }
 
 
 
@@ -68,13 +60,10 @@ class HomeController extends Controller{
     }
 
 
-
-  
-
-     public function addproduct()
-    {
-        return view('addproduct');
-    }
+    //  public function addproduct()
+    // {
+    //     return view('addproduct');
+    // }
 
 
 

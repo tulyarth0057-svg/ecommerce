@@ -1,8 +1,5 @@
 <?php $__env->startSection('title', 'My Cart'); ?>
 
-
-
-
 <?php $__env->startPush('styles'); ?>
 
 <style>
@@ -99,6 +96,8 @@
 
 <?php $__env->stopPush(); ?>
 
+
+
 <?php $__env->startSection('content'); ?>
 
         <!-- breadcrumb-area start -->
@@ -148,7 +147,8 @@
 
             <?php $__empty_1 = true; $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <div class="cart-item col-md-12" data-cart-id="<?php echo e($item->cart_id); ?>"
-         data-unit-price="<?php echo e($item->final_price); ?>">
+         data-unit-price="<?php echo e($item->final_price); ?>"
+          data-price="<?php echo e($item->p_price); ?>">
 
                     
                     <!-- IMAGE -->
@@ -177,18 +177,25 @@
 
 
                     
-                   <div class="mb-4 col-md-2">
-    <div class="d-inline-flex align-items-center border rounded px-2" >
-<button type="button" class="btn btn-sm qty-minus" data-cart-id="<?php echo e($item->cart_id); ?>">−</button>
-                <input type="text"
-                       class="qty-input text-center"
-                       id="qtyInput-<?php echo e($item->cart_id); ?>"
-                       value="<?php echo e($item->quantity ?? 1); ?>"
-                       readonly
-                       style="width:60px; border:none; background:#f8f9fa;">
-                <button type="button" class="btn btn-sm qty-plus" data-cart-id="<?php echo e($item->cart_id); ?>">+</button>
-        </div>
-    </div>
+                  <div class="d-inline-flex h-50 p-2 align-items-center border rounded"
+                      data-cart-id="<?php echo e($item->cart_id); ?>"
+                        data-price="<?php echo e($item->p_price); ?>">
+    <button type="button"
+        class="btn btn-sm qty-minus"
+        data-cart-id="<?php echo e($item->cart_id); ?>">−</button>
+
+    <input type="number"
+        class="qty-input text-center"
+        id="qtyInput-<?php echo e($item->cart_id); ?>"
+        value="<?php echo e($item->p_quantity); ?>"
+        min="1"
+        style="width:60px; border:none;">
+
+    <button type="button"
+        class="btn btn-sm qty-plus"
+        data-cart-id="<?php echo e($item->cart_id); ?>">+</button>
+</div>
+
 
                       
                         <div class="ms-5 col-md-2 text-center" id="itemTotal-<?php echo e($item->cart_id); ?>">
@@ -199,8 +206,6 @@
                     </div>
                     <!-- remove -->
                     <div class="col-md-2 remove-icon">
-                     
-
                         <form method="POST" action="<?php echo e(route('cart.remove', $item->cart_id)); ?>">
                             <?php echo csrf_field(); ?>
                             <?php echo method_field('DELETE'); ?>
@@ -230,7 +235,7 @@
                 <a href="/" class="btn btn-outline-secondary">Continue shopping</a>
               <form action="<?php echo e(route('cart.clear')); ?>" method="POST" style="display:inline;">
     <?php echo csrf_field(); ?>
-    <!-- Optional: confirm dialog -->
+    <!--  confirm dialog -->
     <button type="submit" class="btn btn-outline-danger"
             onclick="return confirm('Are you sure you want to clear the cart?')">
         Clear cart
@@ -273,7 +278,7 @@
                 Taxes calculated at checkout
             </small>
             
-            <a href="<?php echo e(route('cart')); ?>" class="btn btn-dark w-100 mt-3">
+            <a href="<?php echo e(route('checkout')); ?>" class="btn btn-dark w-100 mt-3">
                 Proceed to Checkout
             </a>
 
@@ -819,29 +824,18 @@
             <!-- cart-collection end -->
         </main>
         <!-- main end -->
-      
-                            
-        
-        <!-- bg-screen start -->
-        <div class="bg-screen">
-            <div class="bg-back position-fixed top-0 end-0 bottom-0 start-0 bg-black z-index-4 opacity-0 invisible"></div>
-            <div class="bg-shop position-fixed top-0 end-0 bottom-0 start-0 bg-black z-index-4 opacity-0 invisible"></div>
-        </div>
-        <!-- bg-screen end -->
-      
-<?php $__env->stopSection(); ?>
+
+
+
+        <?php $__env->startPush('scripts'); ?>
 
 <?php $__env->startPush('scripts'); ?>
 
-
-
 <script>
+// Delete cart item
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // Delete cart item with confirmation
     document.querySelectorAll('.delete-cart-item').forEach(button => {
         button.addEventListener('click', function() {
-            
             const cartId = this.dataset.cartId;
             const productName = this.dataset.productName;
             
@@ -856,116 +850,145 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Submit the hidden form
                     document.getElementById('delete-form-' + cartId).submit();
                 }
             });
-            
         });
     });
-    
 });
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+// Subtotal update function
+function updateSubtotal() {
+    let subtotal = 0;
 
-    // Sab items ko select karo
-    const cartItems = document.querySelectorAll('.cart-item');
-
-    // Subtotal update function (poora cart recalculate)
-    function updateCartSubtotal() {
-        let grandTotal = 0;
-
-        cartItems.forEach(item => {
-            const qtyInput = item.querySelector('.qty-input');
-            const unitPrice = parseFloat(item.dataset.unitPrice) || 0;
-            const qty = parseInt(qtyInput.value) || 1;
-
-            const itemTotal = qty * unitPrice;
-            grandTotal += itemTotal;
-
-            // Item ka apna total update
-            const itemTotalEl = item.querySelector('.item-total');
-            if (itemTotalEl) {
-                itemTotalEl.innerHTML = '₹' + itemTotal.toLocaleString('en-IN', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-            }
-        });
-
-        // Global subtotal update
-        const subtotalEl = document.getElementById('cartSubtotal');
-        if (subtotalEl) {
-            subtotalEl.innerHTML = '₹' + grandTotal.toLocaleString('en-IN', {
+    document.querySelectorAll('.cart-item').forEach(item => {
+        const price = parseFloat(item.dataset.price) || 0;  // ✅ p_price from data-price
+        const qty = parseInt(item.querySelector('.qty-input').value) || 1;
+        
+        const itemTotal = price * qty;
+        subtotal += itemTotal;
+        
+        // Update individual item total
+        const itemTotalEl = item.querySelector('.item-total');
+        if (itemTotalEl) {
+            itemTotalEl.innerHTML = '₹' + itemTotal.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
         }
-        // ─── Total update (naya code yahan se) ───
+    });
+
+    // Update subtotal
+    const subtotalEl = document.getElementById('cartSubtotal');
+    if (subtotalEl) {
+        subtotalEl.innerHTML = '₹' + subtotal.toLocaleString('en-IN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+    
+    // Update total (subtotal - discount)
     const totalEl = document.getElementById('cartTotal');
     if (totalEl) {
-        // Agar discount fixed hai aur shipping free hai to:
-        const discount = <?php echo e($discount ?? 0); ?>;  // Blade se value le rahe hain (static)
-        const finalTotal = grandTotal - discount;  // shipping free hai to subtract nahi karna
-
+        const discount = <?php echo e($discount ?? 0); ?>;
+        const finalTotal = subtotal - discount;
+        
         totalEl.textContent = '₹' + finalTotal.toLocaleString('en-IN', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
     }
+}
 
+// Quantity button handler
+document.addEventListener('click', function (e) {
+
+    if (!e.target.classList.contains('qty-plus') &&
+        !e.target.classList.contains('qty-minus')) {
+        return;
     }
 
-    // Plus button handler
-    document.querySelectorAll('.qty-plus').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const cartId = this.dataset.cartId;
-            const input = document.getElementById('qtyInput-' + cartId);
-            let qty = parseInt(input.value) || 1;
-            
-            input.value = qty + 1;
-            updateCartSubtotal();
+    const cartId = e.target.dataset.cartId;
+    const input = document.getElementById('qtyInput-' + cartId);
 
-            // Agar future mein AJAX chahiye to yahan daal dena
-        });
+    if (!input) {
+        console.error('Input not found for cart:', cartId);
+        return;
+    }
+
+    let qty = parseInt(input.value) || 1;
+
+    if (e.target.classList.contains('qty-plus')) {
+        qty++;
+    }
+
+    if (e.target.classList.contains('qty-minus')) {
+        if (qty <= 1) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Minimum Quantity',
+                text: 'Quantity cannot be less than 1',
+                confirmButtonColor: '#3085d6'
+            });
+            return;
+        }
+        qty--;
+    }
+
+    // Update UI
+    input.value = qty;
+
+    // Update subtotal immediately
+    updateSubtotal();
+
+    // Save to backend
+    fetch("<?php echo e(route('cart.setQuantity')); ?>", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+            cart_id: cartId,
+            quantity: qty
+        })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+    })
+    .then(data => {
+        console.log('✅ Cart updated:', data);
+        if (!data.success) {
+            alert('Failed to update cart');
+            // Revert changes on error
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error:', error);
+        alert('Network error. Please try again.');
+        location.reload();
     });
 
-    // Minus button handler
-    document.querySelectorAll('.qty-minus').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const cartId = this.dataset.cartId;
-            const input = document.getElementById('qtyInput-' + cartId);
-            let qty = parseInt(input.value) || 1;
-
-            if (qty > 1) {
-                input.value = qty - 1;
-                updateCartSubtotal();
-            } else {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Minimum Quantity',
-                        text: 'Quantity cannot be less than 1',
-                        confirmButtonColor: '#3085d6'
-                    });
-                } else {
-                    alert('Quantity cannot be less than 1');
-                }
-            }
-        });
-    });
-
-    // Page load pe initial calculation (safety ke liye)
-    updateCartSubtotal();
 });
+
+// Initial calculation on page load
+updateSubtotal();
 </script>
 
+<?php $__env->stopPush(); ?>
 
 
 
 <?php $__env->stopPush(); ?>
+      
+      
+<?php $__env->stopSection(); ?>
+
+
       
 
 

@@ -41,7 +41,7 @@ class AddtocardController extends Controller
             'addtocart.p_id',
             'addtocart.size_id',
             'addtocart.color_id',
-            // 'addtocart.qty', // 👈 Agar quantity column hai toh uncomment karo
+            'addtocart.p_quantity',
             'products.p_name',
             'products.p_price',
             'color.color_name',
@@ -132,7 +132,7 @@ DB::table('addtocart')->insert([
     'p_id' => $request->p_id,
     'size_id' => $request->size_id,
     'color_id' => $request->color_id,
-    // 'quantity' => 1, // 👈 Agar quantity column hai
+     'p_quantity' => $quantity, 
     'created_at' => now(),
     'updated_at' => now()
 ]);
@@ -175,7 +175,27 @@ $cartItems = DB::table('addtocart')
         'cart_items' => $cartItems
     ]);
 }
+// set quantity---->
 
+public function setQuantity(Request $request)
+{
+    $cart = addtocart::where('cart_id', $request->cart_id)
+        ->where('user_id', auth()->id())
+        ->first();
+
+    if (!$cart) {
+        return response()->json(['success' => false]);
+    }
+
+    // 🔥 YAHI LINE SAB FIX KARTI HAI
+    $cart->p_quantity = $request->quantity;
+    $cart->save();
+
+    return response()->json([
+        'success' => true,
+        'qty' => $cart->p_quantity
+    ]);
+}
 
 
 // remove item form cart----->
@@ -205,22 +225,21 @@ public function removeFromCart($cart_id)
 public function addFromWishlist(Request $request)
 {
     $request->validate([
-        'product_id' => 'required|exists:products,p_id', // आपका प्रोडक्ट टेबल का pk
+        'product_id' => 'required|exists:products,p_id', 
     ]);
 
     $productId = $request->product_id;
-    $userId = auth()->id(); // login जरूरी है
+    $userId = auth()->id(); 
 
-    // wishlist से प्रोडक्ट ढूंढो
     $wishlistItem = Wishlist::where('user_id', $userId)
-                            ->where('product_id', $productId) // column नाम चेक करो
+                            ->where('product_id', $productId) 
                             ->first();
 
     if (!$wishlistItem) {
         return response()->json(['success' => false, 'message' => 'Item not found in wishlist']);
     }
 
-    // प्रोडक्ट डिटेल लाओ
+
     $product = $wishlistItem->product; 
 
     Addtocard::instance('default')->add([
@@ -233,10 +252,10 @@ public function addFromWishlist(Request $request)
         ]
     ]);
 
-    // ------------------ वैकल्पिक: wishlist से हटा दो ------------------
+
     $wishlistItem->delete();
 
-    // सफलता मैसेज
+
     return response()->json([
         'success' => true,
         'message' => 'Product moved to cart successfully!'
@@ -254,6 +273,187 @@ public function clear()
         ->with('success', 'Cart successfully cleared!');
 }
 
+// checkout-controller---->
+
+public function getCheckout()
+{
+    $userId = Auth::id();
+
+    if (!$userId) {
+        return redirect()->route('signin')->with('error', 'Please login first');
+    }
+
+    // Cart items fetch with DB quantity
+    $cartItems = DB::table('addtocart')
+        ->join('products', 'addtocart.p_id', '=', 'products.p_id')
+        ->join('color', 'addtocart.color_id', '=', 'color.color_id')
+        ->join('sizes', function ($join) {
+            $join->on('addtocart.size_id', '=', 'sizes.size_id')
+                 ->on('color.color_id', '=', 'sizes.size_color_id');
+        })
+        ->where('addtocart.user_id', $userId)
+        ->select(
+            'addtocart.cart_id',
+            'addtocart.p_id',
+            'addtocart.size_id',
+            'addtocart.color_id',
+            'addtocart.p_quantity',   // ✅ REAL QUANTITY
+            'products.p_name',
+            'products.p_price',
+            'color.color_name',
+            'color.color_price_adjustment',
+            'sizes.size_name',
+            'sizes.size_price_adjustment',
+
+            // single item price
+            DB::raw('
+                (products.p_price 
+                + COALESCE(sizes.size_price_adjustment, 0) 
+                + COALESCE(color.color_price_adjustment, 0)
+                ) as final_price
+            '),
+
+            // total per item (price * quantity)
+            DB::raw('
+                (
+                    (products.p_price 
+                    + COALESCE(sizes.size_price_adjustment, 0) 
+                    + COALESCE(color.color_price_adjustment, 0)
+                    ) * addtocart.p_quantity
+                ) as item_total
+            ')
+        )
+        ->get();
+
+    if ($cartItems->isEmpty()) {
+        return redirect()->route('cart')->with('error', 'Your cart is empty');
+    }
+
+    // ✅ subtotal WITH quantity
+    $subtotal = $cartItems->sum('item_total');
+
+    $discount = 0;
+    $shipping = 10;
+    $total = $subtotal - $discount + $shipping;
+
+    return view('checkout', compact(
+        'cartItems',
+        'subtotal',
+        'discount',
+        'shipping',
+        'total'
+    ));
+}
+
+
+
+// Order process karne ke liye
+public function processCheckout(Request $request)
+{
+    $userId = Auth::id();
+    
+    if (!$userId) {
+        return redirect()->route('signin')->with('error', 'Please login first');
+    }
+    
+    // Validate form data
+    $validated = $request->validate([
+        'email' => 'required|email',
+        'name' => 'required|string|max:255',
+        'address' => 'required|string',
+        'city' => 'required|string|max:100',
+        'postcode' => 'required|string|max:10',
+        'phone' => 'required|string|max:15',
+        'state' => 'nullable|string|max:100',
+        'location' => 'nullable|string',
+    ]);
+    
+    // Get cart items
+    $cartItems = DB::table('addtocart')
+        ->join('products', 'addtocart.p_id', '=', 'products.p_id')
+        ->join('color', 'addtocart.color_id', '=', 'color.color_id')
+        ->join('sizes', function($join) {
+            $join->on('addtocart.size_id', '=', 'sizes.size_id')
+                 ->on('color.color_id', '=', 'sizes.size_color_id');
+        })
+        ->where('addtocart.user_id', $userId)
+        ->select(
+            'addtocart.cart_id',
+            'addtocart.p_id',
+            'addtocart.size_id',
+            'addtocart.color_id',
+            'products.p_price',
+            'sizes.size_price_adjustment',
+            'color.color_price_adjustment',
+            DB::raw('(products.p_price + COALESCE(sizes.size_price_adjustment, 0) + COALESCE(color.color_price_adjustment, 0)) as final_price'),
+            DB::raw('1 as quantity')
+        )
+        ->get();
+    
+    if ($cartItems->isEmpty()) {
+        return redirect()->route('cart')->with('error', 'Your cart is empty');
+    }
+    
+//     // Calculate totals
+//     $subtotal = $cartItems->sum('final_price');
+//     $shipping = 10;
+//     $total = $subtotal + $shipping;
+    
+//     try {
+//         DB::beginTransaction();
+        
+//         // Create order
+//         $orderId = DB::table('orders')->insertGetId([
+//             'user_id' => $userId,
+//             'name' => $validated['name'],
+//             'email' => $validated['email'],
+//             'address' => $validated['address'],
+//             'city' => $validated['city'],
+//             'postcode' => $validated['postcode'],
+//             'state' => $validated['state'] ?? null,
+//             'phone' => $validated['phone'],
+//             'location' => $validated['location'] ?? null,
+//             'subtotal' => $subtotal,
+//             'shipping_charge' => $shipping,
+//             'total_amount' => $total,
+//             'status' => 'pending',
+//             'payment_status' => 'pending',
+//             'created_at' => now(),
+//             'updated_at' => now(),
+//         ]);
+        
+//         // Insert order items
+//         foreach ($cartItems as $item) {
+//             DB::table('order_items')->insert([
+//                 'order_id' => $orderId,
+//                 'p_id' => $item->p_id,
+//                 'size_id' => $item->size_id,
+//                 'color_id' => $item->color_id,
+//                 'quantity' => $item->quantity,
+//                 'price' => $item->final_price,
+//                 'total' => $item->final_price * $item->quantity,
+//                 'created_at' => now(),
+//                 'updated_at' => now(),
+//             ]);
+//         }
+        
+//         // Clear cart
+//         DB::table('addtocart')->where('user_id', $userId)->delete();
+        
+//         DB::commit();
+        
+//         return redirect()->route('order.success', $orderId)
+//             ->with('success', 'Order placed successfully!');
+            
+//     } catch (\Exception $e) {
+//         DB::rollBack();
+        
+//         return redirect()->back()
+//             ->withInput()
+//             ->with('error', 'Failed to place order: ' . $e->getMessage());
+//     }
+// }
+}
 
 
 

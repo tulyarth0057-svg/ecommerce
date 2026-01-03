@@ -524,10 +524,15 @@
           <input type="text" class="form-control mb-3 mt-3" name="email" placeholder="Username"/>
           <label for="" class="mt-2">Enter your password</label>
            <div class="input-group mb-3 mt-3">
-            <input type="password" name="password"  id="password" class="form-control" placeholder="Enter your password">
-            <span class="input-group-text bg-white" id="togglePassword" style="cursor:pointer">
-                <i class="bi bi-eye-slash"></i>
-            </span>
+             <input 
+        type="password" 
+        name="password" 
+        id="signinPassword"
+        class="form-control"
+        placeholder="Enter your password">
+    <span class="input-group-text bg-white toggle-password" data-target="signinPassword">
+        <i class="bi bi-eye-slash"></i>
+    </span>
         </div>
         </div>
         
@@ -567,16 +572,15 @@
           <input type="number" name="phone" class="form-control mb-3 mt-3" placeholder="Enter your number">
           <label>Password</label>
        <div class="input-group mb-3 mt-3">
-        <input 
+         <input 
         type="password" 
         name="password" 
-        id="password"
+        id="signupPassword"
         class="form-control"
         placeholder="Enter your password">
-
-            <span class="input-group-text bg-white" id="togglePassword" style="cursor:pointer">
-                <i class="bi bi-eye-slash"></i>
-            </span>
+    <span class="input-group-text bg-white toggle-password" data-target="signupPassword">
+        <i class="bi bi-eye-slash"></i>
+    </span>
         </div>
           <div class="form-check mb-2 d-flex align-items-center">
             <input class="fs-3" type="checkbox" id="terms">
@@ -638,24 +642,36 @@ document.querySelectorAll('.check-login').forEach(link => {
 
 
 
+
 <script>
-const togglePassword = document.getElementById('togglePassword');
-const passwordInput = document.getElementById('password');
 
-togglePassword.addEventListener('click', () => {
-    const icon = togglePassword.querySelector('i');
-
-    if(passwordInput.type === 'password'){
-        passwordInput.type = 'text';
-        icon.classList.remove('bi-eye-slash');
-        icon.classList.add('bi-eye');
-    } else {
-        passwordInput.type = 'password';
-        icon.classList.remove('bi-eye');
-        icon.classList.add('bi-eye-slash');
-    }
+document.addEventListener('DOMContentLoaded', function() {
+    // Saare toggle buttons select karo
+    const toggleButtons = document.querySelectorAll('.toggle-password');
+    
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Data-target attribute se password field ka ID lo
+            const targetId = this.getAttribute('data-target');
+            const passwordField = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+            
+            // Password show/hide toggle karo
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
+        });
+    });
 });
+
 </script>
+
  
 
 <!-- Login ↔ Signup Modal Switching -->
