@@ -79,6 +79,9 @@
     </div>
 </div>
 
+
+
+
             <!-- shop-content start -->
 
           <section class="shop-content section-ptb">
@@ -99,6 +102,7 @@
                                         <div class="collection-title">
                                             <h6 class="font-18">Collection left (12)</h6>
                                         </div>
+                                        <span class="wishlist-count header-count">0</span>
                                         <!-- collection-title end -->
                                         <!-- collection-img start -->
                                         {{-- <div class="collection-img">

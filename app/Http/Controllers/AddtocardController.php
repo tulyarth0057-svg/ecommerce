@@ -132,7 +132,7 @@ DB::table('addtocart')->insert([
     'p_id' => $request->p_id,
     'size_id' => $request->size_id,
     'color_id' => $request->color_id,
-     'p_quantity' => $quantity, 
+    //  'p_quantity' => $quantity, 
     'created_at' => now(),
     'updated_at' => now()
 ]);
@@ -275,7 +275,7 @@ public function clear()
 
 // checkout-controller---->
 
-public function getCheckout()
+public function getCheckout() 
 {
     $userId = Auth::id();
 
@@ -333,7 +333,7 @@ public function getCheckout()
     $subtotal = $cartItems->sum('item_total');
 
     $discount = 0;
-    $shipping = 10;
+    $shipping = 0;
     $total = $subtotal - $discount + $shipping;
 
     return view('checkout', compact(
@@ -342,119 +342,16 @@ public function getCheckout()
         'discount',
         'shipping',
         'total'
+        
     ));
+    
 }
 
 
 
-// Order process karne ke liye
-public function processCheckout(Request $request)
-{
-    $userId = Auth::id();
     
-    if (!$userId) {
-        return redirect()->route('signin')->with('error', 'Please login first');
-    }
-    
-    // Validate form data
-    $validated = $request->validate([
-        'email' => 'required|email',
-        'name' => 'required|string|max:255',
-        'address' => 'required|string',
-        'city' => 'required|string|max:100',
-        'postcode' => 'required|string|max:10',
-        'phone' => 'required|string|max:15',
-        'state' => 'nullable|string|max:100',
-        'location' => 'nullable|string',
-    ]);
-    
-    // Get cart items
-    $cartItems = DB::table('addtocart')
-        ->join('products', 'addtocart.p_id', '=', 'products.p_id')
-        ->join('color', 'addtocart.color_id', '=', 'color.color_id')
-        ->join('sizes', function($join) {
-            $join->on('addtocart.size_id', '=', 'sizes.size_id')
-                 ->on('color.color_id', '=', 'sizes.size_color_id');
-        })
-        ->where('addtocart.user_id', $userId)
-        ->select(
-            'addtocart.cart_id',
-            'addtocart.p_id',
-            'addtocart.size_id',
-            'addtocart.color_id',
-            'products.p_price',
-            'sizes.size_price_adjustment',
-            'color.color_price_adjustment',
-            DB::raw('(products.p_price + COALESCE(sizes.size_price_adjustment, 0) + COALESCE(color.color_price_adjustment, 0)) as final_price'),
-            DB::raw('1 as quantity')
-        )
-        ->get();
-    
-    if ($cartItems->isEmpty()) {
-        return redirect()->route('cart')->with('error', 'Your cart is empty');
-    }
-    
-//     // Calculate totals
-//     $subtotal = $cartItems->sum('final_price');
-//     $shipping = 10;
-//     $total = $subtotal + $shipping;
-    
-//     try {
-//         DB::beginTransaction();
-        
-//         // Create order
-//         $orderId = DB::table('orders')->insertGetId([
-//             'user_id' => $userId,
-//             'name' => $validated['name'],
-//             'email' => $validated['email'],
-//             'address' => $validated['address'],
-//             'city' => $validated['city'],
-//             'postcode' => $validated['postcode'],
-//             'state' => $validated['state'] ?? null,
-//             'phone' => $validated['phone'],
-//             'location' => $validated['location'] ?? null,
-//             'subtotal' => $subtotal,
-//             'shipping_charge' => $shipping,
-//             'total_amount' => $total,
-//             'status' => 'pending',
-//             'payment_status' => 'pending',
-//             'created_at' => now(),
-//             'updated_at' => now(),
-//         ]);
-        
-//         // Insert order items
-//         foreach ($cartItems as $item) {
-//             DB::table('order_items')->insert([
-//                 'order_id' => $orderId,
-//                 'p_id' => $item->p_id,
-//                 'size_id' => $item->size_id,
-//                 'color_id' => $item->color_id,
-//                 'quantity' => $item->quantity,
-//                 'price' => $item->final_price,
-//                 'total' => $item->final_price * $item->quantity,
-//                 'created_at' => now(),
-//                 'updated_at' => now(),
-//             ]);
-//         }
-        
-//         // Clear cart
-//         DB::table('addtocart')->where('user_id', $userId)->delete();
-        
-//         DB::commit();
-        
-//         return redirect()->route('order.success', $orderId)
-//             ->with('success', 'Order placed successfully!');
-            
-//     } catch (\Exception $e) {
-//         DB::rollBack();
-        
-//         return redirect()->back()
-//             ->withInput()
-//             ->with('error', 'Failed to place order: ' . $e->getMessage());
-//     }
-// }
 }
 
 
 
-}
+

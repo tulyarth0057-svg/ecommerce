@@ -12,6 +12,11 @@ use App\Http\Controllers\MainCategoryController;
 use App\Http\Controllers\showController;
 use App\Http\Controllers\AddtocardController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ChatController;
+
+use App\Http\Controllers\HomeController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -24,9 +29,9 @@ use App\Http\Controllers\SearchController;
 |
 */
 
-Route::get('/', function () {
-    return view('/home');
-});
+
+Route::get('/', [HomeController::class, 'index']);
+
 
 
 
@@ -229,12 +234,51 @@ Route::get('/search-products', [ProductController::class, 'search'])->name('prod
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [AddtocardController::class, 'getCheckout'])->name('checkout');
-    Route::post('/checkout/process', [AddtocardController::class, 'processCheckout'])->name('checkout.process');
+    
 });
 
+Route::post('/checkout/process', [OrderController::class, 'processCheckout'])
+    ->name('checkout.process');
+
+Route::get('/order/success/{orderId}', [OrderController::class, 'orderSuccess'])
+    ->name('order.success');
+
+// my order---->
+    
+Route::get('/my-order/{orderId}', [OrderController::class, 'myorder'])
+    ->name('my.order')
+    ->middleware('auth'); 
+
+    // order-details-->
+
+Route::get('/order-detail/{orderId}', [OrderController::class, 'getOrderdetail'])
+    ->name('view.details')
+    ->middleware('auth');
+
+
+    // tracking-order-routes----->
+
+Route::get('/track-order/{order_number}', [OrderController::class, 'trackOrder'])
+    ->name('order.track')
+    ->middleware('auth');
+
+
+//     Route::get('/track-order', [OrderController::class, 'trackForm'])->name('track.form');
+// Route::post('/track-order', [OrderController::class, 'trackOrder']);
+
+
+
+    // chat routes
+
+Route::post('/send-message', [ChatController::class, 'send']);
 
 
 
 
 
 
+
+
+
+
+  // 📦 Distance: ${distance.toFixed(2)} km<br>

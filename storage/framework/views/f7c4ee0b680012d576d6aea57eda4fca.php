@@ -218,8 +218,6 @@
                                             <span class="old-price text-decoration-line-through ms-3">₹<?php echo e(number_format($product->p_old_price, 2)); ?></span>
                                         <?php endif; ?>
                                     </div>
-
-                                    
                             </div>
 
                         </div>

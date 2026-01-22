@@ -100,22 +100,6 @@ class ProductController extends Controller
     return redirect()->back()->with('success','Product added successfully!');
 }
 
-
-// public function productlist(){
-//    // Sab products fetch karo
-//     $products = Product::all();
-//          $products = Product::with('colors.images')->get();
-//          $products = Product::with('category')->get();
-//     // Pass kar do view me
-//     return view('admin.productlist', compact('products'));
-
-
-//             // Products with category, colors, images, and sizes
-//         $products = Product::with(['category', 'colors.images', 'colors.sizes'])->get();
-
-
-
-// }
 public function productlist()
 {
     $products = Product::with([

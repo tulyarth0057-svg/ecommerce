@@ -184,62 +184,6 @@
 </html>
 @section('content')
 
-  <h1 class="mb-3 fw-bold">Product Details</h1>
-
-<div class="container-fluid card-1 rounded-3 w-100 p-4">
-    <div class="row">
- <div class="product-banner">
-    <span class="banner-title">Product Banner</span>
-
-  @if($product->category && $product->category->c_banner_img)
-        <img src="{{ asset($product->category->c_banner_img) }}">
-    @endif
-
-
-</div>
-
-
-
-
-   <div class="container mt-4">
-    <div class="product-modern-card">
-
-        <div class="detail-box">
-            <div class="detail-title">Product Name</div>
-             <h2 class="fw-bold text-info">{{ $product->p_name }}</h2>
-        </div>
-
-         <div class="detail-box">
-            <div class="detail-title">Main Category</div>
-             <h2 class="fw-semibold text-danger">
- <td>{{ $product->mainCategory->cat_name ?? 'No Main Category' }}</td>
-</h2>
-        </div>
-
-        <div class="detail-box">
-            <div class="detail-title">Category</div>
-             <h2 class="fw-semibold text-primary">
-          {{ $product->category->c_name ?? $product->p_category_id }}
-             </h2>
-        </div>
-
-
-
-        <div class="detail-box">
-            <div class="detail-title">Price</div>
-            <h4 class="text-danger fw-bold">₹{{ $product->p_price }}</h4>
-        </div>
-
-        <div class="detail-box">
-            <div class="detail-title">Visibility</div>
-             @if($product->p_visibility_status)
-                    <span class="badge fs-6 bg-success">Visible</span>
-                @else
-                    <span class="badge bg-secondary">Hidden</span>
-                @endif
-        </div>
-
-    </div>
-</div>
+  
 
 

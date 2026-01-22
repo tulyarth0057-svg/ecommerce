@@ -9,15 +9,16 @@ use Illuminate\Support\Facades\Auth;
 class WhistlistController extends Controller
 {
     // SHOW wishlist page (GET /wishlist)
-    public function wishlist()
-    {
-        $wishlists = Whistlist::with('product.colors.images')
-            ->where('user_id', Auth::id())
-            ->get();
+   public function wishlist()
+{
+    $wishlists = Whistlist::with('product.colors.images')
+        ->where('user_id', Auth::id())
+        ->get();
 
-        return view('whistlist', compact('wishlists'));
-        
-    }
+    $wishlistCount = $wishlists->count(); // 🔥 yahin se count
+
+    return view('whistlist', compact('wishlists', 'wishlistCount'));
+}
 
 
 
@@ -26,14 +27,17 @@ public function store(Request $request)
     $userId = auth()->id();
     $productId = $request->product_id;
 
-    $already = whistlist::where('user_id', $userId)
+    $already = Whistlist::where('user_id', $userId)
         ->where('p_id', $productId)
         ->exists();
 
     if ($already) {
+        $count = Whistlist::where('user_id', $userId)->count();
+
         return response()->json([
             'status' => false,
-            'message' => 'Product already in your wishlist ❤️'
+            'message' => 'Product already in your wishlist ❤️',
+            'count' => $count
         ]);
     }
 
@@ -42,11 +46,26 @@ public function store(Request $request)
         'p_id' => $productId
     ]);
 
+    $count = Whistlist::where('user_id', $userId)->count();
+
     return response()->json([
         'status' => true,
-        'message' => 'Product added to wishlist ❤️'
+        'message' => 'Product added to wishlist ❤️',
+        'count' => $count
     ]);
+
+        // whistlist counter header add
+    return response()->json([
+    'wishlistCount' => DB::table('wishlist')
+        ->where('user_id', Auth::id())
+        ->count(),
+
+    'cartCount' => DB::table('addtocart')
+        ->where('user_id', Auth::id())
+        ->count(),
+]);
 }
+
 
     // REMOVE single item (DELETE /wishlist/{id})
     public function removeWishlist($id)
@@ -126,5 +145,8 @@ public function wishlistAddToCart(Request $request)
             'cart_count' => Addtocart::instance('default')->count(),  
         ]);
     }
+
+
+
 
 }

@@ -37,6 +37,14 @@
     </div>
 </div>
 <!-- breadcrumb-area end -->
+<?php if($errors->any()): ?>
+    <div class="alert alert-danger">
+        <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <div><?php echo e($error); ?></div>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    </div>
+<?php endif; ?>
+
 
 <!-- main start -->
 <main id="main">
@@ -68,7 +76,7 @@
                            value="<?php echo e(old('city')); ?>" required>
                 </div>
                 <div>
-                    <label>Postcode *</label>
+                    <label>Pincode *</label>
                     <input type="text" name="postcode" class="checkout-input" 
                            value="<?php echo e(old('postcode')); ?>" required>
                 </div>
@@ -78,10 +86,13 @@
             <input type="text" name="state" class="checkout-input" value="<?php echo e(old('state')); ?>">
             
             <label>Location</label>
-            <input type="text" name="location" class="checkout-input" 
-                   id="locationInput" value="<?php echo e(old('location')); ?>"
-                   placeholder="📍 Click here to auto-fill GPS location" 
-                   readonly onclick="getLocation()">
+
+                   <input type="text" name="location" class="checkout-input" 
+       id="locationInput" value="<?php echo e(old('location')); ?>"
+       placeholder="📍 Click here to get your current location" 
+       readonly onclick="getLocation()">
+
+<div  style="margin-top: 10px; color: #666;"></div>
             
             <label>Phone *</label>
             <input type="tel" name="phone" class="checkout-input" 
@@ -96,6 +107,7 @@
     <label class="fw-bold fs-5 product-name">Product Name</label>
     <label class="fw-bold fs-5 product-name">Price</label>
     </div>
+
         <?php $__empty_1 = true; $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
 
         <div class="order-item col-md-12 gap-4"> 
@@ -128,16 +140,26 @@
         </div>
         <?php endif; ?>
         
-        <div class="order-item">
-            <span>Shipping</span>
-            <span>₹<?php echo e(number_format($shipping, 2)); ?></span>
+       <div class="order-item">
+                <span>Shipping</span>
+                <span id="shippingInfo">₹0.00</span>
+            </div>
+            
+            <div class="order-item total">
+                <span><strong>Total</strong></span>
+                <span id="totalAmount" data-subtotal="<?php echo e($subtotal); ?>">
+                    ₹<?php echo e(number_format($subtotal, 2)); ?>
+
+                </span>
+            </div>
         </div>
+
         
-        <div class="order-item order-total">
-            <span>Total</span>
-            <span>₹<?php echo e(number_format($total, 2)); ?></span>
-        </div>
-    </div>
+        <input type="hidden" name="shipping_charge" id="shippingCharge" value="0">
+        <input type="hidden" name="distance_km" id="distanceKm" value="0">
+
+
+
 </div>
  </div>
 
@@ -145,7 +167,7 @@
                 <h2 class="checkout-h2" style="margin-top: 20px;">Payment Method</h2>
                 
                 <div class="payment-option payment-selected" onclick="selectPayment(this)">
-                    <input type="radio" name="payment" value="cod" checked> <strong>Cash on Delivery</strong><br>
+                    <input type="radio" name="payment" value="cash" checked> <strong>Cash on Delivery</strong><br>
                     <small>Pay with cash upon delivery</small>
                 </div>
                 
@@ -154,12 +176,11 @@
                     <small>Pay securely using Card, UPI, Net Banking</small>
                 </div>
                 
-                <div style="margin-top: 15px;">
-                    <input type="checkbox" style="width: auto; margin-right: 5px;" required> 
-                    <small>I have read and agree to the website terms and conditions *</small>
-                </div>
-                
-                <button type="submit" class="checkout-btn">Place Order</button>
+                <button type="submit" class="checkout-btn" id="placeOrderBtn">
+    Place Order
+</button>
+
+
              
 
             </div>
@@ -171,51 +192,153 @@
 
 <?php $__env->startPush('scripts'); ?>
 
+
+<?php if(session('success_order')): ?>
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    Swal.fire({
+        title: 'Order Placed Successfully!',
+        text: 'Thank you for shopping with us.',
+        icon: 'success',
+        confirmButtonText: 'View Order',
+        allowOutsideClick: false
+    }).then(() => {
+        window.location.href = "<?php echo e(route('order.success', session('success_order'))); ?>";
+    });
+});
+</script>
+<?php endif; ?>
+
+
+
+
+<label>Location</label>
+
+
+<script>
+// Your shop/warehouse location (Dehradun coordinates)
+const SHOP_LAT = 30.3165;
+const SHOP_LON = 78.0322;
+
+// Shipping rates
+const BASE_CHARGE = 50; // Base shipping charge
+const RATE_PER_KM = 10; // Rs 10 per km
+
 function getLocation() {
     const locationInput = document.getElementById('locationInput');
+    const shippingInfo = document.getElementById('shippingInfo');
     
     if (navigator.geolocation) {
-        locationInput.value = 'Fetching location...';
+        locationInput.placeholder = "🔄 Getting your location...";
+        shippingInfo.innerHTML = "🔄 Calculating shipping...";
         
         navigator.geolocation.getCurrentPosition(
             function(position) {
-                const lat = position.coords.latitude.toFixed(6); // 6 decimals
-                const lon = position.coords.longitude.toFixed(6);
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
                 
-                // Google Maps friendly format
-                locationInput.value = `${lat}, ${lon}`;
+                // Fill location
+                locationInput.value = `${latitude}, ${longitude}`;
+                
+                // Calculate distance
+                const distance = calculateDistance(SHOP_LAT, SHOP_LON, latitude, longitude);
+                
+                // Calculate shipping charges
+                const shippingCharge = BASE_CHARGE + (distance * RATE_PER_KM);
+                
+                // Update UI
+                locationInput.placeholder = "📍 Location filled";
+                shippingInfo.innerHTML = `₹${shippingCharge.toFixed(2)}`;
+                
+                // Update hidden inputs and total
+                updateShippingCharge(shippingCharge, distance);
             },
             function(error) {
-                let errorMsg = 'Unable to retrieve location';
-                
                 switch(error.code) {
                     case error.PERMISSION_DENIED:
-                        errorMsg = 'Location permission denied. Please allow location access.';
+                        alert("Please allow location access in your browser.");
                         break;
                     case error.POSITION_UNAVAILABLE:
-                        errorMsg = 'Location information unavailable';
+                        alert("Location unavailable. Please check your GPS.");
                         break;
                     case error.TIMEOUT:
-                        errorMsg = 'Location request timed out';
+                        alert("Request timed out. Please try again.");
                         break;
                 }
-                
-                alert(errorMsg);
-                locationInput.value = '';
+                locationInput.placeholder = "📍 Click here to get your current location";
+                shippingInfo.innerHTML = "₹0.00";
             },
             {
                 enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
+                timeout: 30000,
+                maximumAge: 60000
             }
         );
     } else {
-        alert('Geolocation is not supported by this browser');
+        alert("Your browser doesn't support geolocation.");
     }
 }
 
+// Calculate distance using Haversine formula
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth's radius in km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c;
+    
+    return distance;
+}
+
+function toRad(degrees) {
+    return degrees * (Math.PI / 180);
+}
+
+
+// ✅ UPDATE SHIPPING CHARGE AND TOTAL (BOTH PLACES)
+function updateShippingCharge(charge, distance) {
+    // Update shipping charge hidden input
+    document.getElementById('shippingCharge').value = charge.toFixed(2);
+    
+    // Update distance hidden input
+    document.getElementById('distanceKm').value = distance.toFixed(2);
+    
+    // ✅ UPDATE BOTH TOTAL ELEMENTS
+    const totalElement = document.getElementById('totalAmount');
+    const totalElementBottom = document.getElementById('totalAmountBottom');
+    
+    const subtotal = parseFloat(totalElement.dataset.subtotal);
+    const newTotal = subtotal + charge;
+    
+    // Update top total
+    totalElement.textContent = `₹${newTotal.toFixed(2)}`;
+    
+    // ✅ Update bottom total
+    totalElementBottom.textContent = `₹${newTotal.toFixed(2)}`;
+    
+    console.log('Shipping Updated:', {
+        distance: distance.toFixed(2) + ' km',
+        shipping: '₹' + charge.toFixed(2),
+        subtotal: '₹' + subtotal.toFixed(2),
+        total: '₹' + newTotal.toFixed(2)
+    });
+}
 </script>
+
+<script>
+document.querySelector('form').addEventListener('submit', function () {
+    const btn = document.getElementById('placeOrderBtn');
+    btn.disabled = true;
+    btn.innerText = 'Processing...';
+});
+</script>
+
+
 
 <?php $__env->stopPush(); ?>
 

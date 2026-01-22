@@ -12,6 +12,42 @@
                     margin-left:60px;
                     color:orangered;
                 }
+                .form-control1{
+                    
+                }
+              
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-input {
+    width: 100%;
+    padding: 12px 45px 12px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+}
+
+.password-input:focus {
+    border-color: #6f42c1;
+    box-shadow: 0 0 0 2px rgba(111,66,193,0.15);
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.toggle-password i {
+    font-size: 1.1rem;
+}
+
 
         </style>
 
@@ -457,7 +493,8 @@
                                                         <span class="d-block">
                                                             <span class="d-block header-block-icon-wrap position-relative per-8">
                                                                 <span class="d-block header-block-icon font-16 font-xl-20"><i class="ri-heart-line"></i></span>
-                                                                <span class="header-block-counter wishlist-counter extra-color font-10 position-absolute end-0 d-flex align-items-center justify-content-center primary-bg rounded-circle">4</span>
+                                                                <span class="header-block-counter wishlist-counter extra-color font-10 position-absolute end-0 d-flex align-items-center justify-content-center primary-bg rounded-circle" id="wishlist-count"><?php echo e($wishlistCount); ?></span>
+                                                                
                                                             </span>
                                                         </span>
                                                         <span class="d-none d-xl-block header-text-content text-uppercase text-nowrap heading-weight">Wishlist</span>
@@ -475,8 +512,10 @@
                                                         <span class="d-block">
                                                             <span class="d-block header-block-icon-wrap position-relative per-8">
                                                                 <span class="d-block header-block-icon font-16 font-xl-20"><i class="ri-shopping-bag-3-line"></i></span>
-                                                            <span class="header-block-counter cart-counter extra-color font-10 position-absolute end-0 d-flex align-items-center justify-content-center primary-bg rounded-circle">4
-                                                                </span>
+                                                            <span class="header-block-counter cart-counter extra-color font-10 position-absolute end-0 d-flex align-items-center justify-content-center primary-bg rounded-circle" id="cart-count"><?php echo e($cartCount); ?></span>
+
+                             
+
                                                                  
                                                             </span>
                                                         </span>
@@ -520,20 +559,27 @@
           <button type="button" class="btn-close text-warning" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <label for="" class="mt-2">Enter your Email</label>
-          <input type="text" class="form-control mb-3 mt-3" name="email" placeholder="Username"/>
-          <label for="" class="mt-2">Enter your password</label>
-           <div class="input-group mb-3 mt-3">
-             <input 
+          <label for="" class="mt-2">Enter your Email</label> <br>
+          <input type="text" class="password-input mt-3" name="email" placeholder="email"/><br><br>
+          <label for="" class="mt-2">Enter your password</label><br>
+
+          <div class="password-wrapper mb-3 mt-3">
+    <input 
         type="password" 
         name="password" 
         id="signinPassword"
-        class="form-control"
-        placeholder="Enter your password">
-    <span class="input-group-text bg-white toggle-password" data-target="signinPassword">
+        class="password-input"
+        placeholder="Enter your password"
+    >
+
+    <span class="toggle-password" data-target="signinPassword">
         <i class="bi bi-eye-slash"></i>
     </span>
-        </div>
+</div>
+
+
+
+
         </div>
         
         <div class="text-center justify-content-center flex-column">
@@ -565,19 +611,19 @@
         </div>
         <div class="modal-body">
           <label>Name</label>
-          <input type="text" name="name" class="form-control mb-3 mt-3" placeholder="Enter your name" >
-          <label>Email</label>
-          <input type="email" name="email" class="form-control mb-3 mt-3" placeholder="Enter your email">
+          <input type="text" name="name" class="password-input mt-3" placeholder="Enter your name" > <br><br>
+          <label>Email</label><br>
+          <input type="email" name="email" class="password-input mt-3" placeholder="Enter your email"><br><br>
             <label>Mobile Number</label>
-          <input type="number" name="phone" class="form-control mb-3 mt-3" placeholder="Enter your number">
+          <input type="number" name="phone" class="password-input mt-3" placeholder="Enter your number"><br><br>
           <label>Password</label>
        <div class="input-group mb-3 mt-3">
          <input 
         type="password" 
         name="password" 
         id="signupPassword"
-        class="form-control"
-        placeholder="Enter your password">
+        class="password-input"
+        placeholder="Enter your password"><br><br>
     <span class="input-group-text bg-white toggle-password" data-target="signupPassword">
         <i class="bi bi-eye-slash"></i>
     </span>

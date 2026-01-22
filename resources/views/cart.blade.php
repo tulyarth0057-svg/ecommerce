@@ -115,7 +115,7 @@
         <main id="main">
 
             <!-- cart start -->
-           <section class="cart-area py-5">
+ <section class="cart-area py-5">
         <form method="post" action="javascript:void(0)">
         <div class="container">
         <div class="row align-items-start">
@@ -141,108 +141,106 @@
         </div>
     </div>
 
-        <div class="cart-box">
+                        <div class="cart-box container-fluid px-0 px-sm-3">
 
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-
-            @forelse($cartItems as $item)
-                <div class="cart-item col-md-12" data-cart-id="{{ $item->cart_id }}"
-         data-unit-price="{{ $item->final_price }}"
-          data-price="{{ $item->p_price }}">
-
-                    
-                    <!-- IMAGE -->
-                    <div class="cart-img col-md-2 text-center">
-
-                          <a href="{{ url('product-view/'.$item->p_id) }}" class="d-block">
-                        <img 
-                          src="{{ $item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png') }}"
-                          alt="{{ $item->img_alt_text ?? $item->p_name }}">
-                    </div>
-                </a>
-
-                    <!-- INFO -->
-                    <div class="col-md-3">
-            <h6>{{ $item->p_name }}</h6>
-            <small>
-                Size: {{ $item->size_name }} <br>
-                Color: {{ $item->color_name }}
-            </small>
-            <div class="price">
-                ₹{{ number_format($item->p_price, 2, '.', ',') }}
-            </div>
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+    @endif
 
+    @forelse($cartItems as $item)
+        <div class="cart-item d-flex flex-column flex-sm-row align-items-sm-center gap-2 gap-sm-2 py-3 border-bottom"
+             data-cart-id="{{ $item->cart_id }}"
+             data-unit-price="{{ $item->final_price }}"
+             data-price="{{ $item->final_price }}">
 
-                    {{-- quantity --}}
-                  <div class="d-inline-flex h-50 p-2 align-items-center border rounded"
-                      data-cart-id="{{ $item->cart_id }}"
-                        data-price="{{ $item->p_price }}">
-    <button type="button"
-        class="btn btn-sm qty-minus"
-        data-cart-id="{{ $item->cart_id }}">−</button>
+            <!-- Image -->
+            <div class="cart-img flex-shrink-0 text-center">
+                <a href="{{ url('product-view/'.$item->p_id) }}" class="d-block">
+                    <img src="{{ $item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png') }}"
+                         alt="{{ $item->img_alt_text ?? $item->p_name }}"
+                         class="img-fluid rounded" style="max-height: 120px; max-width: 120px; object-fit: contain;">
+                </a>
+            </div>
 
-    <input type="number"
-        class="qty-input text-center"
-        id="qtyInput-{{ $item->cart_id }}"
-        value="{{ $item->p_quantity }}"
-        min="1"
-        style="width:60px; border:none;">
+            <!-- Main content (name + variant + price) -->
+            <div class="flex-grow-1">
+                <h6 class="mb-1">{{ $item->p_name }}</h6>
+                <small class="text-muted d-block">
+                    Size: {{ $item->size_name }} • Color: {{ $item->color_name }}
+                </small>
+                <div class="price fw-bold mt-1">
+                    ₹{{ number_format($item->p_price, 2, '.', ',') }}
+                </div>
+            </div>
 
-    <button type="button"
-        class="btn btn-sm qty-plus"
-        data-cart-id="{{ $item->cart_id }}">+</button>
-</div>
+            <!-- Quantity + Total + Remove (stack on mobile, inline on sm+) -->
+            <div class="d-flex flex-wrap align-items-center gap-2 gap-sm-3 justify-content-between justify-content-sm-end w-100 w-sm-auto">
 
+                <!-- Quantity -->
+                <div class="d-inline-flex align-items-center border rounded px-1"
+                     data-cart-id="{{ $item->cart_id }}"
+                     data-price="{{ $item->p_price }}">
+                    <button type="button" class="btn btn-sm qty-minus px-2" data-cart-id="{{ $item->cart_id }}">−</button>
+                    <input type="number"
+                           class="qty-input text-center bg-transparent border-0"
+                           id="qtyInput-{{ $item->cart_id }}"
+                           value="{{ $item->p_quantity }}"
+                           min="1"
+                           style="width: 60px;">
+                    <button type="button" class="btn btn-sm qty-plus px-2" data-cart-id="{{ $item->cart_id }}">+</button>
+                </div>
 
-                      {{-- total --}}
-                        <div class="ms-5 col-md-2 text-center" id="itemTotal-{{ $item->cart_id }}">
-            <strong class="item-total" id="itemTotal-{{ $item->cart_id }}">
-                ₹{{ number_format(($item->final_price * ($item->quantity ?? 1)), 2) }}
-            </strong>
-                    </div>
-                    <!-- remove -->
-                    <div class="col-md-2 remove-icon">
-                        <form method="POST" action="{{ route('cart.remove', $item->cart_id) }}">
-                            @csrf
-                            @method('DELETE')
-                        <button type="button" 
-                                class="btn btn-sm ms-auto d-flex remove-btn delete-cart-item" 
-                                data-cart-id="{{ $item->cart_id }}"
-                                data-product-name="{{ $item->p_name }}">
-                                <i class="ri-close-large-line"></i>
-                        </button>
-                        </form>
-                            </div>
+                <!-- Item Total -->
+                <div class="text-center text-sm-end" style="min-width: 100px;">
+                    <strong class="item-total fs-5" id="itemTotal-{{ $item->cart_id }}">
+                        ₹{{ number_format($item->final_price * ($item->p_quantity ?? 1), 2, '.', ',') }}
+                    </strong>
+                </div>
 
-                    <form id="delete-form-{{ $item->cart_id }}" 
-                        action="{{ route('cart.remove', $item->cart_id) }}" 
-                        method="POST" 
-                        style="display:none;">
+                <!-- Remove -->
+                <div>
+                    <button type="button"
+                            class="btn btn-sm text-danger remove-btn delete-cart-item"
+                            data-cart-id="{{ $item->cart_id }}"
+                            data-product-name="{{ $item->p_name }}">
+                        <i class="ri-close-large-line"></i> 
+                    </button>
+
+                    <form id="delete-form-{{ $item->cart_id }}"
+                          action="{{ route('cart.remove', $item->cart_id) }}"
+                          method="POST"
+                          style="display:none;">
                         @csrf
                         @method('DELETE')
                     </form>
-
                 </div>
-            @empty
-                <div class="alert alert-info text-center">Your cart is empty</div>
-            @endforelse
 
-            <div class="d-flex justify-content-between mt-4">
-                <a href="/" class="btn btn-outline-secondary">Continue shopping</a>
-              <form action="{{ route('cart.clear') }}" method="POST" style="display:inline;">
-    @csrf
-    <!--  confirm dialog -->
-    <button type="submit" class="btn btn-outline-danger"
-            onclick="return confirm('Are you sure you want to clear the cart?')">
-        Clear cart
-    </button>
-</form>
             </div>
 
         </div>
+    @empty
+        <div class="alert alert-info text-center py-5 my-4">
+            Your cart is empty
+        </div>
+    @endforelse
+
+    <!-- Bottom buttons -->
+    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-between mt-4 pt-3 border-top">
+        <a href="/" class="btn btn-outline-secondary w-100 w-sm-auto">Continue shopping</a>
+
+        <form action="{{ route('cart.clear') }}" method="POST" class="w-100 w-sm-auto">
+            @csrf
+            <button type="submit" class="btn btn-outline-danger w-100"
+                    onclick="return confirm('Are you sure you want to clear the cart?')">
+                Clear cart
+            </button>
+        </form>
+    </div>
+
+</div>
     </div>
 
     <!-- RIGHT : CHECKOUT / SUMMARY -->
@@ -259,11 +257,6 @@
             <div class="summary-row text-danger">
                 <span>Discount</span>
                 <span>- ₹{{ number_format($discount ?? 0) }}</span>
-            </div>
-
-            <div class="summary-row">
-                <span>Shipping</span>
-                <span class="text-success">Free</span>
             </div>
 
             <hr>
@@ -292,535 +285,7 @@
 </section>
 
             <!-- cart end -->
-            <!-- cart-collection start -->
-            <section class="cart-collection section-ptb">
-                <div class="container">
-                    <div class="collection-category">
-                        <div class="section-capture text-center">
-                            <div class="section-title" data-animate="animate__fadeIn">
-                                <h2 class="section-heading">You may also like</h2>
-                            </div>
-                        </div>
-                        <div class="collection-wrap">
-                            <div class="cart-slider swiper" id="cart-slider">
-                                <div class="swiper-wrapper">
-                                    <div class="swiper-slide" data-animate="animate__fadeIn">
-                                        <div class="single-product">
-                                            <div class="row single-product-wrap">
-                                                <div class="product-image-col">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img">
-                                                            <img src="assets/image/product/p-1.jpg" class="w-100 img-fluid img1" alt="p-1">
-                                                            <img src="assets/image/product/p-2.jpg" class="w-100 img-fluid img2" alt="p-2">
-                                                        </a>
-                                                        <div class="product-action-wrap">
-                                                            <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
-                                                                <a href="javascript:void(0)" class="add-to-cart">
-                                                                    <span class="product-icon">
-                                                                        <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                    </span>
-                                                                    <span class="tooltip-text">add to cart</span>
-                                                                </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content">
-                                                    <div class="pro-content">
-                                                        <div class="product-title">
-                                                            <span class="d-block meb-7">Polyester / Chic</span>
-                                                            <span class="d-block heading-weight"><a href="product.html" class="primary-link">Pleated skater skirt</a></span>
-                                                        </div>
-                                                        <div class="product-price">
-                                                            <div class="price-box heading-weight">
-                                                                <span class="new-price primary-color">$79.00</span>
-                                                                <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$89.00</span></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="product-ratting">
-                                                            <span class="review-ratting">
-                                                                <span class="review-star">
-                                                                    <i class="ri-star-fill"></i>
-                                                                    <i class="ri-star-fill"></i>
-                                                                    <i class="ri-star-fill"></i>
-                                                                    <i class="ri-star-fill"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                </span>
-                                                                <span class="review-average">4.0<span class="review-caption">2 reviews</span></span>
-                                                            </span>
-                                                        </div>
-                                                        <div class="product-description">
-                                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry It is a long established fact that a will be distracted by the readable of at</p>
-                                                        </div>
-                                                        <div class="product-action-wrap">
-                                                            <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
-                                                                <a href="javascript:void(0)" class="add-to-cart">
-                                                                    <span class="product-icon">
-                                                                        <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                    </span>
-                                                                    <span class="tooltip-text">add to cart</span>
-                                                                </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="swiper-slide" data-animate="animate__fadeIn">
-                                        <div class="single-product">
-                                            <div class="row single-product-wrap">
-                                                <div class="product-image-col">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img">
-                                                            <img src="assets/image/product/p-3.jpg" class="w-100 img-fluid img1" alt="p-3">
-                                                            <img src="assets/image/product/p-4.jpg" class="w-100 img-fluid img2" alt="p-4">
-                                                            <span class="product-label product-label-new product-label-left">New</span>
-                                                        </a>
-                                                        <div class="product-action-wrap">
-                                                            <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
-                                                                <a href="javascript:void(0)" class="add-to-cart">
-                                                                    <span class="product-icon">
-                                                                        <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                    </span>
-                                                                    <span class="tooltip-text">add to cart</span>
-                                                                </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content">
-                                                    <div class="pro-content">
-                                                        <div class="product-title">
-                                                            <span class="d-block meb-7">Wool blend / Business</span>
-                                                            <span class="d-block heading-weight"><a href="product.html" class="primary-link">Tailored blazer jacket</a></span>
-                                                        </div>
-                                                        <div class="product-price">
-                                                            <div class="price-box heading-weight">
-                                                                <span class="new-price primary-color">$49.00</span>
-                                                                <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$59.00</span></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="product-ratting">
-                                                            <span class="review-ratting">
-                                                                <span class="review-star">
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                </span>
-                                                                <span class="review-average">No reviews<span class="review-caption">0 reviews</span></span>
-                                                            </span>
-                                                        </div>
-                                                        <div class="product-description">
-                                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry It is a long established fact that a will be distracted by the readable of at</p>
-                                                        </div>
-                                                        <div class="product-action-wrap">
-                                                            <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
-                                                                <a href="javascript:void(0)" class="add-to-cart">
-                                                                    <span class="product-icon">
-                                                                        <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                    </span>
-                                                                    <span class="tooltip-text">add to cart</span>
-                                                                </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="swiper-slide" data-animate="animate__fadeIn">
-                                        <div class="single-product">
-                                            <div class="row single-product-wrap">
-                                                <div class="product-image-col">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img">
-                                                            <img src="assets/image/product/p-5.jpg" class="w-100 img-fluid img1" alt="p-5">
-                                                            <img src="assets/image/product/p-6.jpg" class="w-100 img-fluid img2" alt="p-6">
-                                                        </a>
-                                                        <div class="product-action-wrap">
-                                                            <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
-                                                                <a href="javascript:void(0)" class="add-to-cart">
-                                                                    <span class="product-icon">
-                                                                        <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                    </span>
-                                                                    <span class="tooltip-text">add to cart</span>
-                                                                </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content">
-                                                    <div class="pro-content">
-                                                        <div class="product-title">
-                                                            <span class="d-block meb-7">Cotton / Playful</span>
-                                                            <span class="d-block heading-weight"><a href="product.html" class="primary-link">Girls floral ruffle top</a></span>
-                                                        </div>
-                                                        <div class="product-price">
-                                                            <div class="price-box heading-weight">
-                                                                <span class="new-price primary-color">$69.00</span>
-                                                                <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$79.00</span></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="product-ratting">
-                                                            <span class="review-ratting">
-                                                                <span class="review-star">
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                </span>
-                                                                <span class="review-average">No reviews<span class="review-caption">0 reviews</span></span>
-                                                            </span>
-                                                        </div>
-                                                        <div class="product-description">
-                                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry It is a long established fact that a will be distracted by the readable of at</p>
-                                                        </div>
-                                                        <div class="product-action-wrap">
-                                                            <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
-                                                                <a href="javascript:void(0)" class="add-to-cart">
-                                                                    <span class="product-icon">
-                                                                        <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                    </span>
-                                                                    <span class="tooltip-text">add to cart</span>
-                                                                </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="swiper-slide" data-animate="animate__fadeIn">
-                                        <div class="single-product">
-                                            <div class="row single-product-wrap">
-                                                <div class="product-image-col">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img">
-                                                            <img src="assets/image/product/p-7.jpg" class="w-100 img-fluid img1" alt="p-7">
-                                                            <img src="assets/image/product/p-8.jpg" class="w-100 img-fluid img2" alt="p-8">
-                                                            <span class="product-label product-label-discount product-label-left">5% Off</span>
-                                                        </a>
-                                                        <div class="product-action-wrap">
-                                                            <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
-                                                                <a href="javascript:void(0)" class="add-to-cart">
-                                                                    <span class="product-icon">
-                                                                        <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                    </span>
-                                                                    <span class="tooltip-text">add to cart</span>
-                                                                </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content">
-                                                    <div class="pro-content">
-                                                        <div class="product-title">
-                                                            <span class="d-block meb-7">Cotton / Casual</span>
-                                                            <span class="d-block heading-weight"><a href="product.html" class="primary-link">Classic cotton t-shirt</a></span>
-                                                        </div>
-                                                        <div class="product-price">
-                                                            <div class="price-box heading-weight">
-                                                                <span class="new-price primary-color">$49.00</span>
-                                                                <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$54.00</span></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="product-ratting">
-                                                            <span class="review-ratting">
-                                                                <span class="review-star">
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                </span>
-                                                                <span class="review-average">No reviews<span class="review-caption">0 reviews</span></span>
-                                                            </span>
-                                                        </div>
-                                                        <div class="product-description">
-                                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry It is a long established fact that a will be distracted by the readable of at</p>
-                                                        </div>
-                                                        <div class="product-action-wrap">
-                                                            <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
-                                                                <a href="javascript:void(0)" class="add-to-cart">
-                                                                    <span class="product-icon">
-                                                                        <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                    </span>
-                                                                    <span class="tooltip-text">add to cart</span>
-                                                                </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="swiper-slide" data-animate="animate__fadeIn">
-                                        <div class="single-product">
-                                            <div class="row single-product-wrap">
-                                                <div class="product-image-col">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img">
-                                                            <img src="assets/image/product/p-9.jpg" class="w-100 img-fluid img1" alt="p-9">
-                                                            <img src="assets/image/product/p-10.jpg" class="w-100 img-fluid img2" alt="p-10">
-                                                        </a>
-                                                        <div class="product-action-wrap">
-                                                            <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
-                                                                <a href="javascript:void(0)" class="add-to-cart">
-                                                                    <span class="product-icon">
-                                                                        <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                    </span>
-                                                                    <span class="tooltip-text">add to cart</span>
-                                                                </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content">
-                                                    <div class="pro-content">
-                                                        <div class="product-title">
-                                                            <span class="d-block meb-7">Linen blend / formal</span>
-                                                            <span class="d-block heading-weight"><a href="product.html" class="primary-link">Slim fit linen shirt</a></span>
-                                                        </div>
-                                                        <div class="product-price">
-                                                            <div class="price-box heading-weight">
-                                                                <span class="new-price primary-color">$89.00</span>
-                                                                <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$99.00</span></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="product-ratting">
-                                                            <span class="review-ratting">
-                                                                <span class="review-star">
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                </span>
-                                                                <span class="review-average">No reviews<span class="review-caption">0 reviews</span></span>
-                                                            </span>
-                                                        </div>
-                                                        <div class="product-description">
-                                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry It is a long established fact that a will be distracted by the readable of at</p>
-                                                        </div>
-                                                        <div class="product-action-wrap">
-                                                            <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
-                                                                <a href="javascript:void(0)" class="add-to-cart">
-                                                                    <span class="product-icon">
-                                                                        <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                    </span>
-                                                                    <span class="tooltip-text">add to cart</span>
-                                                                </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="swiper-slide" data-animate="animate__fadeIn">
-                                        <div class="single-product">
-                                            <div class="row single-product-wrap">
-                                                <div class="product-image-col">
-                                                    <div class="product-image">
-                                                        <a href="product.html" class="pro-img">
-                                                            <img src="assets/image/product/p-11.jpg" class="w-100 img-fluid img1" alt="p-11">
-                                                            <img src="assets/image/product/p-12.jpg" class="w-100 img-fluid img2" alt="p-12">
-                                                            <span class="product-label product-label-sale product-label-left">Sale</span>
-                                                        </a>
-                                                        <div class="product-action-wrap">
-                                                            <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
-                                                                <a href="javascript:void(0)" class="add-to-cart">
-                                                                    <span class="product-icon">
-                                                                        <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                    </span>
-                                                                    <span class="tooltip-text">add to cart</span>
-                                                                </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content">
-                                                    <div class="pro-content">
-                                                        <div class="product-title">
-                                                            <span class="d-block meb-7">Viscose / Sleeveless</span>
-                                                            <span class="d-block heading-weight"><a href="product.html" class="primary-link">Flowy midi dress</a></span>
-                                                        </div>
-                                                        <div class="product-price">
-                                                            <div class="price-box heading-weight">
-                                                                <span class="new-price primary-color">$79.00</span>
-                                                                <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$84.00</span></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="product-ratting">
-                                                            <span class="review-ratting">
-                                                                <span class="review-star">
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                    <i class="ri-star-line"></i>
-                                                                </span>
-                                                                <span class="review-average">No reviews<span class="review-caption">0 reviews</span></span>
-                                                            </span>
-                                                        </div>
-                                                        <div class="product-description">
-                                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry It is a long established fact that a will be distracted by the readable of at</p>
-                                                        </div>
-                                                        <div class="product-action-wrap">
-                                                            <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
-                                                                <a href="javascript:void(0)" class="add-to-cart">
-                                                                    <span class="product-icon">
-                                                                        <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                        <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                        <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                    </span>
-                                                                    <span class="tooltip-text">add to cart</span>
-                                                                </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-buttons">
-                                <div class="swiper-buttons-wrap">
-                                    <button type="button" class="swiper-prev swiper-prev-cart" aria-label="Arrow previous"><i class="ri-arrow-left-line d-block lh-1"></i></button>
-                                    <button type="button" class="swiper-next swiper-next-cart" aria-label="Arrow next"><i class="ri-arrow-right-line d-block lh-1"></i></button>
-                                </div>
-                            </div>
-                            <div class="swiper-dots">
-                                <div class="swiper-pagination swiper-pagination-cart"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <!-- cart-collection end -->
+           
         </main>
         <!-- main end -->
 
@@ -829,6 +294,23 @@
         @push('scripts')
 
 @push('scripts')
+
+@if(session('order_placed'))
+<script>
+    Swal.fire({
+        title: 'Order Placed Successfully!',
+        text: 'Thank you for shopping with us.',
+        icon: 'success',
+        confirmButtonText: 'View Order',
+        allowOutsideClick: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // page already loaded hai, kuch extra nahi
+        }
+    });
+</script>
+@endif
+
 
 <script>
 // Delete cart item

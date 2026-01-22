@@ -1,6 +1,246 @@
 <?php $__env->startSection('title', 'home-page'); ?>
 
 
+<?php $__env->startPush('styles'); ?>
+<style>
+
+ .message-card {
+            max-width: 350px;
+            animation: slideUp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+        
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card {
+            border-radius: 24px !important;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .gradient-header {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            position: relative;
+            padding: 28px 24px !important;
+        }
+
+        .gradient-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+            opacity: 0.5;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .icon-circle {
+            width: 56px;
+            height: 56px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 12px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+            }
+        }
+
+        .card-body {
+            background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);
+            padding: 20px 10px !important;
+        }
+
+        .info-text {
+            color: #6c757d;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-text i {
+            color: #ff6b35;
+            font-size: 20px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border: 2px solid #e9ecef !important;
+            border-radius: 16px !important;
+            padding: 16px 20px 16px 50px !important;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+        }
+
+        .form-control:focus {
+            border-color: #ff6b35 !important;
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1) !important;
+            transform: translateY(-2px);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ff6b35;
+            font-size: 18px;
+            z-index: 10;
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+            border: none;
+            border-radius: 16px;
+            padding: 16px 32px;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-send::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-send:hover::before {
+            left: 100%;
+        }
+
+        .btn-send:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(255, 107, 53, 0.35);
+            background: linear-gradient(135deg, #ff5722 0%, #ff6b35 100%);
+        }
+
+        .btn-send:active {
+            transform: translateY(-1px);
+        }
+
+        .decorative-dots {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            opacity: 0.1;
+        }
+
+        .dots-top-right {
+            top: -20px;
+            right: -20px;
+            background: radial-gradient(circle, #ff6b35 2px, transparent 2px);
+            background-size: 20px 20px;
+        }
+
+        .dots-bottom-left {
+            bottom: -20px;
+            left: -20px;
+            background: radial-gradient(circle, #6c757d 2px, transparent 2px);
+            background-size: 20px 20px;
+        }
+
+        .success-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 16px;
+            animation: slideIn 0.5s ease-out 0.3s both;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .message-fab {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+ background: linear-gradient(135deg, #ff5722 0%, #ff6b35 100%);
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 1050;
+}
+
+#messageBox {
+    position: fixed;
+    bottom: 100px;
+    right: 25px;
+    width: 360px;
+    z-index: 1040;
+}
+
+   
+</style>
+
+
+
+<?php $__env->stopPush(); ?>
+
+
   <?php $__env->startSection('content'); ?>
 
         <!-- preloader end -->
@@ -47,6 +287,7 @@
                 </div>
             </div>
             <!-- service-area end -->
+
             <!-- main-slider start -->
             <section class="slider-content position-relative">
                 <div class="home-slider swiper" id="home-slider">
@@ -176,7 +417,7 @@
                                                     <span class="primary-color text-uppercase">2+ item</span>
                                                 </div>
                                                 <div class="d-xl-none mst-7">
-                                                    <a href="collection.html" class="link-btn">Shop now</a>
+                                                    <a href="<?php echo e(route('kidstoyscollection1')); ?>" class="link-btn">Shop now</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -187,7 +428,7 @@
                                                 <span class="btn-style tertiary-btn banner-btn position-absolute top-50 start-50 translate-middle z-1 text-nowrap">Shop now</span>
                                                 <img src="assets/image/collection/collection-4.jpg" class="w-100 img-fluid" alt="collection-4">
                                             </a>
-                                            <a href="collection.html" class="d-block d-xl-none banner-img br-hidden">
+                                            <a href="<?php echo e(route('womentops/t-shirtscollection')); ?>" class="d-block d-xl-none banner-img br-hidden">
                                                 <img src="assets/image/collection/collection-4.jpg" class="w-100 img-fluid" alt="collection-4">
                                             </a>
                                             <div class="cat-content pst-15">
@@ -196,7 +437,7 @@
                                                     <span class="primary-color text-uppercase">15+ item</span>
                                                 </div>
                                                 <div class="d-xl-none mst-7">
-                                                    <a href="collection.html" class="link-btn">Shop now</a>
+                                                    <a href="<?php echo e(route('womentops/t-shirtscollection')); ?>" class="link-btn">Shop now</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -207,7 +448,7 @@
                                                 <span class="btn-style tertiary-btn banner-btn position-absolute top-50 start-50 translate-middle z-1 text-nowrap">Shop now</span>
                                                 <img src="assets/image/collection/collection-5.jpg" class="w-100 img-fluid" alt="collection-5">
                                             </a>
-                                            <a href="collection.html" class="d-block d-xl-none banner-img br-hidden">
+                                            <a href="<?php echo e(route('menshirtcollection')); ?>" class="d-block d-xl-none banner-img br-hidden">
                                                 <img src="assets/image/collection/collection-5.jpg" class="w-100 img-fluid" alt="collection-5">
                                             </a>
                                             <div class="cat-content pst-15">
@@ -216,47 +457,47 @@
                                                     <span class="primary-color text-uppercase">10+ item</span>
                                                 </div>
                                                 <div class="d-xl-none mst-7">
-                                                    <a href="collection.html" class="link-btn">Shop now</a>
+                                                    <a href="<?php echo e(route('menshirtcollection')); ?>" class="link-btn">Shop now</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="swiper-slide h-auto d-flex" data-animate="animate__fadeIn">
                                         <div class="cat-block banner-hover w-100 ptb-15 plr-15 body-bg border-radius">
-                                            <a href="collection.html" class="d-none d-xl-block position-relative banner-img br-hidden">
+                                            <a href="<?php echo e(route('womenjeanscollection')); ?>" class="d-none d-xl-block position-relative banner-img br-hidden">
                                                 <span class="btn-style tertiary-btn banner-btn position-absolute top-50 start-50 translate-middle z-1 text-nowrap">Shop now</span>
                                                 <img src="assets/image/collection/collection-6.jpg" class="w-100 img-fluid" alt="collection-6">
                                             </a>
-                                            <a href="collection.html" class="d-block d-xl-none banner-img br-hidden">
+                                            <a href="<?php echo e(route('womenjeanscollection')); ?>" class="d-block d-xl-none banner-img br-hidden">
                                                 <img src="assets/image/collection/collection-6.jpg" class="w-100 img-fluid" alt="collection-6">
                                             </a>
                                             <div class="cat-content pst-15">
                                                 <div class="ul-mtm15 justify-content-between heading-weight">
-                                                    <span class="heading-color text-truncate">Jumpsuits dresses</span>
+                                                    <span class="heading-color text-truncate">Women jeans</span>
                                                     <span class="primary-color text-uppercase">5+ item</span>
                                                 </div>
                                                 <div class="d-xl-none mst-7">
-                                                    <a href="collection.html" class="link-btn">Shop now</a>
+                                                    <a href="<?php echo e(route('womenjeanscollection')); ?>" class="link-btn">Shop now</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="swiper-slide h-auto d-flex" data-animate="animate__fadeIn">
                                         <div class="cat-block banner-hover w-100 ptb-15 plr-15 body-bg border-radius">
-                                            <a href="collection.html" class="d-none d-xl-block position-relative banner-img br-hidden">
+                                            <a href="<?php echo e(route('menformalpantscollection')); ?>" class="d-none d-xl-block position-relative banner-img br-hidden">
                                                 <span class="btn-style tertiary-btn banner-btn position-absolute top-50 start-50 translate-middle z-1 text-nowrap">Shop now</span>
                                                 <img src="assets/image/collection/collection-7.jpg" class="w-100 img-fluid" alt="collection-7">
                                             </a>
-                                            <a href="collection.html" class="d-block d-xl-none banner-img br-hidden">
+                                            <a href="<?php echo e(route('menformalpantscollection')); ?>" class="d-block d-xl-none banner-img br-hidden">
                                                 <img src="assets/image/collection/collection-7.jpg" class="w-100 img-fluid" alt="collection-7">
                                             </a>
                                             <div class="cat-content pst-15">
                                                 <div class="ul-mtm15 justify-content-between heading-weight">
-                                                    <span class="heading-color text-truncate">Denim jeans</span>
+                                                    <span class="heading-color text-truncate">Men Jeans and pants</span>
                                                     <span class="primary-color text-uppercase">20+ item</span>
                                                 </div>
                                                 <div class="d-xl-none mst-7">
-                                                    <a href="collection.html" class="link-btn">Shop now</a>
+                                                    <a href="<?php echo e(route('menformalpantscollection')); ?>" class="link-btn">Shop now</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -415,90 +656,114 @@
                         <div class="row row-mtm100 flex-lg-row-reverse">
                             <div class="col-12 col-lg-6 col-xl-7">
                                 <div class="collection-wrap">
-                                    <div class="collection-product-slider swiper" id="trend-product-slider">
+                                <div class="collection-product-slider swiper" id="trend-product-slider">
                                         <div class="swiper-wrapper">
                                             <div class="swiper-slide" data-animate="animate__fadeIn">
-                                                <div class="single-product">
-                                                    <div class="row single-product-wrap">
-                                                        <div class="product-image-col">
-                                                            <div class="product-image">
-                                                                <a href="product.html" class="pro-img">
-                                                                    <img src="assets/image/product/p-1.jpg" class="w-100 img-fluid img1" alt="p-1">
-                                                                    <img src="assets/image/product/p-2.jpg" class="w-100 img-fluid img2" alt="p-2">
-                                                                </a>
-                                                                <div class="product-action-wrap">
-                                                                    <div class="product-action">
-                                                                        <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                            <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                            <span class="tooltip-text">wishlist</span>
-                                                                        </a>
-                                                                        <a href="javascript:void(0)" class="add-to-cart">
-                                                                            <span class="product-icon">
-                                                                                <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                                <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                                <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                            </span>
-                                                                            <span class="tooltip-text">add to cart</span>
-                                                                        </a>
-                                                                        <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                            <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                            <span class="tooltip-text">quickview</span>
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="product-content">
-                                                            <div class="pro-content">
-                                                                <div class="product-title">
-                                                                    <span class="d-block meb-7">Polyester / Chic</span>
-                                                                    <span class="d-block heading-weight"><a href="product.html" class="primary-link">Pleated skater skirt</a></span>
-                                                                </div>
-                                                                <div class="product-price">
-                                                                    <div class="price-box heading-weight">
-                                                                        <span class="new-price primary-color">$79.00</span>
-                                                                        <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$89.00</span></span>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="product-ratting">
-                                                                    <span class="review-ratting">
-                                                                        <span class="review-star">
-                                                                            <i class="ri-star-fill"></i>
-                                                                            <i class="ri-star-fill"></i>
-                                                                            <i class="ri-star-fill"></i>
-                                                                            <i class="ri-star-fill"></i>
-                                                                            <i class="ri-star-line"></i>
-                                                                        </span>
-                                                                        <span class="review-average">4.0<span class="review-caption">2 reviews</span></span>
-                                                                    </span>
-                                                                </div>
-                                                                <div class="product-description">
-                                                                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry It is a long established fact that a will be distracted by the readable of at</p>
-                                                                </div>
-                                                                <div class="product-action-wrap">
-                                                                    <div class="product-action">
-                                                                        <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                            <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                            <span class="tooltip-text">wishlist</span>
-                                                                        </a>
-                                                                        <a href="javascript:void(0)" class="add-to-cart">
-                                                                            <span class="product-icon">
-                                                                                <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
-                                                                                <span class="product-loader-icon icon-16"><i class="ri-loader-4-line d-block lh-1"></i></span>
-                                                                                <span class="product-check-icon icon-16"><i class="ri-check-line d-block lh-1"></i></span>
-                                                                            </span>
-                                                                            <span class="tooltip-text">add to cart</span>
-                                                                        </a>
-                                                                        <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                            <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                            <span class="tooltip-text">quickview</span>
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                               <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
+<div class="col-6 col-md-4 shop-col" data-animate="animate__fadeIn">
+    <div class="single-product">
+        <div class="row single-product-wrap">
+
+            <!-- Product Image Column -->
+            <div class="product-image-col">
+                <div class="product-image position-relative">
+                    <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>" class="pro-img">
+                        <img src="<?php echo e(asset('storage/colors/' . $product->img_path)); ?>"
+                             class="w-100 img-fluid img1"
+                             alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
+                             style="height:400px; object-fit:contain;">
+
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($product->hover_img_path)): ?>
+                        <img src="<?php echo e(asset('storage/colors/' . $product->hover_img_path)); ?>"
+                             class="w-100 img-fluid img2"
+                             alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
+                             style="height:400px; object-fit:contain;">
+                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                    </a>
+
+                    <!-- Product Actions -->
+                    <div class="product-action-wrap">
+                        <div class="product-action">
+                            <a href="javascript:void(0)"
+                               class="add-to-wishlist"
+                               data-product-id="<?php echo e($product->p_id); ?>"
+                               data-redirect="<?php echo e(route('wishlist.index')); ?>">
+                                <span class="product-icon">
+                                    <i class="ri-heart-line d-block icon-16 lh-1"></i>
+                                </span>
+                                <span class="tooltip-text">wishlist</span>
+                            </a>
+
+                            <a href="javascript:void(0)" class="add-to-cart">
+                                <span class="product-icon">
+                                    <span class="product-bag-icon icon-16">
+                                        <i class="ri-shopping-bag-3-line d-block lh-1"></i>
+                                    </span>
+                                    <span class="product-loader-icon icon-16">
+                                        <i class="ri-loader-4-line d-block lh-1"></i>
+                                    </span>
+                                    <span class="product-check-icon icon-16">
+                                        <i class="ri-check-line d-block lh-1"></i>
+                                    </span>
+                                </span>
+                                <span class="tooltip-text">add to cart</span>
+                            </a>
+
+                            <a href="#quickview-modal"
+                               data-bs-toggle="modal"
+                               class="quick-view">
+                                <span class="product-icon">
+                                    <i class="ri-eye-line d-block icon-16 lh-1"></i>
+                                </span>
+                                <span class="tooltip-text">quickview</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Content -->
+            <div class="product-content mt-2">
+                <div class="pro-content">
+                    <div class="product-title mb-1">
+                        <a href="<?php echo e(url('product-view/'.$product->p_id)); ?>"
+                           class="primary-link">
+                            <?php echo e($product->p_name); ?>
+
+                        </a>
+                    </div>
+
+                    <div class="product-price mb-1 heading-weight">
+                        <span class="new-price primary-color">
+                            ₹<?php echo e(number_format($product->p_price, 2)); ?>
+
+                        </span>
+
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($product->p_old_price): ?>
+                        <span class="old-price ms-2">
+                            <span class="text-decoration-line-through">
+                                ₹<?php echo e(number_format($product->p_old_price, 2)); ?>
+
+                            </span>
+                        </span>
+                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                    </div>
+
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($product->p_description)): ?>
+                    <div class="product-description">
+                        <p><?php echo e(Str::limit($product->p_description, 90)); ?></p>
+                    </div>
+                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
+<p class="text-center w-100">No products found!</p>
+<?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
                                             </div>
                                             <div class="swiper-slide" data-animate="animate__fadeIn">
                                                 <div class="single-product">
@@ -2105,6 +2370,8 @@
                 </div>
             </section>
             <!-- category-product end -->
+
+     
             <!-- blog-area start -->
             <section class="blog-area section-ptb">
                 <div class="container-fluid">
@@ -2262,6 +2529,72 @@
                 </div>
             </section>
             <!-- blog-area end -->
+
+
+            
+
+
+
+<button id="messageToggleBtn" class="message-fab">
+    <i class="bi bi-chat-dots-fill"></i>
+</button>
+
+
+   <div id="messageBox" class="message-card w-100 d-none">
+    <div class="card border-0 shadow-lg position-relative overflow-hidden">
+        <div class="decorative-dots dots-top-right"></div>
+        <div class="decorative-dots dots-bottom-left"></div>
+
+        <div class="card-header gradient-header border-0">
+            <div class="header-content text-center">
+                <div class="icon-circle mx-auto">✉️</div>
+                <h4 class="text-white fw-bold mb-0">Send Us a Message</h4>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="success-badge">
+                <i class="bi bi-check-circle-fill"></i>
+                Secure & Encrypted
+            </div>
+
+            <p class="info-text">
+                <i class="bi bi-chat-heart-fill"></i>
+                We'd love to hear from you. Please leave your message below.
+            </p>
+
+            <div class="input-wrapper">
+                <i class="bi bi-pencil-fill input-icon"></i>
+                <input 
+                    type="text"
+                    class="form-control form-control-lg"
+                    placeholder="Type your message here..."
+                >
+            </div>
+
+            <button 
+                type="submit"
+                class="btn btn-send text-white w-100 fw-semibold d-flex align-items-center justify-content-center gap-2"
+            >
+                <i class="bi bi-send-fill"></i> Send Message
+            </button>
+
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    <i class="bi bi-shield-check"></i> Your privacy is protected
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+                
         </main>
         <!-- main end -->
 
@@ -3215,7 +3548,7 @@
         <!-- plugin js -->
   <?php $__env->startPush('scripts'); ?>
        
-        <?php if(session('swal_success')): ?>
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('swal_success')): ?>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         Swal.fire({
@@ -3226,12 +3559,13 @@
         });
     });
 </script>
-<?php endif; ?>
+<?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
-
-
-
-
+<script>
+    document.getElementById("messageToggleBtn").addEventListener("click", function () {
+        document.getElementById("messageBox").classList.toggle("d-none");
+    });
+</script>
         <?php $__env->stopPush(); ?>
 
 

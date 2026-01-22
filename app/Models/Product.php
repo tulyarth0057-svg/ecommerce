@@ -73,6 +73,11 @@ class Product extends Model
     {
         return $this->belongsToMany(User::class, 'wishlists', 'p_id', 'user_id')->withTimestamps();
     }
+    
+     public function color()
+    {
+        return $this->belongsTo(Color::class, 'p_color_id', 'color_id');
+    }
 
 
 }

@@ -25,7 +25,157 @@
     border-radius: 0.25rem;
 
 }
+.wish-table-info {
+    background: #fff;
+    transition: box-shadow 0.2s;
+}
 
+.wish-table-info:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.whistlist-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+}
+
+@media (max-width: 575px) {
+    .wish-item-content {
+        flex-direction: row !important;
+        align-items: center !important;
+    }
+    
+    .wish-remove {
+        font-size: 1.4rem;
+    }
+}
+
+/* section whisltist */
+
+/* Professional Wishlist Styling */
+.wish-area {
+    padding: 3rem 0;    
+}
+
+.wish-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.wish-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-2px);
+}
+
+.wish-img {
+    border: 1px solid #e9ecef;
+    transition: transform 0.3s ease;
+}
+
+.wish-img:hover {
+    transform: scale(1.05);
+}
+
+.product-title {
+    font-size: 1rem;
+    line-height: 1.4;
+    transition: color 0.2s ease;
+}
+
+.product-title:hover,
+.hover-primary:hover {
+    color: #0d6efd !important;
+}
+
+.price-display {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.badge {
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    color: white;
+    background-color: #f86335;
+}
+
+.bg-success-subtle {
+    background-color: #d1e7dd !important;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border: none;
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
+
+.wish-remove {
+    transition: all 0.2s ease;
+}
+
+.wish-remove:hover {
+    transform: scale(1.1);
+    color: #dc3545 !important;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.hover-shadow {
+    transition: box-shadow 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+    .wish-card {
+        padding: 0.5rem;
+    }
+    
+    .wish-img {
+        width: 80px !important;
+        height: 80px !important;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+[data-animate] {
+    animation: fadeIn 0.6s ease-out;
+}
+.cart-button{
+    background-color:#f86335;
+    border: none;
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    color: white;
+
+    &:hover{
+        background-color: grey;
+        color:white;
+
+    }
+
+}
 
 </style>
 @endpush
@@ -42,113 +192,239 @@
 
 
         <main id="main">
+
+
             <!-- wishlist-page strat -->
-            <section class="wish-area section-ptb">
-                <div class="container">
-                       
-                        <!-- add product to whistlist -->
 
-                        <div class="wish-itemview section-pt">
-                            <div class="wish-title d-flex align-items-center justify-content-between peb-30 beb" data-animate="animate__fadeIn">
-                                <h6 class="font-18">My favorites</h6>
-                                <span class="wish-count"><span class="wish-counter">4</span>Items</span>
+
+{{-- 
+<section class="wish-area ">
+    <div class="container">
+        <!-- add product to wishlist -->
+
+        <div class="wish-itemview section-pt">
+            <div class="wish-title d-flex align-items-center justify-content-between peb-30 beb" data-animate="animate__fadeIn">
+                <h6 class="font-18">My favorites</h6>
+              <span class="wish-counter">
+                    {{ $wishlistCount }} Items
+            </span>
+              
+            </div>
+
+            <div class="wish-table">
+                <!-- Desktop table header - hidden on mobile -->
+                <div class="wish-table-heading d-none d-md-block ptb-30 beb" data-animate="animate__fadeIn">
+                    <div class="row align-items-center">
+                        <div class="col-md-5 heading-color heading-weight">Product</div>
+                        <div class="col-md-3 heading-color heading-weight">Qty</div>
+                        <div class="col-md-2 heading-color heading-weight">Total</div>
+                        <div class="col-md-2 heading-color heading-weight text-end">Option</div>
+                    </div>
+                </div>
+
+                <div class="wish-table-data">
+                    @foreach($wishlists as $wishlist)
+                        <div class="wish-table-info ptb-20 beb border rounded-3 mb-4" data-animate="animate__fadeIn">
+                            <div class="row align-items-center g-3">
+
+                                <!-- Product image + info -->
+                                <div class="col-8 col-sm-9 col-md-8">
+                                    <div class="wish-item-content d-flex align-items-start flex-wrap gap-3">
+                                        <div class="wish-item-image flex-shrink-0">
+                                            <a href="{{ url('product-view/'.$wishlist->p_id) }}" class="d-block">
+                                                <img src="{{ asset('storage/colors/' . $wishlist->product->colors->first()->images->first()->img_path) }}"
+                                                     alt="{{ $wishlist->product->img_alt_text ?? $wishlist->product->p_name }}"
+                                                     class="whistlist-img img-fluid rounded"
+                                                     style="max-width: 90px; height: auto; object-fit: cover;">
+                                            </a>
+                                        </div>
+
+                                        <div class="wish-item-info">
+                                            <a href="{{ url('product-view/'.$wishlist->p_id) }}"
+                                               class="primary-link heading-weight d-block mb-2">
+                                                {{ $wishlist->product->p_name }}
+                                            </a>
+
+                                            <div class="wish-item-price heading-color heading-weight">
+                                                <small class="d-block text-muted">Price:</small>
+                                                <span>₹{{ number_format($wishlist->product->p_price) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Total (now visible on all sizes, aligned better) -->
+                                <div class="col-4 col-sm-3 col-md-2 text-md-center">
+                                    <div class="wish-total-price heading-color heading-weight">
+                                        <small class="d-block d-md-none text-muted">Total:</small>
+                                        <span class="text-danger fw-bold">
+                                            ₹{{ number_format($wishlist->product->p_price) }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Remove button -->
+                                <div class="col-12 col-sm-12 col-md-2 text-md-end mt-3 mt-md-0">
+                                    <form action="{{ route('wishlist.remove', $wishlist->w_id) }}"
+                                          method="POST"
+                                          class="delete-wishlist-form d-inline">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button type="button"
+                                                class="wish-remove text-danger icon-20 bg-transparent border-0 p-0">
+                                            <i class="ri-close-large-line fs-5"></i>
+                                        </button>
+                                    </form>
+                                </div>
+
                             </div>
-                            <div class="wish-table">
-                                <div class="wish-table-heading d-none d-md-block ptb-30 beb" data-animate="animate__fadeIn">
-                                    <div class="row">
-                                        <div class="col-md-5 heading-color heading-weight">Product</div>
-                                        <div class="col-md-3 heading-color heading-weight">Qty</div>
-                                        <div class="col-md-2 heading-color heading-weight">Total</div>
-                                        <div class="col-md-2 heading-color heading-weight text-end">Option</div>
-                                    </div>
-                                </div>
-                                <div class="wish-table-data">
-                                    <div class="wish-table-info ptb-30 beb" data-animate="animate__fadeIn">
-                                        @foreach($wishlists as $wishlist)                               
-                                    <div class="row row-mtm w-750 m-auto mb-4 p-4 border">
-                                        <div class="wish-table-item">
-                                            <div class="row row-mtm30">
 
-                                                <!-- Product -->
-                                                <div class="col-12 col-md-8">
-                                                    <div class="wish-item-content d-flex flex-wrap">
-                                                        <div class="wish-item-image ">
-                                                                <a href="{{ url('product-view/'.$wishlist->p_id) }}" class="d-block" class="d-block br-hidden">
-                                                            <img src="{{ asset('storage/colors/' . $wishlist->product->colors->first()->images->first()->img_path) }}"
-                                                            alt="{{ $wishlist->product->img_alt_text ?? $wishlist->product->p_name }}" class="whistlist-img"
-                                                            >
-                                                            </a>
-                                                        </div>
-
-                                                        <div class="wish-item-info p-2 ms-3 ">
-                                                            <a href="{{ url('product-view/'.$wishlist->p_id) }}" class="primary-link heading-weight">
-                                    
-                                                                <label for="">Product name:</label><br>
-                                                                {{ $wishlist->product->p_name }}
-                                                            </a>
-
-                                                            <div class="wish-item-price heading-color heading-weight mst-7 ">
-                                                                <label for="">Price :</label><br>
-                                                                <span>₹{{ $wishlist->product->p_price }}</span>
-                                                                
-                                                            </div>
-
-                                            
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                               <!-- Total -->
-                                                    <div class="col-3 col-md-2">
-                                                        <div class="wish-total-price heading-color heading-weight">
-                                                        <label for="">total price :</label>
-                                                            <span class="text-danger"> ₹{{ $wishlist->product->p_price }}</span>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Remove -->
-                                                <div class="col-3 col-md-2 text-end">
-                                                    <form action="{{ route('wishlist.remove', $wishlist->w_id) }}" 
-                                                        method="POST" 
-                                                        class="delete-wishlist-form">
-                                                        @csrf
-                                                        @method('DELETE')
-
-                                                        <button type="button" class="wish-remove text-danger icon-16">
-                                                            <i class="ri-close-large-line"></i>
-                                                        </button>
-                                                    </form>
-                                                </div>
-
-
-                                                </div>
-                                            </div>
-
-                                            <!-- Add to Cart -->
-                                            <div class="wish-note-cart">
-                                    <button class="btn btn-cart bg-dark p-2 text-white w-100 add-wishlist-to-cart"
+                            <!-- Add to Cart button (full width on mobile) -->
+                            <div class="wish-note-cart mt-4">
+                                <button class="btn btn-cart bg-dark text-white w-100 add-wishlist-to-cart"
                                         data-product-id="{{ $wishlist->product->p_id }}">
-                                        Add to Cart
-                                    </button>
-
-
-                                            </div>
-                                        </div>
-                                        @endforeach
-
-                                        </div>
-                                        </div>
-                                    </div>
-                            
-                                        </div>
-                                    </div>
-                                </div>
+                                    Add to Cart
+                                </button>
                             </div>
                         </div>
-                       
-                    </form>
+                    @endforeach
                 </div>
-            </section>
+            </div>
+        </div>
+    </div>
+</section> --}}
+
+
+
+<section class="wish-area bg-light">
+    <div class="container">
+        <!-- Wishlist Header -->
+        <div class="wish-itemview section-pt">
+            <div class="wish-header mb-4 p-4 bg-white rounded-3 shadow-sm" data-animate="animate__fadeIn">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <div>
+                        <h4 class="mb-1 fw-bold text-dark">My Wishlist</h4>
+                        <p class="text-muted mb-0 small">Save items you love for later</p>
+                    </div>
+                    <div class="wish-count">
+                        <span class="badge rounded-pill px-3 py-2">
+                            <span class="wish-counter fw-semibold"> {{ $wishlistCount }} Items</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop Table Header -->
+            <div class="wish-table-heading d-none d-lg-block mb-3 px-3" data-animate="animate__fadeIn">
+                <div class="row align-items-center text-uppercase small fw-semibold text-muted">
+                    <div class="col-lg-5">Product Details</div>
+                    <div class="col-lg-2 text-center">Unit Price</div>
+                    <div class="col-lg-2 text-center">Stock Status</div>
+                    <div class="col-lg-2 text-center">Action</div>
+                    <div class="col-lg-1 text-center">Remove</div>
+                </div>
+            </div>
+
+            <!-- Wishlist Items -->
+            <div class="wish-table-data">
+                @foreach($wishlists as $wishlist)
+                    <div class="wish-card mb-3 bg-white rounded-3 shadow-sm overflow-hidden hover-shadow transition" data-animate="animate__fadeIn">
+                        <div class="p-3 p-md-4">
+                            <div class="row align-items-center g-3">
+
+                                <!-- Product Image & Info -->
+                                <div class="col-12 col-lg-5">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <!-- Image -->
+                                        <div class="wish-image-wrapper position-relative flex-shrink-0">
+                                            <a href="{{ url('product-view/'.$wishlist->p_id) }}" class="d-block">
+                                                <img src="{{ asset('storage/colors/' . $wishlist->product->colors->first()->images->first()->img_path) }}"
+                                                     alt="{{ $wishlist->product->img_alt_text ?? $wishlist->product->p_name }}"
+                                                     class="wish-img rounded-3"
+                                                     style="width: 100px; height: 100px; object-fit: cover;">
+                                            </a>
+                                        </div>
+
+                                        <!-- Product Info -->
+                                        <div class="wish-info flex-grow-1">
+                                            <a href="{{ url('product-view/'.$wishlist->p_id) }}"
+                                               class="product-title text-dark text-decoration-none fw-semibold d-block mb-2 hover-primary">
+                                                {{ $wishlist->product->p_name }}
+                                            </a>
+                                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                <span class="badge bg-light text-dark small">
+                                                    <i class="ri-star-fill text-warning me-1"></i>4.5
+                                                </span>
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Unit Price -->
+                                <div class="col-6 col-lg-2 text-lg-center">
+                                    <small class="d-block d-lg-none text-muted mb-1">Price</small>
+                                    <div class="price-display">
+                                        <span class="h5 fw-bold text-dark mb-0">₹{{ number_format($wishlist->product->p_price) }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Stock Status -->
+                                <div class="col-6 col-lg-2 text-lg-center">
+                                    <small class="d-block d-lg-none text-muted mb-1">Status</small>
+                                    <span class="badge bg-success-subtle text-success px-3 py-2">
+                                        <i class="ri-checkbox-circle-fill me-1"></i>In Stock
+                                    </span>
+                                </div>
+
+                                <!-- Add to Cart -->
+                                <div class="col-12 col-lg-2 text-lg-center">
+                                    <button class="btn w-100 cart-button add-wishlist-to-cart"
+                                            data-product-id="{{ $wishlist->product->p_id }}">
+                                        <i class="ri-shopping-cart-line me-2"></i>Add to Cart
+                                    </button>
+                                </div>
+
+                                <!-- Remove Button -->
+                                <div class="col-12 col-lg-1 text-lg-center">
+                                    <form action="{{ route('wishlist.remove', $wishlist->w_id) }}"
+                                          method="POST"
+                                          class="delete-wishlist-form d-inline">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button type="button"
+                                                class="btn btn-link text-danger p-0 wish-remove"
+                                                title="Remove from wishlist">
+                                            <i class="ri-delete-bin-line fs-5"></i>
+                                        </button>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Empty State (if no items) -->
+            @if(count($wishlists) === 0)
+                <div class="text-center py-5 bg-white rounded-3 shadow-sm">
+                    <div class="empty-wishlist-icon mb-3">
+                        <i class="ri-heart-line" style="font-size: 4rem; color: #ddd;"></i>
+                    </div>
+                    <h5 class="mb-2">Your wishlist is empty</h5>
+                    <p class="text-muted mb-4">Save your favorite items to buy them later</p>
+                    <a href="/" class="btn btn-secondary px-4">
+                        Continue Shopping
+                    </a>
+                </div>
+            @endif
+
+        </div>
+    </div>
+</section>
             <!-- wishlist-page end -->
         </main>
         <!-- main end -->
@@ -1210,9 +1486,37 @@ document.querySelectorAll('.delete-wishlist-form .wish-remove').forEach(button =
 </script>
 
 
+<script>
+function addToWishlist(productId) {
+    fetch("{{ route('wishlist.store') }}", {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ product_id: productId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.wishlistCount !== undefined) {
+            document.querySelectorAll('.wishlist-counter').forEach(el => {
+                el.innerText = data.wishlistCount;
+            });
+        }
+
+        if (data.cartCount !== undefined) {
+            document.querySelectorAll('.cart-counter').forEach(el => {
+                el.innerText = data.cartCount;
+            });
+        }
+
+        if (data.message) alert(data.message);
+    });
+}
 
 
 
+</script>
         @endpush
 
 
