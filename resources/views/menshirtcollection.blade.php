@@ -175,18 +175,18 @@
                                 <img src="{{ asset('storage/colors/' . $product->img_path) }}"
                                     alt="{{ $product->img_alt_text ?? $product->p_name }}"
                                     class="img-fluid img1 product-img-main"
-                                    style="height:400px; width:100%; object-fit:contain;">
+                                    style="height:300px; width:100%; object-fit:contain;">
                                 
                                 @if(isset($product->hover_img_path))
                                 <img src="{{ asset('storage/colors/' . $product->hover_img_path) }}"
                                     alt="{{ $product->img_alt_text ?? $product->p_name }}"
                                     class="img-fluid img2 product-img-hover "
-                                    style="height:400px; width:100%; object-fit:contain;">
+                                    style="height:300px; width:100%; object-fit:contain;">
                                 @endif
                             </a>
                                     {{-- whistlist or view icon  --}}
                                 <div class="product-actions position-absolute top-0 start-0 mx-4 mb-3 opacity-0 transition-3">
-                                <div class="d-flex gap-2 whistlist-icon">
+                                <div class="d-flex gap-2 mx-5 mt-1 whistlist-icon">
                                     <a href="javascript:void(0)"
                                         class="add-to-wishlist btn btn-light"
                                         data-product-id="{{ $product->p_id }}"
@@ -196,6 +196,7 @@
                                 </div>
                             </div>
                                 </div>
+                                
                             </div>
 
                             <!-- Product Content Column -->

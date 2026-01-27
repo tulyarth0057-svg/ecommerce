@@ -311,83 +311,110 @@ body {
 
 <!-- ================= ORDER LIST ================= -->
 <div class="container mb-5">
-    @foreach($orderItems as $item)
-    <div class="order-card">
-        <div class="order-card-inner">
-            
-            <!-- LEFT SECTION: IMAGE + INFO -->
-            <div style="display: flex; gap: 30px; flex: 1;">
-                <!-- IMAGE -->
-                <div class="order-image-wrapper">
-                    <span class="status-badge {{ strtolower($order->o_order_status) }}">
-                        {{ ucfirst($order->o_order_status) }}
-                    </span>
-                    <img src="{{ $item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png') }}"
-                         alt="{{ $item->o_i_product_name }}">
-                </div>
 
-                <!-- INFO -->
-                <div class="order-info">
-                    <p class="order-id">ORDER #{{ $order->o_order_number }}</p>
-                    <h4 class="product-name">{{ $item->o_i_product_name }}</h4>
+    @foreach($allOrders as $order)
 
-                    <ul class="order-meta">
-                        <li><i class="ri-checkbox-circle-fill"></i> Payment: {{ ucfirst($order->o_payment_method) }}</li>
-                        <li><i class="ri-checkbox-circle-fill"></i> Quantity: {{ $item->o_i_quantity }}</li>
-                        <li><i class="ri-checkbox-circle-fill"></i> Status: {{ ucfirst($order->o_order_status) }}</li>
-                    </ul>
+        @php
+            $items = $orderItems->where('o_i_order_id', $order->o_id);
+        @endphp
 
-                   <div class="variants-section">
-    <strong>Size:</strong>
-    <span class="size-box">{{ $item->o_i_size }}</span>
-
-    &nbsp;&nbsp;
-
-    <strong>Color:</strong>
-    @if($item->color_code)
-        <span class="color-dot" style="background: {{ $item->color_code }}"></span>
-    @else
-        <small style="color:red;">N/A</small>
-    @endif
-</div>
-
-                </div>
-            </div>
-
-            <!-- RIGHT SECTION: SUMMARY -->
-            <div class="order-summary">
-                {{-- <div class="price">₹{{ number_format($order->o_total_amount, 2) }}</div> --}}
-                <div class="price-breakup">
-                    <p><span>Subtotal:</span><span>₹{{ number_format($item->o_i_total_price, 2) }}</span></p>
-                    <p><span>Shipping:</span><span>₹{{ number_format($order->o_shipping_cost / count($orderItems), 2) }}</span></p>
-                    <p><span>Quantity:</span><span>{{ $item->o_i_quantity }}</span></p>
-                    <hr>
-                    <strong><span>Total:</span><span class="price">₹{{ number_format($item->o_i_total_price + ($order->o_shipping_cost / count($orderItems)), 2) }}</span></strong>
-                </div>
-
+        @foreach($items as $item)
+        <div class="order-card">
+            <div class="order-card-inner">
                 
+                <!-- LEFT SECTION: IMAGE + INFO -->
+                <div style="display: flex; gap: 30px; flex: 1;">
+                    <!-- IMAGE -->
+                    <div class="order-image-wrapper">
+                        <span class="status-badge {{ strtolower($order->o_order_status) }}">
+                            {{ ucfirst($order->o_order_status) }}
+                        </span>
+                        <img src="{{ $item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png') }}"
+                             alt="{{ $item->o_i_product_name }}">
+                    </div>
 
-                <button class="btn-payment-status {{ strtolower($order->o_payment_status) }}">
-                    Payment {{ ucfirst($order->o_payment_status) }}
-                </button>
+                    <!-- INFO -->
+                    <div class="order-info">
+                        <p class="order-id">ORDER #{{ $order->o_order_number }}</p>
+                        <h4 class="product-name">{{ $item->o_i_product_name }}</h4>
 
-                <div class="action-buttons">
-                    <a href="{{ route('view.details', ['orderId' => $order->o_id]) }}" class="btn-action btn-dark-custom">
-                        <i class="ri-shopping-bag-line"></i> View Details
-                    </a>
-                     <a href="{{ route('order.track', ['order_number' => $order->o_id]) }}" class="btn-action btn-outline-custom">
+                        <ul class="order-meta">
+                            <li><i class="ri-checkbox-circle-fill"></i> Payment: {{ ucfirst($order->o_payment_method) }}</li>
+                            <li><i class="ri-checkbox-circle-fill"></i> Quantity: {{ $item->o_i_quantity }}</li>
+                            <li><i class="ri-checkbox-circle-fill"></i> Status: {{ ucfirst($order->o_order_status) }}</li>
+                        </ul>
 
-                   
+                        <div class="variants-section">
+                            <strong>Size:</strong>
+                            <span class="size-box">{{ $item->o_i_size }}</span>
 
+                            &nbsp;&nbsp;
 
-                        <i class="ri-truck-line"></i> Track Order
-                    </a>
+                            <strong>Color:</strong>
+                            @if($item->color_code)
+                                <span class="color-dot" style="background: {{ $item->color_code }}"></span>
+                            @else
+                                <small style="color:red;">N/A</small>
+                            @endif
+                        </div>
+                    </div>
                 </div>
-            </div>
 
+                <!-- RIGHT SECTION: SUMMARY -->
+                <div class="order-summary">
+                    <div class="price-breakup">
+                        <p><span>Subtotal:</span>
+                            <span>₹{{ number_format($item->o_i_total_price, 2) }}</span>
+                        </p>
+
+                        <p><span>Shipping:</span>
+                            <span>
+                                ₹{{ number_format($order->o_shipping_cost / max(1, $items->count()), 2) }}
+                            </span>
+                        </p>
+
+                        <p><span>Quantity:</span>
+                            <span>{{ $item->o_i_quantity }}</span>
+                        </p>
+
+                        <hr>
+
+                        <strong>
+                            <span>Total:</span>
+                            <span class="price">
+                                ₹{{ number_format(
+                                    $item->o_i_total_price + ($order->o_shipping_cost / max(1, $items->count())),
+                                    2
+                                ) }}
+                            </span>
+                        </strong>
+                    </div>
+
+                    <button class="btn-payment-status {{ strtolower($order->o_payment_status) }}">
+                        Payment {{ ucfirst($order->o_payment_status) }}
+                    </button>
+
+                    <div class="action-buttons">
+                        <a href="{{ route('view.details', ['orderId' => $order->o_id]) }}"
+                           class="btn-action btn-dark-custom">
+                            <i class="ri-shopping-bag-line"></i> View Details
+                        </a>
+
+                        <a href="{{ route('order.track', ['order_number' => $order->o_order_number]) }}"
+                           class="btn-action btn-outline-custom">
+                            <i class="ri-truck-line"></i> Track Order
+                        </a>
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </div>
+        @endforeach
+
     @endforeach
+
 </div>
+
+
 
 @endsection

@@ -270,14 +270,18 @@ Route::get('/track-order/{order_number}', [OrderController::class, 'trackOrder']
 
     // chat routes
 
-Route::post('/send-message', [ChatController::class, 'send']);
+// Route::post('/send-message', [ChatController::class, 'send']);
+
+
+// route of order list in admin panel---->
 
 
 
+Route::get('/admin/order-list', [OrderController::class, 'showOrderlist'])->name('order.list');
 
-
-
-
+Route::get('/view-order/{orderId}', [OrderController::class, 'AdminVieworder'])
+    ->name('view.order');
+   
 
 
 

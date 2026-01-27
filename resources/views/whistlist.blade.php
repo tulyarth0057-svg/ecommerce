@@ -1438,7 +1438,7 @@
 
 
 
- <script>
+<script>
 document.querySelectorAll('.add-wishlist-to-cart').forEach(btn => {
 
     btn.addEventListener('click', function () {
@@ -1449,15 +1449,21 @@ document.querySelectorAll('.add-wishlist-to-cart').forEach(btn => {
             icon: 'info',
             title: 'Select Size & Color',
             text: 'Please select size & color on product page',
-            confirmButtonText: 'Continue'
-        }).then(() => {
-            window.location.href = `/product-view/${productId}`;
+            confirmButtonText: 'Continue',
+            showCancelButton: true,
+            cancelButtonText: 'Cancel',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Navigate to the product page
+                window.location.href = `/product-view/${productId}`;
+            }
         });
 
     });
 
 });
 </script>
+
 
       
 
@@ -1486,38 +1492,51 @@ document.querySelectorAll('.delete-wishlist-form .wish-remove').forEach(button =
 </script>
 
 
+
 <script>
 function addToWishlist(productId) {
     fetch("{{ route('wishlist.store') }}", {
         method: "POST",
         headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ product_id: productId })
     })
     .then(res => res.json())
-    .then(data => {
-        if (data.wishlistCount !== undefined) {
-            document.querySelectorAll('.wishlist-counter').forEach(el => {
-                el.innerText = data.wishlistCount;
-            });
-        }
+   .then(data => {
 
-        if (data.cartCount !== undefined) {
-            document.querySelectorAll('.cart-counter').forEach(el => {
-                el.innerText = data.cartCount;
-            });
-        }
+    console.log(data);
 
-        if (data.message) alert(data.message);
-    });
+    if (data.wishlistCount !== undefined) {
+
+        // 🔥 FIRE GLOBAL EVENT
+        document.dispatchEvent(
+            new CustomEvent('wishlist-updated', {
+                detail: { count: data.wishlistCount }
+            })
+        );
+    }
+
+    if (data.message) {
+        Swal.fire({
+            icon: 'success',
+            text: data.message,
+            timer: 1500,
+            showConfirmButton: false
+        });
+    }
+});
 }
-
-
-
 </script>
-        @endpush
+
+
+
+
+
+
+
+ @endpush
 
 
  @endsection

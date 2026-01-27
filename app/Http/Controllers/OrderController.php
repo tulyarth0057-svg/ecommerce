@@ -31,7 +31,9 @@ public function processCheckout(Request $request)
         'city' => 'required',
         'state' => 'nullable',
         'postcode' => 'required',
-        'shipping_charge' => 'required|numeric'
+         'o_order_notes' => 'nullable|string|max:500',
+        'shipping_charge' => 'required|numeric',
+
     ]);
 
     // Fetch cart with REAL quantity and color
@@ -91,6 +93,7 @@ public function processCheckout(Request $request)
         'o_email'          => $validated['email'],
         'o_name'           => $validated['name'],
         'o_phone'          => $validated['phone'],
+      'o_order_notes' => $validated['o_order_notes'] ?? null,
         'o_street_address' => $validated['address'],
         'o_city'           => $validated['city'],
         'o_state'          => $validated['state'],
@@ -159,7 +162,7 @@ public function orderSuccess($orderId)
     // ✅ ALL orders (new + old) of logged-in user
     $allOrders = DB::table('tbl_orders')
         ->where('o_user_id', $userId)
-        ->orderBy('o_created_at', 'desc') // better than o_id
+        ->orderBy('o_created_at', 'desc') 
         ->get();
 
     return view('order', compact('order', 'orderItems', 'allOrders'));
@@ -169,7 +172,6 @@ public function orderSuccess($orderId)
  /**
      * ✅ VIEW ORDER (From order list/history)
      */
-
 public function myorder($orderId)
 {
     $userId = Auth::id();
@@ -177,18 +179,20 @@ public function myorder($orderId)
         return redirect()->route('signin');
     }
 
-    // Selected order
-    $order = DB::table('tbl_orders')
-        ->where('o_id', $orderId)
+    // All orders of user
+    $allOrders = DB::table('tbl_orders')
         ->where('o_user_id', $userId)
-        ->first();
+        ->orderBy('o_created_at', 'desc')
+        ->get();
 
-    if (!$order) {
-        return redirect()->route('my.order')
-            ->with('error', 'Order not found');
+    if ($allOrders->isEmpty()) {
+        return redirect()->route('my.order')->with('error', 'No orders found');
     }
 
-    // Order items
+    // Selected order (optional highlight)
+    $order = $allOrders->firstWhere('o_id', $orderId);
+
+    // ✅ GET ITEMS OF ALL ORDERS
     $orderItems = DB::table('tbl_order_items as oi')
         ->leftJoin('products as p', 'p.p_id', '=', 'oi.o_i_product_id')
         ->leftJoin('color as c', 'c.color_id', '=', 'oi.o_i_color_id')
@@ -200,7 +204,7 @@ public function myorder($orderId)
                     WHERE i2.img_color_id = c.color_id
                 )');
         })
-        ->where('oi.o_i_order_id', $orderId)
+        ->whereIn('oi.o_i_order_id', $allOrders->pluck('o_id')) // 🔥 KEY LINE
         ->select(
             'oi.*',
             DB::raw('COALESCE(c.color_name, "") as color_name'),
@@ -209,15 +213,8 @@ public function myorder($orderId)
         )
         ->get();
 
-    // ✅ ALL orders (new + old)
-    $allOrders = DB::table('tbl_orders')
-        ->where('o_user_id', $userId)
-        ->orderBy('o_created_at', 'desc')
-        ->get();
-
     return view('my-order', compact('order', 'orderItems', 'allOrders'));
 }
-
 
 
 // order-detail-page---->
@@ -281,6 +278,65 @@ public function trackOrder($order_number)
         // Return the separate track order page
         return view('track-order', compact('order'));
     }
+
+
+
+    // admin order-list------>
+
+     public function showOrderlist()
+    {
+      
+       $orders = Order::latest()->get();
+
+        
+        return view('admin.order-list', compact('orders'));
+    }
+
+    // vieworder-admin-controller--->
+       
+
+public function AdminVieworder($orderId)
+{
+    // Get the order (NO user restriction for admin)
+    $order = Order::where('o_id', $orderId)->firstOrFail();
+
+    // Get order items with color + image
+    $orderItems = DB::table('tbl_order_items as oi')
+        ->leftJoin('color as c', 'c.color_id', '=', 'oi.o_i_color_id')
+        ->leftJoin('images as i', function ($join) {
+            $join->on('i.img_color_id', '=', 'c.color_id')
+                 ->whereRaw('i.img_id = (
+                     SELECT MIN(i2.img_id)
+                     FROM images i2
+                     WHERE i2.img_color_id = c.color_id
+                 )');
+        })
+        ->where('oi.o_i_order_id', $orderId)
+        ->select(
+            'oi.*',
+            'c.color_name',
+            'c.color_code',
+            'i.img_path'
+        )
+        ->get();
+
+    // Calculate totals
+    $totalItemsPrice = $orderItems->sum('o_i_total_price');
+    $grandTotal = $totalItemsPrice + ($order->o_shipping_cost ?? 0);
+
+    // Return admin view
+    return view('admin.view-order', compact(
+        'order',
+        'orderItems',
+        'totalItemsPrice',
+        'grandTotal'
+    ));
+}
+
+
+
+
+    
 
 
 }

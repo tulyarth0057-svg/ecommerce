@@ -165,7 +165,7 @@
                         <!-- shop-grid start -->
                             <div class="row row-mtm">
                             <div class="row">
-                            <?php $__empty_1 = true; $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
                                 <div class="col-6 col-md-4 shop-col" data-animate="animate__fadeIn">
                                     <div class="single-product">
                                         <div class="row single-product-wrap">
@@ -177,14 +177,14 @@
                                 <img src="<?php echo e(asset('storage/colors/' . $product->img_path)); ?>"
                                     alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
                                     class="img-fluid img1 product-img-main"
-                                    style="height:400px; width:100%; object-fit:contain;">
+                                    style="height:300px; width:100%; object-fit:contain;">
                                 
-                                <?php if(isset($product->hover_img_path)): ?>
+                                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(isset($product->hover_img_path)): ?>
                                 <img src="<?php echo e(asset('storage/colors/' . $product->hover_img_path)); ?>"
                                     alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
                                     class="img-fluid img2 product-img-hover "
-                                    style="height:400px; width:100%; object-fit:contain;">
-                                <?php endif; ?>
+                                    style="height:300px; width:100%; object-fit:contain;">
+                                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                             </a>
                                     
                                 <div class="product-actions position-absolute top-0 start-0 mx-4 mb-3 opacity-0 transition-3">
@@ -208,9 +208,9 @@
                                     </div>
                                     <div class="product-price mb-1">
                                         <span class="new-price primary-color">₹<?php echo e(number_format($product->p_price, 2)); ?></span>
-                                        <?php if($product->p_old_price): ?>
+                                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($product->p_old_price): ?>
                                             <span class="old-price text-decoration-line-through ms-3">₹<?php echo e(number_format($product->p_old_price, 2)); ?></span>
-                                        <?php endif; ?>
+                                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                     </div>
 
                                     
@@ -221,9 +221,9 @@
                         </div>
                     </div>
                 </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
                 <p>No products found!</p>
-            <?php endif; ?>
+            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
         </div>
      </div>
    </div>

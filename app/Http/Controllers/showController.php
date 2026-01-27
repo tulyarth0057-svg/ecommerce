@@ -545,7 +545,7 @@ public function getMenShirtCollection() {
     // product-view ----->
 public function productview($id)
 {
-    // 1️⃣ Product + single image (listing style)
+    // 1️⃣ Product (main + hover image)
     $product = DB::table('products')
         ->leftJoin('color', 'products.p_id', '=', 'color.color_product_id')
         ->leftJoin('images', 'color.color_id', '=', 'images.img_color_id')
@@ -559,6 +559,7 @@ public function productview($id)
             'products.p_long_description',
             'products.p_category_id',
             DB::raw('MIN(images.img_path) as img_path'),
+            DB::raw('MAX(images.img_path) as hover_img_path'),
             DB::raw('MIN(images.img_alt_text) as img_alt_text')
         )
         ->where('products.p_id', $id)
@@ -570,80 +571,72 @@ public function productview($id)
             'products.p_stock',
             'products.p_short_description',
             'products.p_long_description',
-            'products.p_category_id' 
+            'products.p_category_id'
         )
         ->first();
-        
 
     if (!$product) {
         abort(404);
     }
+
+    // 2️⃣ All images (gallery)
     $images = DB::table('images')
-    ->join('color', 'images.img_color_id', '=', 'color.color_id')
-    ->where('color.color_product_id', $id)
-    ->select(
-        'images.img_path',
-        'images.img_alt_text',
-        'color.color_id as color_id'
-    )
-    ->get();
+        ->join('color', 'images.img_color_id', '=', 'color.color_id')
+        ->where('color.color_product_id', $id)
+        ->select(
+            'images.img_path',
+            'images.img_alt_text',
+            'color.color_id'
+        )
+        ->get();
 
-
-    // 2️⃣ Colors
+    // 3️⃣ Colors
     $colors = DB::table('color')
         ->where('color_product_id', $id)
         ->get();
 
-    // 3️⃣ Sizes (color wise attach)
+    // 4️⃣ Sizes (color-wise)
     foreach ($colors as $color) {
         $color->sizes = DB::table('sizes')
             ->where('size_color_id', $color->color_id)
-              ->where('size_price_adjustment', $color->color_id)
+            ->select(
+                'size_id',
+                'size_name',
+                'size_price_adjustment'
+            )
             ->get();
     }
 
-    foreach ($colors as $color) {
-    $color->sizes = DB::table('sizes')
-        ->where('size_color_id', $color->color_id)
+    // 5️⃣ Related Products (with hover image)
+    $relatedProducts = DB::table('products')
+        ->leftJoin('color', 'products.p_id', '=', 'color.color_product_id')
+        ->leftJoin('images', 'color.color_id', '=', 'images.img_color_id')
         ->select(
-            'size_id',
-            'size_name',
-            'size_price_adjustment'
+            'products.p_id',
+            'products.p_name',
+            'products.p_price',
+            'products.p_old_price',
+            'products.p_category_id',
+            DB::raw('MIN(images.img_path) as img_path'),
+            DB::raw('MAX(images.img_path) as hover_img_path'),
+            DB::raw('MIN(images.img_alt_text) as img_alt_text')
+        )
+        ->where('products.p_category_id', $product->p_category_id)
+        ->where('products.p_id', '!=', $id)
+        ->groupBy(
+            'products.p_id',
+            'products.p_name',
+            'products.p_price',
+            'products.p_old_price',
+            'products.p_category_id'
         )
         ->get();
-}
 
-
-    
-  $relatedProducts = DB::table('products')
-    ->leftJoin('color', 'products.p_id', '=', 'color.color_product_id')
-    ->leftJoin('images', 'color.color_id', '=', 'images.img_color_id')
-    ->select(
-        'products.p_id',
-        'products.p_name',
-        'products.p_price',
-        'products.p_old_price',
-         'products.p_category_id',
-        DB::raw('MIN(images.img_path) as img_path'),
-        DB::raw('MIN(images.img_alt_text) as img_alt_text')
-    )
-    ->where('products.p_category_id', $product->p_category_id)
-    ->where('products.p_id', '!=', $id)
-    ->groupBy(
-        'products.p_id',
-        'products.p_name',
-        'products.p_price',
-        'products.p_old_price',
-         'products.p_category_id'
-    )
-    ->get();
-
-
-    
     $product->colors = $colors;
 
-    return view('product-view', compact('product','images', 'relatedProducts'));
+    return view('product-view', compact('product', 'images', 'relatedProducts'));
 }
+
 
 
 }

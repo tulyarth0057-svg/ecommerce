@@ -193,13 +193,13 @@
                                 <img src="{{ asset('storage/colors/' . $product->img_path) }}"
                                     alt="{{ $product->img_alt_text ?? $product->p_name }}"
                                     class="img-fluid img1 product-img-main"
-                                    style="height:400px; width:100%; object-fit:contain;">
+                                    style="height:300px; width:100%; object-fit:contain;">
                                 
                                 @if(isset($product->hover_img_path))
                                 <img src="{{ asset('storage/colors/' . $product->hover_img_path) }}"
                                     alt="{{ $product->img_alt_text ?? $product->p_name }}"
                                     class="img-fluid img2 product-img-hover "
-                                    style="height:400px; width:100%; object-fit:contain;">
+                                    style="height:300px; width:100%; object-fit:contain;">
                                 @endif
                             </a>
                                     {{-- whistlist or view icon  --}}

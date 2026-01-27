@@ -311,86 +311,115 @@ body {
 
 <!-- ================= ORDER LIST ================= -->
 <div class="container mb-5">
-    <?php $__currentLoopData = $orderItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-    <div class="order-card">
-        <div class="order-card-inner">
-            
-            <!-- LEFT SECTION: IMAGE + INFO -->
-            <div style="display: flex; gap: 30px; flex: 1;">
-                <!-- IMAGE -->
-                <div class="order-image-wrapper">
-                    <span class="status-badge <?php echo e(strtolower($order->o_order_status)); ?>">
-                        <?php echo e(ucfirst($order->o_order_status)); ?>
 
-                    </span>
-                    <img src="<?php echo e($item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png')); ?>"
-                         alt="<?php echo e($item->o_i_product_name); ?>">
-                </div>
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $allOrders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
 
-                <!-- INFO -->
-                <div class="order-info">
-                    <p class="order-id">ORDER #<?php echo e($order->o_order_number); ?></p>
-                    <h4 class="product-name"><?php echo e($item->o_i_product_name); ?></h4>
+        <?php
+            $items = $orderItems->where('o_i_order_id', $order->o_id);
+        ?>
 
-                    <ul class="order-meta">
-                        <li><i class="ri-checkbox-circle-fill"></i> Payment: <?php echo e(ucfirst($order->o_payment_method)); ?></li>
-                        <li><i class="ri-checkbox-circle-fill"></i> Quantity: <?php echo e($item->o_i_quantity); ?></li>
-                        <li><i class="ri-checkbox-circle-fill"></i> Status: <?php echo e(ucfirst($order->o_order_status)); ?></li>
-                    </ul>
-
-                   <div class="variants-section">
-    <strong>Size:</strong>
-    <span class="size-box"><?php echo e($item->o_i_size); ?></span>
-
-    &nbsp;&nbsp;
-
-    <strong>Color:</strong>
-    <?php if($item->color_code): ?>
-        <span class="color-dot" style="background: <?php echo e($item->color_code); ?>"></span>
-    <?php else: ?>
-        <small style="color:red;">N/A</small>
-    <?php endif; ?>
-</div>
-
-                </div>
-            </div>
-
-            <!-- RIGHT SECTION: SUMMARY -->
-            <div class="order-summary">
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
+        <div class="order-card">
+            <div class="order-card-inner">
                 
-                <div class="price-breakup">
-                    <p><span>Subtotal:</span><span>₹<?php echo e(number_format($item->o_i_total_price, 2)); ?></span></p>
-                    <p><span>Shipping:</span><span>₹<?php echo e(number_format($order->o_shipping_cost / count($orderItems), 2)); ?></span></p>
-                    <p><span>Quantity:</span><span><?php echo e($item->o_i_quantity); ?></span></p>
-                    <hr>
-                    <strong><span>Total:</span><span class="price">₹<?php echo e(number_format($item->o_i_total_price + ($order->o_shipping_cost / count($orderItems)), 2)); ?></span></strong>
+                <!-- LEFT SECTION: IMAGE + INFO -->
+                <div style="display: flex; gap: 30px; flex: 1;">
+                    <!-- IMAGE -->
+                    <div class="order-image-wrapper">
+                        <span class="status-badge <?php echo e(strtolower($order->o_order_status)); ?>">
+                            <?php echo e(ucfirst($order->o_order_status)); ?>
+
+                        </span>
+                        <img src="<?php echo e($item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png')); ?>"
+                             alt="<?php echo e($item->o_i_product_name); ?>">
+                    </div>
+
+                    <!-- INFO -->
+                    <div class="order-info">
+                        <p class="order-id">ORDER #<?php echo e($order->o_order_number); ?></p>
+                        <h4 class="product-name"><?php echo e($item->o_i_product_name); ?></h4>
+
+                        <ul class="order-meta">
+                            <li><i class="ri-checkbox-circle-fill"></i> Payment: <?php echo e(ucfirst($order->o_payment_method)); ?></li>
+                            <li><i class="ri-checkbox-circle-fill"></i> Quantity: <?php echo e($item->o_i_quantity); ?></li>
+                            <li><i class="ri-checkbox-circle-fill"></i> Status: <?php echo e(ucfirst($order->o_order_status)); ?></li>
+                        </ul>
+
+                        <div class="variants-section">
+                            <strong>Size:</strong>
+                            <span class="size-box"><?php echo e($item->o_i_size); ?></span>
+
+                            &nbsp;&nbsp;
+
+                            <strong>Color:</strong>
+                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($item->color_code): ?>
+                                <span class="color-dot" style="background: <?php echo e($item->color_code); ?>"></span>
+                            <?php else: ?>
+                                <small style="color:red;">N/A</small>
+                            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                        </div>
+                    </div>
                 </div>
 
-                
+                <!-- RIGHT SECTION: SUMMARY -->
+                <div class="order-summary">
+                    <div class="price-breakup">
+                        <p><span>Subtotal:</span>
+                            <span>₹<?php echo e(number_format($item->o_i_total_price, 2)); ?></span>
+                        </p>
 
-                <button class="btn-payment-status <?php echo e(strtolower($order->o_payment_status)); ?>">
-                    Payment <?php echo e(ucfirst($order->o_payment_status)); ?>
+                        <p><span>Shipping:</span>
+                            <span>
+                                ₹<?php echo e(number_format($order->o_shipping_cost / max(1, $items->count()), 2)); ?>
 
-                </button>
+                            </span>
+                        </p>
 
-                <div class="action-buttons">
-                    <a href="<?php echo e(route('view.details', ['orderId' => $order->o_id])); ?>" class="btn-action btn-dark-custom">
-                        <i class="ri-shopping-bag-line"></i> View Details
-                    </a>
-                     <a href="<?php echo e(route('order.track', ['order_number' => $order->o_id])); ?>" class="btn-action btn-outline-custom">
+                        <p><span>Quantity:</span>
+                            <span><?php echo e($item->o_i_quantity); ?></span>
+                        </p>
 
-                   
+                        <hr>
 
+                        <strong>
+                            <span>Total:</span>
+                            <span class="price">
+                                ₹<?php echo e(number_format(
+                                    $item->o_i_total_price + ($order->o_shipping_cost / max(1, $items->count())),
+                                    2
+                                )); ?>
 
-                        <i class="ri-truck-line"></i> Track Order
-                    </a>
+                            </span>
+                        </strong>
+                    </div>
+
+                    <button class="btn-payment-status <?php echo e(strtolower($order->o_payment_status)); ?>">
+                        Payment <?php echo e(ucfirst($order->o_payment_status)); ?>
+
+                    </button>
+
+                    <div class="action-buttons">
+                        <a href="<?php echo e(route('view.details', ['orderId' => $order->o_id])); ?>"
+                           class="btn-action btn-dark-custom">
+                            <i class="ri-shopping-bag-line"></i> View Details
+                        </a>
+
+                        <a href="<?php echo e(route('order.track', ['order_number' => $order->o_order_number])); ?>"
+                           class="btn-action btn-outline-custom">
+                            <i class="ri-truck-line"></i> Track Order
+                        </a>
+                    </div>
                 </div>
+
             </div>
-
         </div>
-    </div>
-    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
+
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
+
 </div>
+
+
 
 <?php $__env->stopSection(); ?>
 

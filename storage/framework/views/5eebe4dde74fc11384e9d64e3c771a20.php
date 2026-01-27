@@ -82,7 +82,7 @@
             position: absolute;
             top: 5%;
             left: 100%;
-            width: 550px;
+            width: 400px;
             height: 400px;
             border: 1px solid #ddd;
             background-repeat: no-repeat;
@@ -132,6 +132,57 @@
             border-radius: 10px;
         }
         
+      .product-image a {
+    overflow: hidden;
+    display: block;
+   
+}
+
+.product-img-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+ 
+}
+
+.product-image a:hover .product-img-hover {
+    opacity: 1;
+}
+
+.product-image a:hover .product-img-main {
+    opacity: 0;
+}
+
+.product-img-main {
+    transition: opacity 0.4s ease;
+ 
+}
+
+.product-image {
+    position: relative;
+    overflow: hidden;
+
+}
+
+.product-actions {
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.product-actions a {
+    pointer-events: all;
+  
+}
+
+.product-image:hover .product-actions {
+    opacity: 1 !important;
+}
+
+
+
 
 
 
@@ -153,13 +204,13 @@
             
                 <!-- Thumbnails -->
             <div class="col-2 thumb-img ">
-                   <?php $__currentLoopData = $images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                   <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
               <img src="<?php echo e(asset('storage/colors/'.$image->img_path)); ?>"
              alt="<?php echo e($image->img_alt_text ?? $product->p_name); ?>"
              class="img-fluid thumb mb-2 d-none"
              data-color-id="<?php echo e($image->color_id); ?>"
              onclick="changeImage(this)">
-                  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                  <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
                 </div>
 
                 <!-- Main Image -->
@@ -168,7 +219,9 @@
                         <img id="mainImage"
                              src="<?php echo e(asset('storage/colors/'.$product->img_path)); ?>"
                              alt="<?php echo e($product->img_alt_text ?? $product->p_name); ?>"
-                             class="img-fluid img1">
+                             class="img-fluid img1 rounded-2 w-100"
+                              style="height:500px; object-fit:contain;">
+                          
                     </a>
 
                         <!-- Zoom result -->
@@ -201,7 +254,7 @@
             <div class="mb-3" id="colorsWrapper">
     <label class="fw-semibold d-block mb-2">Color</label>
 
-    <?php $__currentLoopData = $product->colors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $product->colors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
         <div class="d-flex align-items-center gap-2 mb-2 color-item"
              data-color-id="<?php echo e($color->color_id); ?>"
              style="cursor:pointer">
@@ -213,7 +266,7 @@
 
             <span><?php echo e($color->color_name); ?></span>
         </div>
-    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
 </div>
 
 
@@ -222,8 +275,8 @@
     <label class="fw-semibold d-block mb-3">Sizes</label>
 
     <div id="sizeWrapper">
-        <?php $__currentLoopData = $product->colors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <?php $__currentLoopData = $color->sizes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $size): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $product->colors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $color): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $color->sizes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $size): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
                 <span 
                     class="custom-border p-2 me-2 size-btn d-none"
                     data-color-id="<?php echo e($color->color_id); ?>"
@@ -233,8 +286,8 @@
                     <?php echo e($size->size_name); ?>
 
                 </span>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
     </div>
 
     
@@ -295,32 +348,59 @@
 
    <!-- related all products sections -->
 
-<div class="container-fluid px-3 mt-5">
- <div class="row product-box">
-    <div class="section-capture text-center mt-5">
+                    <div class="container-fluid px-3 mt-5">
+                        <div class="row product-box">
+                            <div class="section-capture text-center mt-5">
                             <div class="section-title" data-animate="animate__fadeIn">
                                 <h2 class="section-heading mt-5 related-product ">Discover more products!</h2>
                             </div>
                         </div>
 
-    <div class="shop-product-wrap data-grid">
-        <div class="row row-mtm">
-            <?php $__empty_1 = true; $__currentLoopData = $relatedProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $related): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                <div class="col-6 col-md-4 gap-3" data-animate="animate__fadeIn">
-                    <div class="single-product">
-                        <div class="row single-product-wrap">
+                     <div class="shop-product-wrap data-grid">
+
+
+                        <div class="row row-mtm">
+                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $relatedProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $related): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
+                                <div class="col-6 col-md-4 gap-3" data-animate="animate__fadeIn">
+                                    <div class="single-product">
+                                        <div class="row single-product-wrap">
 
                             <!-- Product Image Column -->
-                            <div class="product-image-col">
-                                <div class="product-image">
-                                    <a href="<?php echo e(url('product-view/'.$related->p_id)); ?>" class="d-block">
+                           <div class="product-image-col">
+                                 <div class="product-image position-relative ">
+                          <a href="<?php echo e(url('product-view/'.$related->p_id)); ?>" class="d-block pro-img">
+
+                                        <!-- Main Image -->
                                         <img src="<?php echo e(asset('storage/colors/' . $related->img_path)); ?>"
-                                             alt="<?php echo e($related->img_alt_text ?? $related->p_name); ?>"
-                                             class="img-fluid img1"
-                                             style="height:400px; width:100%; object-fit:contain;">
+                                            alt="<?php echo e($related->img_alt_text ?? $related->p_name); ?>"
+                                            class="img-fluid img1 w-100"
+                                            style="height:300px; object-fit:contain;">
+
+                                        <!-- Hover Image -->
+                                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($related->hover_img_path)): ?>
+                                            <img src="<?php echo e(asset('storage/colors/' . $related->hover_img_path)); ?>"
+                                                alt="<?php echo e($related->img_alt_text ?? $related->p_name); ?>"
+                                                class="img-fluid img2 w-100 position-absolute top-0 start-0"
+                                                style="height:300px; object-fit:contain;">
+                                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+                                    </a>
+                                    
+                                <div class="product-actions position-absolute top-0 start-0 mx-4 mb-3 opacity-0 transition-3">
+                                <div class="d-flex gap-2 mx-5 mt-1 whistlist-icon">
+                                    <a href="javascript:void(0)"
+                                        class="add-to-wishlist btn btn-light"
+                                        data-product-id="<?php echo e($product->p_id); ?>"
+                                        data-redirect="<?php echo e(route('wishlist.index')); ?>">
+                                        <i class="ri-heart-line"></i>
                                     </a>
                                 </div>
                             </div>
+                                </div>
+
+                                
+                            </div>
+
 
                             <!-- Product Content Column -->
                             <div class="product-content mt-2">
@@ -330,29 +410,12 @@
                                     </div>
                                     <div class="product-price mb-1">
                                         <span class="new-price primary-color">₹<?php echo e(number_format($related->p_price, 2)); ?></span>
-                                        <?php if($related->p_old_price): ?>
+                                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($related->p_old_price): ?>
                                             <span class="old-price text-decoration-line-through ms-3">₹<?php echo e(number_format($related->p_old_price, 2)); ?></span>
-                                        <?php endif; ?>
+                                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                     </div>
 
-                                    <div class="align-items-center justify-content-center w-100 h-100 mt-3 transition-3 text-center d-flex">
-                                        <div class="d-flex gap-2">
-                                            <a href="javascript:void(0)"
-                                               class="add-to-wishlist btn btn-light"
-                                               data-product-id="<?php echo e($related->p_id); ?>"
-                                               data-redirect="<?php echo e(route('wishlist.index')); ?>">
-                                               <i class="ri-heart-line"></i>
-                                            </a>
-
-                                            <a href="javascript:void(0)" class="add-to-cart btn btn-light">
-                                                <i class="ri-shopping-bag-3-line"></i>
-                                            </a>
-
-                                            <a href="<?php echo e(url('product-view/'.$related->p_id)); ?>" class="d-block quick-view btn btn-light">
-                                                <i class="ri-eye-line"></i>
-                                            </a>
-                                        </div>
-                                    </div>
+                                        
 
                                 </div>
                             </div>
@@ -360,10 +423,12 @@
                         </div>
                     </div>
                 </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
                 <p class="text-center">No related products found!</p>
-            <?php endif; ?>
+            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
         </div>
+
+
     </div>
     </div>
 </div>

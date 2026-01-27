@@ -1,3 +1,15 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>frontend-header</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+
+ </head>
+    
  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <body>
 
@@ -532,8 +544,6 @@
                                                                 <span class="d-block header-block-icon font-16 font-xl-20"><i class="ri-shopping-bag-3-line"></i></span>
                                                             <span class="header-block-counter cart-counter extra-color font-10 position-absolute end-0 d-flex align-items-center justify-content-center primary-bg rounded-circle" id="cart-count">{{ $cartCount }}</span>
 
-                             {{-- <span id="wishlist-count">{{ $wishlistCount }}</span><span id="cart-count">{{ $cartCount }}</span> --}}
-
                                                                  
                                                             </span>
                                                         </span>
@@ -900,15 +910,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 </script>
 
-
-
+{{-- Global Wishlist Update Listener --}}
+<script>
+document.addEventListener('wishlist-updated', function (e) {
+    // Update all wishlist counters on the page
+    document.querySelectorAll('.wishlist-counter').forEach(el => {
+        el.textContent = e.detail.count;
+    });
+});
+</script>
 
 
 
 
 </body>
 
-
+</html>
 
 
 

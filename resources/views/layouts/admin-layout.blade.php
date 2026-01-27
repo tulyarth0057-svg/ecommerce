@@ -6,8 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
    <title>@yield('title', 'My Laravel App')</title>
-   {{-- favicon icon link --}}
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+   
+  
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('assetsofdash/images/Red and Black Modern Creative Agency Logo-old.png') }}" type="image/x-icon">
 
        {{-- links of other cdn --}}
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">

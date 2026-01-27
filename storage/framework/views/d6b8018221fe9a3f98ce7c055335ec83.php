@@ -228,7 +228,7 @@
 
             <!-- Wishlist Items -->
             <div class="wish-table-data">
-                <?php $__currentLoopData = $wishlists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $wishlist): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $wishlists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $wishlist): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
                     <div class="wish-card mb-3 bg-white rounded-3 shadow-sm overflow-hidden hover-shadow transition" data-animate="animate__fadeIn">
                         <div class="p-3 p-md-4">
                             <div class="row align-items-center g-3">
@@ -306,11 +306,11 @@
                             </div>
                         </div>
                     </div>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
             </div>
 
             <!-- Empty State (if no items) -->
-            <?php if(count($wishlists) === 0): ?>
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(count($wishlists) === 0): ?>
                 <div class="text-center py-5 bg-white rounded-3 shadow-sm">
                     <div class="empty-wishlist-icon mb-3">
                         <i class="ri-heart-line" style="font-size: 4rem; color: #ddd;"></i>
@@ -321,7 +321,7 @@
                         Continue Shopping
                     </a>
                 </div>
-            <?php endif; ?>
+            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
         </div>
     </div>
@@ -1056,7 +1056,7 @@
 
 
 
- <script>
+<script>
 document.querySelectorAll('.add-wishlist-to-cart').forEach(btn => {
 
     btn.addEventListener('click', function () {
@@ -1067,15 +1067,21 @@ document.querySelectorAll('.add-wishlist-to-cart').forEach(btn => {
             icon: 'info',
             title: 'Select Size & Color',
             text: 'Please select size & color on product page',
-            confirmButtonText: 'Continue'
-        }).then(() => {
-            window.location.href = `/product-view/${productId}`;
+            confirmButtonText: 'Continue',
+            showCancelButton: true,
+            cancelButtonText: 'Cancel',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Navigate to the product page
+                window.location.href = `/product-view/${productId}`;
+            }
         });
 
     });
 
 });
 </script>
+
 
       
 
@@ -1104,33 +1110,51 @@ document.querySelectorAll('.delete-wishlist-form .wish-remove').forEach(button =
 </script>
 
 
+
 <script>
 function addToWishlist(productId) {
     fetch("<?php echo e(route('wishlist.store')); ?>", {
         method: "POST",
         headers: {
-            "X-CSRF-TOKEN": "<?php echo e(csrf_token()); ?>",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            product_id: productId
-        })
+        body: JSON.stringify({ product_id: productId })
     })
     .then(res => res.json())
-    .then(data => {
-        if (data.count !== undefined) {
-            document.querySelector('.wish-counter').innerText =
-                data.count + ' Items';
-        }
+   .then(data => {
 
-        alert(data.message);
-    });
+    console.log(data);
+
+    if (data.wishlistCount !== undefined) {
+
+        // 🔥 FIRE GLOBAL EVENT
+        document.dispatchEvent(
+            new CustomEvent('wishlist-updated', {
+                detail: { count: data.wishlistCount }
+            })
+        );
+    }
+
+    if (data.message) {
+        Swal.fire({
+            icon: 'success',
+            text: data.message,
+            timer: 1500,
+            showConfirmButton: false
+        });
+    }
+});
 }
 </script>
 
 
 
-        <?php $__env->stopPush(); ?>
+
+
+
+
+ <?php $__env->stopPush(); ?>
 
 
  <?php $__env->stopSection(); ?>

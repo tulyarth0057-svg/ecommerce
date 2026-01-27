@@ -15,12 +15,13 @@ class WhistlistController extends Controller
         ->where('user_id', Auth::id())
         ->get();
 
-    $wishlistCount = $wishlists->count(); // 🔥 yahin se count
+    $wishlistCount = $wishlists->count(); 
 
     return view('whistlist', compact('wishlists', 'wishlistCount'));
 }
 
 
+// whistlist store---->
 
 public function store(Request $request)
 {
@@ -31,13 +32,13 @@ public function store(Request $request)
         ->where('p_id', $productId)
         ->exists();
 
-    if ($already) {
-        $count = Whistlist::where('user_id', $userId)->count();
+    $wishlistCount = Whistlist::where('user_id', $userId)->count();
 
+    if ($already) {
         return response()->json([
             'status' => false,
             'message' => 'Product already in your wishlist ❤️',
-            'count' => $count
+            'wishlistCount' => $wishlistCount
         ]);
     }
 
@@ -46,25 +47,14 @@ public function store(Request $request)
         'p_id' => $productId
     ]);
 
-    $count = Whistlist::where('user_id', $userId)->count();
-
     return response()->json([
         'status' => true,
         'message' => 'Product added to wishlist ❤️',
-        'count' => $count
+        'wishlistCount' => $wishlistCount + 1
     ]);
-
-        // whistlist counter header add
-    return response()->json([
-    'wishlistCount' => DB::table('wishlist')
-        ->where('user_id', Auth::id())
-        ->count(),
-
-    'cartCount' => DB::table('addtocart')
-        ->where('user_id', Auth::id())
-        ->count(),
-]);
 }
+
+
 
 
     // REMOVE single item (DELETE /wishlist/{id})

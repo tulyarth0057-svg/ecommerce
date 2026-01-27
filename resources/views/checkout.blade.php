@@ -4,28 +4,198 @@
 
 @push('styles')
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    .checkout-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-    .checkout-breadcrumb { color: #ff6b35; margin-bottom: 20px; font-size: 14px; }
-    .checkout-title { color: #ff6b35; font-size: 36px; margin-bottom: 30px; }
-    .checkout-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-    .checkout-box { background: white; padding: 25px; border-radius: 8px; height: auto; }
-    .order-box { border: 2px solid #ff6b35;  }
-    .order{height: auto;}
-    .checkout-h2 { color: #ff6b35; font-size: 22px; margin-bottom: 20px; }
-    .checkout-input, .checkout-btn { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ffb380; border-radius: 20px; font-size: 14px; }
-    .checkout-input:focus { outline: none; border-color: #ff6b35; }
-    .checkout-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .order-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #ffe4cc; }
-    .order-total { font-weight: bold; color: #ff6b35; font-size: 18px; padding-top: 10px; border-top: 2px solid #ff6b35; margin-top: 10px; }
-    .payment-option { padding: 12px; border: 2px solid #ffe4cc; border-radius: 8px; margin: 10px 0; cursor: pointer; }
-    .payment-option:hover, .payment-selected { background: #fff5eb; border-color: #ff6b35; }
-    .checkout-btn { background: #ff6b35; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; }
-    .checkout-btn:hover { background: #ff5722; }
-    @media(max-width: 768px) { .checkout-grid { grid-template-columns: 1fr; } .checkout-row { grid-template-columns: 1fr; } }
-    .product-name{
-        color:#ff6b35;
+   * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Page background */
+body {
+    background: #f9fafb;
+}
+
+/* Container */
+.checkout-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+     
+}
+
+/* Grid */
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+/* Card */
+.checkout-box {
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+     border: 2px solid #ff6b35;
+}
+
+/* Order box highlight */
+.order-box {
+    border: 2px solid #ff6b35;
+}
+
+/* Headings */
+.checkout-h2 {
+    color: #ff6b35;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ffe4cc;
+    padding-bottom: 10px;
+}
+
+/* Labels */
+label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-top: 10px;
+    display: block;
+}
+
+/* Inputs */
+.checkout-input {
+    width: 100%;
+    padding: 12px 16px;
+    margin-top: 6px;
+    border-radius:10px;
+    border: 1.8px solid #ffb380;
+    font-size: 14px;
+    background: #fff;
+    transition: all 0.25s ease;
+}
+
+.checkout-input-textarea{
+  width: 100%;
+    height: 150px;
+    margin-top: 6px;
+    border-radius: 10px;
+    border: 1.8px solid #ffb380;
+    font-size: 14px;
+    background: #fff;
+    transition: all 0.25s ease;
+}
+
+.checkout-input:focus {
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15);
+    outline: none;
+}
+
+/* Textarea */
+textarea.checkout-input {
+    border-radius: 18px;
+    resize: none;
+}
+
+/* Two column row */
+.checkout-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* Order items */
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px dashed #ffe4cc;
+    font-size: 14px;
+}
+
+.order-item strong {
+    color: #111827;
+}
+
+.product-name {
+    color: #ff6b35;
+    font-weight: 600;
+}
+
+/* Totals */
+.order-item.total {
+    border-top: 2px solid #ff6b35;
+    margin-top: 12px;
+    padding-top: 14px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Payment options */
+.payment-option {
+    padding: 5px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: #fff;
+}
+
+.payment-option input {
+    margin-right: 8px;
+}
+
+.payment-option:hover {
+    border-color: #ff6b35;
+    background: #fff5eb;
+}
+
+.payment-selected {
+    border-color: #ff6b35;
+    background: #fff5eb;
+}
+
+/* Button */
+.checkout-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #ff6b35, #ff5722);
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.checkout-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(255, 107, 53, 0.4);
+}
+
+/* Alerts */
+.alert {
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
     }
+
+    .checkout-container {
+        padding: 12px;
+    }
+}
+
 </style>
 @endpush
 
@@ -75,33 +245,40 @@
                 <div>
                     <label>Town / City *</label>
                     <input type="text" name="city" class="checkout-input" 
-                           value="{{ old('city') }}" required>
+                           value="{{ old('city') }}" placeholder="Enter your city name" required>
                 </div>
                 <div>
                     <label>Pincode *</label>
                     <input type="text" name="postcode" class="checkout-input" 
-                           value="{{ old('postcode') }}" required>
+                           value="{{ old('postcode') }}" placeholder="Enter your pincode" required>
                 </div>
             </div>
             
             <label>State</label>
-            <input type="text" name="state" class="checkout-input" value="{{ old('state') }}">
+            <input type="text" name="state" class="checkout-input" value="{{ old('state') }}" placeholder="Enter your state" required>
             
             <label>Location</label>
 
                    <input type="text" name="location" class="checkout-input" 
        id="locationInput" value="{{ old('location') }}"
        placeholder="📍 Click here to get your current location" 
-       readonly onclick="getLocation()">
+       readonly onclick="getLocation()" required>
 
 <div  style="margin-top: 10px; color: #666;"></div>
             
             <label>Phone *</label>
             <input type="tel" name="phone" class="checkout-input" 
                     value="{{ auth()->user()->phone ?? old('phone') }}"
-                   placeholder="1234567890" required>
-            
+                   placeholder="Enter your Number" required>
+
+                  
+            <label class="mt-3" for="message">Message (optional) </label>
+            <textarea name="o_order_notes" class="checkout-input-textarea" placeholder=" leave a message"></textarea>
+            <small>500 words maximum</small>
+
     </div>
+
+    {{-- right-side-colun-of-price --}}
 
     <div class="checkout-box order-box order">
         <h2 class="checkout-h2 text-center">Your order</h2>
@@ -153,39 +330,43 @@
                     ₹{{ number_format($subtotal, 2) }}
                 </span>
             </div>
+
+            {{-- payment method --}}
+<hr class="divider">
+
+<h2 class="checkout-h2 text-center">Payment Method</h2>
+
+<div class="payment-option payment-selected" onclick="selectPayment(this)">
+    <input type="radio" name="payment" value="cash" checked>
+    <strong>Cash on Delivery</strong><br>
+    <small>Pay with cash upon delivery</small>
+</div>
+
+<div class="payment-option" onclick="selectPayment(this)">
+    <input type="radio" name="payment" value="online">
+    <strong>Online Payment (Razorpay)</strong><br>
+    <small>Pay securely using Card, UPI, Net Banking</small>
+</div>
+
+<button type="submit" class="checkout-btn">
+    Place Order
+</button>
+
+
         </div>
 
         {{-- Hidden Inputs --}}
         <input type="hidden" name="shipping_charge" id="shippingCharge" value="0">
         <input type="hidden" name="distance_km" id="distanceKm" value="0">
 
-
+</form>
 
 </div>
+
  </div>
 
-            <div class=" card container p-3 mb-5">
-                <h2 class="checkout-h2" style="margin-top: 20px;">Payment Method</h2>
-                
-                <div class="payment-option payment-selected" onclick="selectPayment(this)">
-                    <input type="radio" name="payment" value="cash" checked> <strong>Cash on Delivery</strong><br>
-                    <small>Pay with cash upon delivery</small>
-                </div>
-                
-                <div class="payment-option" onclick="selectPayment(this)">
-                    <input type="radio" name="payment" value="online"> <strong>Online Payment (Razorpay)</strong><br>
-                    <small>Pay securely using Card, UPI, Net Banking</small>
-                </div>
-                
-                <button type="submit" class="checkout-btn" id="placeOrderBtn">
-    Place Order
-</button>
-
-
-             
-
-            </div>
-    </form>
+          
+    
    
    
 </main>
