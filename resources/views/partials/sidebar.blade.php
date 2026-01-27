@@ -48,7 +48,7 @@
                         <i class="icofont-funky-man fs-5"></i> <span>Customers</span> <span class="arrow icofont-rounded-down ms-auto text-end fs-5"></span></a>
                         <!-- Menu: Sub menu ul -->
                         <ul class="sub-menu collapse" id="customers-info">
-                            <li><a class="ms-link" href="customers.html">Customers List</a></li>
+                            <li><a class="ms-link" href="{{ route('contact.list') }}">Customers List</a></li>
                             <li><a class="ms-link" href="customer-detail.html">Customers Details</a></li>
                         </ul>
                     </li>
@@ -121,6 +121,6 @@
 
         <style>
             .sidebar{
-                background:orangered;
+                background:rgb(236, 75, 17);
             }
         </style>

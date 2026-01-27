@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\MainCategory;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\User;
+use App\Models\Product;
+use Carbon\Carbon;
 
 class CategoryController extends Controller
 {
@@ -157,5 +162,79 @@ public function getByMainCategory2($main_id)
     $categories = Category::where('main_category_id', $main_id)->get();
     return response()->json($categories);
 }
+
+
+
+// show cartegroy in home dashboard page---->
+
+public function howHomeDashboard()
+{
+    // Eager load mainCategory and products
+    $categories = Category::with('mainCategory', 'products')->get();
+
+        // Count of main categories
+    $mainCategoriesCount = \App\Models\MainCategory::where('status', 1)->count();
+
+
+
+    $totalRevenue = Order::where('o_payment_status', 'completed')
+                          ->sum('o_total_amount'); // total-sale-amount
+
+    // ✅ TOTAL ITEMS SOLD
+    $itemsSold = OrderItem::sum('o_i_quantity');
+
+    //cutomer count (sign-up se)
+    $customersCount = User::where('role', 'user')->count(); 
+    $newCustomersToday = User::whereDate('created_at', today())->count();
+
+
+    $topSellingItem = OrderItem::selectRaw('o_i_product_id, SUM(o_i_quantity) as total_qty') 
+    ->groupBy('o_i_product_id')
+    ->orderByDesc('total_qty')  //top selling product count
+    ->with('product')
+    ->first();
+
+
+    $leastSellingProducts = OrderItem::selectRaw('o_i_product_id, SUM(o_i_quantity) as total_qty')
+    ->groupBy('o_i_product_id')
+    ->orderBy('total_qty', 'ASC') // 👈 least first
+    ->with('product')
+    ->limit(5)
+    ->get();
+
+    // orders--->
+        $ordersCount = Order::count(); // ✅ order count
+        $pendingOrders   = Order::where('o_order_status', 'pending')->count();
+        $shippedOrders   = Order::where('o_order_status', 'shipped')->count();
+        $deliveredOrders = Order::where('o_order_status', 'delivered')->count();
+
+        // low stock products
+
+        $lowStockProducts = Product::where('p_stock', '<=', 5)->get();
+        $lowStockCount = $lowStockProducts->count();
+
+        // todays sale
+        $todaySales = Order::whereDate('o_created_at', Carbon::today())
+        ->where('o_order_status', 'delivered')
+        ->sum('o_total_amount');
+
+        $todayOrders = Order::whereDate('o_created_at', Carbon::today())->count();
+
+
+    return view('admin.dashboard', compact('categories','mainCategoriesCount','ordersCount','totalRevenue','itemsSold','customersCount','topSellingItem','leastSellingProducts','pendingOrders',
+    'shippedOrders','deliveredOrders','lowStockProducts','lowStockCount','todaySales','todayOrders','newCustomersToday'));
+}
+
+// controller of click btn to change the category cards dynamic---->
+public function getCategoriesByMain($main_id)
+{
+    $categories = Category::with('products')
+                    ->where('main_category_id', $main_id)
+                    ->get();
+
+    return response()->json($categories);
+}
+
+
 
 }

@@ -469,12 +469,13 @@
                                                             <li><hr class="dropdown-divider"></li>
 
                                                             <li>
-                                                                <form method="POST" action="<?php echo e(route('logout')); ?>">
-                                                                    <?php echo csrf_field(); ?>
-                                                                    <button type="submit" class="dropdown-item text-secondary ">
-                                                                        Logout <i class="bi bi-box-arrow-right"></i>
-                                                                    </button>
-                                                                </form>
+                                                                <form id="logoutForm">
+    <?php echo csrf_field(); ?>
+    <button type="submit" class="dropdown-item text-secondary">
+        Logout <i class="bi bi-box-arrow-right"></i>
+    </button>
+</form>
+
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -555,6 +556,7 @@
 
 
            <!-- Login Modal -->
+
 <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <form method="POST" action="<?php echo e(url('signin')); ?>">
@@ -579,16 +581,14 @@
         name="password" 
         id="signinPassword"
         class="password-input"
-        placeholder="Enter your password"
-    >
+        placeholder="Enter your password" >
 
     <span class="toggle-password" data-target="signinPassword">
         <i class="bi bi-eye-slash"></i>
     </span>
 </div>
 
-
-
+<p id="errorMsg" style="color:red;"></p>
 
         </div>
         
@@ -656,8 +656,62 @@
 </div>
 
 
+
+
+
 <!-- starting scripts -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+
+<script>
+$('#logoutForm').on('submit', function(e){
+    e.preventDefault(); // 🔥 important
+
+    $.ajax({
+        url: "<?php echo e(route('logout')); ?>",
+        type: "POST",
+        data: $(this).serialize(),
+        success: function(res){
+            if(res.status){
+                window.location.href = "/";// homepage
+            }
+        },
+        error: function(){
+            alert('Logout failed!');
+        }
+    });
+});
+</script>
+
+
+<script>
+$('#loginForm').on('submit', function(e){
+    e.preventDefault();
+
+    $.ajax({
+        url: "<?php echo e(route('signin')); ?>", // apna route check kar lena
+        type: "POST",
+        data: $(this).serialize(),
+        success: function(res){
+            if(res.status){
+                if(res.role === 'admin'){
+                    window.location.href = "<?php echo e(route('admin.dashboard')); ?>";
+                }else{
+                    location.reload(); // user ke liye current page
+                }
+            }
+        },
+        error: function(xhr){
+            $('#errorMsg').text(xhr.responseJSON.message);
+        }
+    });
+});
+</script>
+
 
 
 <script>

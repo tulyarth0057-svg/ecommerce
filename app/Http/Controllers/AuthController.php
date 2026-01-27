@@ -79,13 +79,39 @@ class AuthController extends Controller
 
 
     // LOGOUT SYSTEM
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-          return redirect('/')->with('swal_success', 'Logout successful!');
+   public function logout(Request $request)
+{
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
+    return response()->json([
+        'status' => true,
+        'message' => 'Logout successful!'
+    ]);
+}
+
+
+
+
+// controller of contact list in admin panel---->
+
+   public function showContactlist()
+    {
+      
+   $users = User::latest()->get();
+    return view('admin.contact-list', compact('users'));
+    
+    }
+
+ // delecte route of contact list in admin panel---->
+
+    public function deleteUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->back()->with('success', 'User deleted successfully!');
     }
 
 }

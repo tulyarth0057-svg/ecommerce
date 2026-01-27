@@ -5,83 +5,132 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Whistlist;
 use Illuminate\Support\Facades\Auth;
+use Cart;
 
 class WhistlistController extends Controller
 {
-    // SHOW wishlist page (GET /wishlist)
-   public function wishlist()
-{
-    $wishlists = Whistlist::with('product.colors.images')
-        ->where('user_id', Auth::id())
-        ->get();
+    // ==========================
+    // SHOW wishlist page
+    // ==========================
+    public function wishlist()
+    {
+        // ❌ Admin not allowed
+        if (!Auth::check() || Auth::user()->role === 'admin') {
+            return redirect('/')->with('error', 'Only users can access wishlist');
+        }
 
-    $wishlistCount = $wishlists->count(); 
+        $wishlists = Whistlist::with('product.colors.images')
+            ->where('user_id', Auth::id())
+            ->get();
 
-    return view('whistlist', compact('wishlists', 'wishlistCount'));
-}
+        $wishlistCount = $wishlists->count();
 
+        return view('whistlist', compact('wishlists', 'wishlistCount'));
+    }
 
-// whistlist store---->
+    // ==========================
+    // ADD to wishlist (AJAX)
+    // ==========================
+    public function store(Request $request)
+    {
+        // ✅ Login check
+        if (!Auth::check()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Please login first'
+            ], 401);
+        }
 
-public function store(Request $request)
-{
-    $userId = auth()->id();
-    $productId = $request->product_id;
+        $user = Auth::user();
 
-    $already = Whistlist::where('user_id', $userId)
-        ->where('p_id', $productId)
-        ->exists();
+        // ❌ Admin cannot add wishlist
+        if ($user->role === 'admin') {
+            return response()->json([
+                'status' => false,
+                'message' => 'Admin cannot add products to wishlist'
+            ], 403);
+        }
 
-    $wishlistCount = Whistlist::where('user_id', $userId)->count();
+        $productId = $request->product_id;
 
-    if ($already) {
+        $already = Whistlist::where('user_id', $user->id)
+            ->where('p_id', $productId)
+            ->exists();
+
+        $wishlistCount = Whistlist::where('user_id', $user->id)->count();
+
+        if ($already) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Product already in your wishlist ❤️',
+                'wishlistCount' => $wishlistCount
+            ]);
+        }
+
+        Whistlist::create([
+            'user_id' => $user->id,
+            'p_id' => $productId
+        ]);
+
         return response()->json([
-            'status' => false,
-            'message' => 'Product already in your wishlist ❤️',
-            'wishlistCount' => $wishlistCount
+            'status' => true,
+            'message' => 'Product added to wishlist ❤️',
+            'wishlistCount' => $wishlistCount + 1
         ]);
     }
 
-    Whistlist::create([
-        'user_id' => $userId,
-        'p_id' => $productId
-    ]);
+    // ==========================
+    // REMOVE single wishlist item
+    // ==========================
+  
+       public function removeWishlist($id)
+{
+    if (!Auth::check() || Auth::user()->role === 'admin') {
+        return response()->json([
+            'success' => false,
+            'message' => 'Action not allowed'
+        ], 403);
+    }
 
-    return response()->json([
-        'status' => true,
-        'message' => 'Product added to wishlist ❤️',
-        'wishlistCount' => $wishlistCount + 1
-    ]);
+    $deleted = Whistlist::where('w_id', $id)
+        ->where('user_id', Auth::id())
+        ->delete();
+
+    if ($deleted) {
+        return response()->json([
+            'success' => true,
+            'message' => 'Removed from wishlist'
+        ]);
+    } else {
+        return response()->json([
+            'success' => false,
+            'message' => 'Item not found or already removed'
+        ], 404);
+    }
 }
 
 
+    // ==========================
+    // CLEAR wishlist
+    // ==========================
+    // public function clearWishlist()
+    // {
+    //     if (!Auth::check() || Auth::user()->role === 'admin') {
+    //         return redirect()->back()->with('error', 'Action not allowed');
+    //     }
 
+    //     Whistlist::where('user_id', Auth::id())->delete();
 
-    // REMOVE single item (DELETE /wishlist/{id})
-    public function removeWishlist($id)
-    {
-        Whistlist::where('w_id', $id)
-            ->where('user_id', Auth::id())
-            ->delete();
+    //     return back()->with('success', 'Wishlist cleared successfully');
+    // }
 
-        return back()->with('success', 'Removed from wishlist');
-    }
-
-    // CLEAR wishlist (DELETE /wishlist/clear)
-    public function clearWishlist()
-    {
-        Whistlist::where('user_id', Auth::id())->delete();
-
-        return back()->with('success', 'Wishlist cleared successfully');
-    }
-
-
-
-    // product---addtocart--->
-public function wishlistAddToCart(Request $request)
+    // ==========================
+    // MOVE wishlist → cart
+    // ==========================
+    public function wishlistAddToCart(Request $request)
     {
         $request->validate([
-            'p_id' => 'required|exists:products,p_id',  
+            'product_id' => 'required|exists:products,p_id',
         ]);
 
         $user = Auth::user();
@@ -93,9 +142,17 @@ public function wishlistAddToCart(Request $request)
             ], 401);
         }
 
+        // ❌ Admin blocked
+        if ($user->role === 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Admin cannot add items to cart'
+            ], 403);
+        }
+
         $wishlistItem = Whistlist::where('user_id', $user->id)
-                                 ->where('p_id', $request->product_id)
-                                 ->first();
+            ->where('p_id', $request->product_id)
+            ->first();
 
         if (!$wishlistItem) {
             return response()->json([
@@ -104,39 +161,26 @@ public function wishlistAddToCart(Request $request)
             ], 404);
         }
 
-        $product = $wishlistItem->product;   // thanks to relation
+        $product = $wishlistItem->product;
 
-        if (!$product) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Product not found'
-            ], 404);
-        }
-
-        // Add to cart using the standard package
         Cart::instance('default')->add([
-            'id'      => $product->p_id,
-            'name'    => $product->p_name,
-            'qty'     => 1,
-            'price'   => $product->p_price,           // or discounted price if exists
-            'weight'  => 0,
+            'id'    => $product->p_id,
+            'name'  => $product->p_name,
+            'qty'   => 1,
+            'price' => $product->p_price,
+            'weight'=> 0,
             'options' => [
-                'image' => $product->img_path ?? null,   // adjust field name
-                // 'color' => ..., 'size' => ... if needed later
+                'image' => $product->img_path ?? null,
             ]
         ]);
 
-        // Optional but recommended: remove from wishlist (move action)
+        // remove from wishlist
         $wishlistItem->delete();
 
         return response()->json([
             'success' => true,
             'message' => 'Product moved to cart successfully!',
-            'cart_count' => Addtocart::instance('default')->count(),  
+            'cart_count' => Cart::instance('default')->count(),
         ]);
     }
-
-
-
-
 }

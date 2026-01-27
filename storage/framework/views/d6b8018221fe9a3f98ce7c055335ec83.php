@@ -1051,10 +1051,9 @@
                 </div>
             </div>
         </div>
-        <?php $__env->startPush('scripts'); ?>
 
-
-
+    
+<?php $__env->startPush('scripts'); ?>
 
 <script>
 document.querySelectorAll('.add-wishlist-to-cart').forEach(btn => {
@@ -1083,31 +1082,75 @@ document.querySelectorAll('.add-wishlist-to-cart').forEach(btn => {
 </script>
 
 
-      
 
 
 <script>
-document.querySelectorAll('.delete-wishlist-form .wish-remove').forEach(button => {
-    button.addEventListener('click', function () {
-        let form = this.closest('form');
 
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "This item will be removed from wishlist!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
-            }
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.delete-wishlist-form .wish-remove').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent form submission
+
+            let form = this.closest('form');
+            let wishlistItem = form.closest('.wish-card'); // adjust if using .wish-table-info
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This item will be removed from wishlist!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e65c00',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // AJAX request
+                    fetch(form.action, {
+                        method: 'POST', // Laravel expects POST + _method
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ _method: 'DELETE' }) // Laravel DELETE spoofing
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove from DOM
+                            wishlistItem.remove();
+
+                            // Update wishlist counter
+                            let counter = document.querySelector('.wish-counter');
+                            if (counter) {
+                                let count = parseInt(counter.textContent) - 1;
+                                counter.textContent = count + ' Items';
+                            }
+
+                            // Show SweetAlert success
+                            Swal.fire({
+                                icon: 'success',
+                                text: data.message,
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            Swal.fire('Error', data.message, 'error');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        Swal.fire('Error', 'Something went wrong!', 'error');
+                    });
+                }
+            });
         });
     });
 });
+
 </script>
+
 
 
 
@@ -1147,11 +1190,6 @@ function addToWishlist(productId) {
 });
 }
 </script>
-
-
-
-
-
 
 
  <?php $__env->stopPush(); ?>

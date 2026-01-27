@@ -5,11 +5,454 @@
 @push('styles')
 <style>
   body { background-color: #f8f9fa;font-family: 'Poppins',sans-serif }
+
+    .category-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-radius: 1rem;
+    }
+    .category-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .category-img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border: 3px solid #e65c00;
+    }
+    .product-list {
+        max-height: 150px;
+        overflow-y: auto;
+        margin-top: 0.5rem;
+    }
+     h1 {
+        color: black;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+      
+    }
+    .card-footer{
+        background: #e65c00;
+    }
+    /* .card-title{
+        color: #e65c00;
+    } */
+    .btn-main-category{
+        background: #e65c00;
+        color: white;
+       &:hover{
+        border: 1px solid #e65c00;
+        color:#e65c00;
+       }
+    }
+    .card-body-1{
+        background: #e65c00;
+        color: white;
+        padding: 10px 0px;
+        border-radius: 10px;
+        
+    }
+
 </style>
+
+
 @endpush
 
    @section('content')
-                <div class="container-xxl">
+
+   {{-- home-dashboard-content --}}
+
+<div class="container">
+
+    {{-- show categroy-products-counts --}}
+
+
+    <h1>Site Information</h1>
+
+    <div class="row mb-4 mt-4">
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body-1">
+                    <h5 class="card-title">Main Categories</h5>
+                    <p class="card-text display-4">{{ $mainCategoriesCount }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body-1">
+                    <h5 class="card-title">Total Categories</h5>
+                    <p class="card-text display-4">{{ $categories->count() }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body-1">
+                    <h5 class="card-title">Total Products</h5>
+                    <p class="card-text display-4">{{ $categories->sum(fn($cat) => $cat->products->count()) }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body-1">
+                        <h5 class="card-title">Total Orders</h5>
+                        <p class="card-text display-4">{{ $ordersCount }}</p>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+
+    {{-- 2 section cards start --}}
+
+     <div class="row mb-4 mt-4">
+
+             <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body-1">
+                        <h5 class="card-title">Total Revenue</h5>
+                        <p class="card-text display-4">₹ {{ number_format($totalRevenue, 2) }}</p>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body-1">
+                        <h5 class="card-title">Total Sale (qty)</h5>
+                        <p class="card-text display-4">{{ $itemsSold }}</p>
+                    </div>
+                </div>
+            </div>
+
+              
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body-1">
+                        <h5 class="card-title">Total Customer</h5>
+                        <p class="card-text display-4">{{ $customersCount }}</p>
+                    </div>
+                </div>
+            </div>
+
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm">
+                        <div class="card-body-1">
+                            <h5 class="card-title">New Customers</h5>
+                            <p class="card-text display-4">
+                                {{ $newCustomersToday ?? 0 }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+    </div>
+
+<hr>
+     {{-- 3 section cards start --}}
+
+     <div class="row mb-4 mt-4">
+
+        <h2>Top Product</h2>
+             <div class="col-md-12">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body-1">
+                        <h5 class="card-title">Top Selling Item</h5>
+                      @if($topSellingItem && $topSellingItem->product)
+
+                                <h5>{{ $topSellingItem->product->p_name }}</h5>
+
+                                <p>
+                                    Sold Quantity:
+                                    <strong>{{ $topSellingItem->total_qty }}</strong>
+                                </p>
+
+                            @else
+                                <p class="text-muted">No sales yet</p>
+                            @endif
+
+                    </div>
+                </div>
+            </div>
+
+    </div>
+<hr>
+
+ {{-- 4 section cards start --}}
+
+    <div class="row mb-4 mt-4">
+
+        <h2>Least Product</h2>
+
+             <div class="col-md-12">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body-1">
+                        <h5 class="fw-bold text-white mb-3">Least Selling Products</h5>
+
+                        <ul class="list-group list-group-flush">
+                            @forelse($leastSellingProducts as $item)
+                                @if($item->product)
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>{{ $item->product->p_name }}</span>
+                                        <span class="badge bg-warning text-dark">
+                                            Sold: {{ $item->total_qty }}
+                                        </span>
+                                    </li>
+                                @endif
+                            @empty
+                                <li class="list-group-item text-muted">No data</li>
+                            @endforelse
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+
+
+    <hr>
+
+
+     {{-- 5 section cards start --}}
+
+    <div class="row mb-4 mt-4">
+
+        <h2>Orders</h2>
+
+            {{-- total order --}}
+             <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body-1">
+                        <h5 class="card-title">Total Orders</h5>
+                        <p class="card-text display-4">{{ $ordersCount }}</p>
+                    </div>
+                </div>
+            </div>
+           
+
+           {{-- Pending Orders --}}
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body-1">
+                <h6 class="card-title">⏳ Pending Orders</h6>
+                <p class="display-5 fw-bold">{{ $pendingOrders }}</p>
+            </div>
+        </div>
+    </div>
+
+    {{-- Shipped Orders --}}
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body-1">
+                <h6 class="card-title">🚚 Shipped Orders</h6>
+                <p class="display-5 fw-bold">{{ $shippedOrders }}</p>
+            </div>
+        </div>
+    </div>
+
+    {{-- Delivered Orders --}}
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body-1">
+                <h6 class="card-title">✅ Delivered Orders</h6>
+                <p class="display-5 fw-bold">{{ $deliveredOrders }}</p>
+            </div>
+        </div>
+    </div>
+
+             
+
+    </div>
+
+
+     {{-- 6 section cards start --}}
+
+    <div class="row mb-4 mt-4">
+
+        <h2>Product</h2>
+
+           <div class="col-md-3">
+    <div class="card text-center shadow-sm">
+        <div class="card-body-1">
+            <h5 class="card-title">Low Stock Products</h5>
+            <p class="card-text display-4">
+                {{ $lowStockCount }}
+            </p>
+        </div>
+    </div>
+</div>
+
+
+          <div class="col-md-3">
+    <div class="card text-center shadow-sm">
+        <div class="card-body-1">
+            <h5 class="card-title">Today’s Sales</h5>
+            <p class="card-text display-6">
+                ₹ {{ number_format($todaySales, 2) }}
+            </p>
+            <small class="text-white">{{ $todayOrders }} Orders</small>
+        </div>
+    </div>
+</div>
+
+
+  
+
+
+
+    </div>
+
+    {{-- end counters --}}
+
+    <hr>
+
+    {{-- start cards --}}
+    
+        
+    <h2 class="mt-4 mb-4">Categories & Products</h2>
+
+        {{-- Main Category Buttons --}}
+    <div class="text-center mb-4">
+        <button class="btn btn-main-category me-2 mb-4" data-id="0">All</button>
+        @foreach(\App\Models\MainCategory::where('status',1)->get() as $main)
+            <button class="btn btn-main-category me-2 mb-4" data-id="{{ $main->cat_id }}">{{ $main->cat_name }}</button>
+        @endforeach
+    </div>
+
+
+
+    {{-- Category Cards --}}
+    <div class="row g-4 mt-4" id="category-cards">
+        @foreach($categories as $category)
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 category-card-item" data-main="{{ $category->main_category_id }}">
+                <div class="card shadow-sm h-100 category-card">
+
+                    {{-- Image --}}
+                    <div class="card-img-top d-flex justify-content-center align-items-center p-3 bg-light">
+                        @if($category->c_image)
+                            <img src="{{ asset($category->c_image) }}" alt="{{ $category->c_name }}" class="rounded-circle category-img">
+                        @else
+                            <div class="rounded-circle bg-secondary d-flex justify-content-center align-items-center category-img">
+                                <span class="text-white">No Image</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Info --}}
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ $category->c_name }}</h5>
+                        <p class="text-muted mb-2">Main: {{ $category->mainCategory->cat_name ?? '-' }}</p>
+                        <h6>Products:</h6>
+                        <ul class="list-group list-group-flush product-list">
+                            @forelse($category->products as $product)
+                                <li class="list-group-item">{{ $product->p_name }}</li>
+                            @empty
+                                <li class="list-group-item text-muted">No Products</li>
+                            @endforelse
+                        </ul>
+                    </div>
+
+                    {{-- Footer --}}
+                    <div class="card-footer text-center text-white fw-bold ">
+                        Total Products: {{ $category->products->count() }}
+                    </div>
+
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+
+</div>
+
+
+
+
+
+   @endsection
+    
+   
+  
+
+
+@push('scripts')
+
+<!-- SweetAlert2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+@if(session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: "{{ session('success') }}",
+        timer: 2000,
+        showConfirmButton: false
+    });
+</script>
+@endif
+
+@if(session('error'))
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: "{{ session('error') }}",
+        timer: 2000,
+        showConfirmButton: false
+    });
+</script>
+@endif
+
+{{-- script of category btn --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const buttons = document.querySelectorAll('.btn-main-category');
+    const cards   = document.querySelectorAll('.category-card-item');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+
+            const mainId = this.dataset.id;
+
+            // filter cards
+            cards.forEach(card => {
+                if (mainId == 0 || card.dataset.main == mainId) {
+                    card.style.display = '';   // IMPORTANT
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+});
+</script>
+
+
+@endpush
+
+
+
+
+
+{{-- old code of dashoard --}}
+
+ {{-- <div class="container-xxl">
 
                     <div class="row g-3 mb-3 row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-4">
                         <div class="col">
@@ -789,43 +1232,4 @@
                         </div>
                     </div><!-- Row end  -->
 
-                </div>
-
-@endsection
-
-@push('scripts')
-
-
-
-<!-- SweetAlert2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-
-<!-- SweetAlert2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-@if(session('success'))
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: "{{ session('success') }}",
-        timer: 2000,
-        showConfirmButton: false
-    });
-</script>
-@endif
-
-@if(session('error'))
-<script>
-    Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: "{{ session('error') }}",
-        timer: 2000,
-        showConfirmButton: false
-    });
-</script>
-@endif
-
-@endpush
+                </div> --}}

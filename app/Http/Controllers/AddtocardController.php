@@ -199,28 +199,52 @@ public function setQuantity(Request $request)
 
 
 // remove item form cart----->
-public function removeFromCart($cart_id)
-{
-    $userId = Auth::id();
+  public function removeFromCart(Request $request, $cart_id)
+    {
+        // Check if user is logged in
+        if (!Auth::check() || Auth::user()->role === 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Action not allowed'
+            ], 403);
+        }
 
-    // Check if item belongs to current user
-    $cartItem = DB::table('addtocart')
-        ->where('cart_id', $cart_id)
-        ->where('user_id', $userId)
-        ->first();
+        $userId = Auth::id();
 
-    if (!$cartItem) {
-        return redirect()->back()->with('error', 'Item not found in cart');
+        // Find cart item for the current user
+        $cartItem = DB::table('addtocart')
+            ->where('cart_id', $cart_id)
+            ->where('user_id', $userId)
+            ->first();
+
+        if (!$cartItem) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Item not found in cart'
+            ], 404);
+        }
+
+        // Delete the item
+        $deleted = DB::table('addtocart')
+            ->where('cart_id', $cart_id)
+            ->where('user_id', $userId)
+            ->delete();
+
+        if ($deleted) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Item removed from cart'
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to remove item'
+        ], 500);
     }
 
-    // Delete the item
-    DB::table('addtocart')
-        ->where('cart_id', $cart_id)
-        ->where('user_id', $userId)
-        ->delete();
 
-    return redirect()->back()->with('success', 'Item removed from cart');
-}
+
 
 public function addFromWishlist(Request $request)
 {
@@ -262,16 +286,24 @@ public function addFromWishlist(Request $request)
     ]);
 }
 
-public function clear()
-{
-    
-    if (Auth::check()) {
-        Addtocart::where('user_id', Auth::id())->delete();
-    } 
 
-    return redirect()->route('cart')
-        ->with('success', 'Cart successfully cleared!');
+// clear all produts in cart---->
+
+public function clear(Request $request)
+{
+    $userId = Auth::id();
+
+    // Clear all cart items for this user
+    DB::table('addtocart')->where('user_id', $userId)->delete();
+
+    // Return JSON response for AJAX
+    return response()->json([
+        'success' => true,
+        'message' => 'Cart cleared successfully'
+    ]);
 }
+
+
 
 // checkout-controller---->
 

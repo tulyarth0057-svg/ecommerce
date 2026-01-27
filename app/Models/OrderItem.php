@@ -45,4 +45,6 @@ class OrderItem extends Model
     {
         return $this->belongsTo(Size::class, 'o_i_size', 'size_id');
     }
+ 
+
 }

@@ -141,15 +141,15 @@
 
                         <div class="cart-box container-fluid px-0 px-sm-3">
 
-    <?php if(session('success')): ?>
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <?php echo e(session('success')); ?>
 
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    <?php endif; ?>
+    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
-    <?php $__empty_1 = true; $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
         <div class="cart-item d-flex flex-column flex-sm-row align-items-sm-center gap-2 gap-sm-2 py-3 border-bottom"
              data-cart-id="<?php echo e($item->cart_id); ?>"
              data-unit-price="<?php echo e($item->final_price); ?>"
@@ -220,26 +220,27 @@
                     </form>
                 </div>
 
+             
             </div>
 
         </div>
-    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
         <div class="alert alert-info text-center py-5 my-4">
             Your cart is empty
         </div>
-    <?php endif; ?>
+    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
     <!-- Bottom buttons -->
     <div class="d-flex flex-column flex-sm-row gap-3 justify-content-between mt-4 pt-3 border-top">
         <a href="/" class="btn btn-outline-secondary w-100 w-sm-auto">Continue shopping</a>
 
-        <form action="<?php echo e(route('cart.clear')); ?>" method="POST" class="w-100 w-sm-auto">
-            <?php echo csrf_field(); ?>
-            <button type="submit" class="btn btn-outline-danger w-100"
-                    onclick="return confirm('Are you sure you want to clear the cart?')">
-                Clear cart
-            </button>
-        </form>
+   <form action="<?php echo e(route('cart.clear')); ?>" method="POST" class="clear-cart-form w-100 w-sm-auto">
+    <?php echo csrf_field(); ?>
+    <button type="submit" class="btn btn-outline-danger w-100">
+        Clear cart
+    </button>
+    </form>
+
     </div>
 
 </div>
@@ -297,7 +298,7 @@
 
 <?php $__env->startPush('scripts'); ?>
 
-<?php if(session('order_placed')): ?>
+<?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('order_placed')): ?>
 <script>
     Swal.fire({
         title: 'Order Placed Successfully!',
@@ -311,17 +312,24 @@
         }
     });
 </script>
-<?php endif; ?>
+<?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
 
 <script>
-// Delete cart item
-document.addEventListener('DOMContentLoaded', function() {
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    // -----------------------
+    // Cart Delete Handler
+    // -----------------------
     document.querySelectorAll('.delete-cart-item').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
             const cartId = this.dataset.cartId;
             const productName = this.dataset.productName;
-            
+            const form = document.getElementById('delete-form-' + cartId);
+            const cartItem = this.closest('.cart-item'); // adjust according to your cart HTML
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: `Remove "${productName}" from cart?`,
@@ -333,13 +341,107 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('delete-form-' + cartId).submit();
+                    fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ _method: 'DELETE' })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            cartItem.remove();
+                            let counter = document.querySelector('.cart-counter');
+                            if (counter) {
+                                let count = parseInt(counter.textContent) - 1;
+                                counter.textContent = count + ' Items';
+                            }
+                            Swal.fire({ icon: 'success', text: data.message, timer: 1500, showConfirmButton: false });
+                        } else {
+                            Swal.fire('Error', data.message, 'error');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        Swal.fire('Error', 'Something went wrong!', 'error');
+                    });
                 }
             });
         });
     });
+
 });
+
 </script>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+    // Clear cart confirmation
+    document.querySelectorAll('.clear-cart-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent default form submit
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "All items in your cart will be removed!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, clear it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({}) // just send an empty JSON
+                    })
+
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove all cart items from DOM
+                            document.querySelectorAll('.cart-item').forEach(item => item.remove());
+
+                            // Reset cart counter
+                            let counter = document.querySelector('.cart-counter');
+                            if (counter) counter.textContent = '0 Items';
+
+                            Swal.fire({
+                                icon: 'success',
+                                text: data.message,
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            Swal.fire('Error', data.message, 'error');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        Swal.fire('Error', 'Something went wrong!', 'error');
+                    });
+                }
+            });
+        });
+    });
+
+});
+
+</script>
+
+
 
 <script>
 // Subtotal update function

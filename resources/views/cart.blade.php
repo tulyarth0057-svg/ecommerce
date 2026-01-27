@@ -218,6 +218,7 @@
                     </form>
                 </div>
 
+             
             </div>
 
         </div>
@@ -231,13 +232,13 @@
     <div class="d-flex flex-column flex-sm-row gap-3 justify-content-between mt-4 pt-3 border-top">
         <a href="/" class="btn btn-outline-secondary w-100 w-sm-auto">Continue shopping</a>
 
-        <form action="{{ route('cart.clear') }}" method="POST" class="w-100 w-sm-auto">
-            @csrf
-            <button type="submit" class="btn btn-outline-danger w-100"
-                    onclick="return confirm('Are you sure you want to clear the cart?')">
-                Clear cart
-            </button>
-        </form>
+   <form action="{{ route('cart.clear') }}" method="POST" class="clear-cart-form w-100 w-sm-auto">
+    @csrf
+    <button type="submit" class="btn btn-outline-danger w-100">
+        Clear cart
+    </button>
+    </form>
+
     </div>
 
 </div>
@@ -311,15 +312,22 @@
 </script>
 @endif
 
-
+{{-- // Delete cart item --}}
 <script>
-// Delete cart item
-document.addEventListener('DOMContentLoaded', function() {
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    // -----------------------
+    // Cart Delete Handler
+    // -----------------------
     document.querySelectorAll('.delete-cart-item').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
             const cartId = this.dataset.cartId;
             const productName = this.dataset.productName;
-            
+            const form = document.getElementById('delete-form-' + cartId);
+            const cartItem = this.closest('.cart-item'); // adjust according to your cart HTML
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: `Remove "${productName}" from cart?`,
@@ -331,13 +339,107 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('delete-form-' + cartId).submit();
+                    fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ _method: 'DELETE' })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            cartItem.remove();
+                            let counter = document.querySelector('.cart-counter');
+                            if (counter) {
+                                let count = parseInt(counter.textContent) - 1;
+                                counter.textContent = count + ' Items';
+                            }
+                            Swal.fire({ icon: 'success', text: data.message, timer: 1500, showConfirmButton: false });
+                        } else {
+                            Swal.fire('Error', data.message, 'error');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        Swal.fire('Error', 'Something went wrong!', 'error');
+                    });
                 }
             });
         });
     });
+
 });
+
 </script>
+
+{{-- clear all products in carts --}}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+    // Clear cart confirmation
+    document.querySelectorAll('.clear-cart-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent default form submit
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "All items in your cart will be removed!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, clear it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({}) // just send an empty JSON
+                    })
+
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove all cart items from DOM
+                            document.querySelectorAll('.cart-item').forEach(item => item.remove());
+
+                            // Reset cart counter
+                            let counter = document.querySelector('.cart-counter');
+                            if (counter) counter.textContent = '0 Items';
+
+                            Swal.fire({
+                                icon: 'success',
+                                text: data.message,
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            Swal.fire('Error', data.message, 'error');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        Swal.fire('Error', 'Something went wrong!', 'error');
+                    });
+                }
+            });
+        });
+    });
+
+});
+
+</script>
+
+
 
 <script>
 // Subtotal update function

@@ -113,6 +113,17 @@ Route::get('/get-subcategories/{main_id}', [ProductController::class, 'getByMain
 Route::get('/admin/get-categories/{main_id}', [CategoryController::class, 'getByMainCategory']);
 
 
+// show category in admin panel--->
+// Display all categories in card layout
+Route::get('/admin/dashboard', [CategoryController::class, 'howHomeDashboard'])->name('admin.dashboard');
+
+// route of categroy btn--->
+Route::get('/admin/categories-by-main/{main_id}', [CategoryController::class, 'getCategoriesByMain'])->name('admin.categories.byMain');
+
+
+
+
+
 
 
 Route::get('admin/add-product', function () {
@@ -194,7 +205,7 @@ Route::delete('/wishlist/{id}', [WhistlistController::class, 'removeWishlist'])
 Route::post('/wishlist/add-to-cart', [WhistlistController::class, 'addToCart'])
      ->name('wishlist.addToCart');
 
-// add to card route
+// add to card route--->
 Route::post('/cart/add-from-wishlist', [AddtocartController::class, 'addFromWishlist'])->name('cart.add.from.wishlist');
 
 
@@ -275,13 +286,21 @@ Route::get('/track-order/{order_number}', [OrderController::class, 'trackOrder']
 
 // route of order list in admin panel---->
 
+    Route::get('/admin/order-list', [OrderController::class, 'showOrderlist'])->name('order.list');
 
-
-Route::get('/admin/order-list', [OrderController::class, 'showOrderlist'])->name('order.list');
-
-Route::get('/view-order/{orderId}', [OrderController::class, 'AdminVieworder'])
-    ->name('view.order');
+    Route::get('/view-order/{orderId}', [OrderController::class, 'AdminVieworder'])
+        ->name('view.order');
    
+
+
+   // route of contact-list in admin panel---->
+
+    Route::get('/admin/contact-list', [AuthController::class, 'showContactlist'])->name('contact.list');
+    // delect route---->
+
+    Route::delete('/admin/user-delete/{id}', [AuthController::class, 'deleteUser'])
+    ->name('admin.user.delete');
+
 
 
 
