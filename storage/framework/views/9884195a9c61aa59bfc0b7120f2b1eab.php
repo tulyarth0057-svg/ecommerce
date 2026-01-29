@@ -130,16 +130,6 @@
                 </div>
             </div>
 
-              
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body-1">
-                        <h5 class="card-title">Total Customer</h5>
-                        <p class="card-text display-4"><?php echo e($customersCount); ?></p>
-                    </div>
-                </div>
-            </div>
-
                 <div class="col-md-3">
                     <div class="card text-center shadow-sm">
                         <div class="card-body-1">
@@ -151,6 +141,15 @@
                         </div>
                     </div>
                 </div>
+
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body-1">
+                        <h5 class="card-title">Total Customer</h5>
+                        <p class="card-text display-4"><?php echo e($customersCount); ?></p>
+                    </div>
+                </div>
+            </div>
 
 
 
@@ -244,7 +243,7 @@
         <div class="card shadow-sm text-center">
             <div class="card-body-1">
                 <h6 class="card-title">⏳ Pending Orders</h6>
-                <p class="display-5 fw-bold"><?php echo e($pendingOrders); ?></p>
+                <p class="display-5"><?php echo e($pendingOrders); ?></p>
             </div>
         </div>
     </div>
@@ -254,7 +253,7 @@
         <div class="card shadow-sm text-center">
             <div class="card-body-1">
                 <h6 class="card-title">🚚 Shipped Orders</h6>
-                <p class="display-5 fw-bold"><?php echo e($shippedOrders); ?></p>
+                <p class="display-5"><?php echo e($shippedOrders); ?></p>
             </div>
         </div>
     </div>
@@ -264,7 +263,7 @@
         <div class="card shadow-sm text-center">
             <div class="card-body-1">
                 <h6 class="card-title">✅ Delivered Orders</h6>
-                <p class="display-5 fw-bold"><?php echo e($deliveredOrders); ?></p>
+                <p class="display-5 "><?php echo e($deliveredOrders); ?></p>
             </div>
         </div>
     </div>
@@ -272,7 +271,8 @@
              
 
     </div>
-
+    
+    <hr>
 
      
 
@@ -280,7 +280,7 @@
 
         <h2>Product</h2>
 
-           <div class="col-md-3">
+           <div class="col-md-4">
     <div class="card text-center shadow-sm">
         <div class="card-body-1">
             <h5 class="card-title">Low Stock Products</h5>
@@ -293,7 +293,7 @@
 </div>
 
 
-          <div class="col-md-3">
+<div class="col-md-4">
     <div class="card text-center shadow-sm">
         <div class="card-body-1">
             <h5 class="card-title">Today’s Sales</h5>
@@ -306,14 +306,72 @@
     </div>
 </div>
 
+ <div class="col-md-4">
+    <div class="card text-center shadow-sm">
+        <div class="card-body-1">
+            <h5 class="card-title">Orders per day</h5>
+            <p class="card-text display-6">
+                <?php echo e($todayOrders); ?>
 
-  
-
+            </p>
+           
+        </div>
+    </div>
+</div>
 
 
     </div>
 
     
+
+<hr>
+
+    
+
+<div class="card">
+    <div class="card-header">
+        <h5>Sales Trend (Last 7 Days)</h5>
+    </div>
+
+    <div class="card-body">
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($salesTrend->count() > 0): ?>
+            <canvas id="salesTrendChart" height="120"></canvas>
+        <?php else: ?>
+            <p class="text-center text-muted mb-0">
+                No sales data available
+            </p>
+        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+    </div>
+</div>
+
+
+<hr>
+        
+
+
+        
+
+        <div class="col-md-12">
+    <div class="card shadow-sm">
+        <div class="card-header text-center">
+            <h5 class="mb-0">Orders Per Day (Last 7 Days)</h5>
+        </div>
+
+        <div class="card-body">
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($ordersPerDay->count() > 0): ?>
+                <canvas id="ordersPerDayChart" height="120"></canvas>
+            <?php else: ?>
+                <p class="text-center text-muted mb-0">
+                    No order data available
+                </p>
+            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+        </div>
+    </div>
+</div>
+
+
+
+
 
     <hr>
 
@@ -388,12 +446,77 @@
 
 
 <?php $__env->startPush('scripts'); ?>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- SweetAlert2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
-<!-- SweetAlert2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    <?php if($ordersPerDay->count() > 0): ?>
+
+    const ordersData = <?php echo json_encode($ordersPerDay, 15, 512) ?>;
+
+    const orderLabels = ordersData.map(item => item.date);
+    const orderCounts = ordersData.map(item => item.total_orders);
+
+    const ctxOrders = document.getElementById('ordersPerDayChart').getContext('2d');
+
+    new Chart(ctxOrders, {
+        type: 'bar',
+        data: {
+            labels: orderLabels,
+            datasets: [{
+                label: 'Orders',
+                data: orderCounts,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+<?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+
+
+<script>
+    const salesTrend = <?php echo json_encode($salesTrend, 15, 512) ?>;
+
+    const salesLabels = salesTrend.map(item => item.date);
+    const salesData = salesTrend.map(item => item.total_sales);
+
+    const ctx = document.getElementById('salesTrendChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: salesLabels,
+            datasets: [{
+                label: 'Total Sales (₹)',
+                data: salesData,
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
 
 
 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('success')): ?>
@@ -419,6 +542,12 @@
     });
 </script>
 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+
+<script>
+const salesData = <?php echo json_encode($salesTrend, 15, 512) ?>;
+</script>
+
 
 
 <script>

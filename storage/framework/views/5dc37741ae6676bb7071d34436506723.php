@@ -25,7 +25,7 @@
                             <i class="icofont-chart-flow fs-5"></i> <span>Categories</span> <span class="arrow icofont-rounded-down ms-auto text-end fs-5"></span></a>
                             <!-- Menu: Sub menu ul -->
                             <ul class="sub-menu collapse" id="categories">
-                                  <li><a class="ms-link" href="<?php echo e(route('product.category')); ?>">Add Categories</a></li>
+                                  <li><a class="ms-link" href="<?php echo e(route('category.create')); ?>">Add Categories</a></li>
                                 <li><a class="ms-link" href="<?php echo e(route("category.list")); ?>">Categories List</a></li>
 
                             </ul>
@@ -118,7 +118,7 @@
 
         <style>
             .sidebar{
-                background:orangered;
+                background:rgb(236, 75, 17);
             }
         </style>
 <?php /**PATH E:\laravel_git\ecommerce-web\resources\views/partials/sidebar.blade.php ENDPATH**/ ?>

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\OrderItem;
 use App\Models\Order;
+use Razorpay\Api\Api;
 
 class OrderController extends Controller
 {
@@ -88,25 +89,26 @@ public function processCheckout(Request $request)
 
     // Insert Order
     $orderId = DB::table('tbl_orders')->insertGetId([
-        'o_user_id'        => $userId,
-        'o_order_number'   => 'ORD-' . time(),
-        'o_email'          => $validated['email'],
-        'o_name'           => $validated['name'],
-        'o_phone'          => $validated['phone'],
-      'o_order_notes' => $validated['o_order_notes'] ?? null,
-        'o_street_address' => $validated['address'],
-        'o_city'           => $validated['city'],
-        'o_state'          => $validated['state'],
-        'o_postcode'       => $validated['postcode'],
-        'o_subtotal'       => $subtotal,
-        'o_shipping_cost'  => $shipping,
-        'o_total_amount'   => $grandTotal,
-        'o_payment_method' => $request->payment ?? 'cash',
-        'o_payment_status' => 'pending',
-        'o_order_status'   => 'pending',
-        'o_created_at'     => now(),
-        'o_updated_at'     => now(),
-    ]);
+    'o_user_id'        => $userId,
+    'o_order_number'   => 'ORD-' . time(),
+    'o_email'          => $validated['email'],
+    'o_name'           => $validated['name'],
+    'o_phone'          => $validated['phone'],
+    'o_order_notes'    => $validated['o_order_notes'] ?? null,
+    'o_street_address' => $validated['address'],
+    'o_city'           => $validated['city'],
+    'o_state'          => $validated['state'],
+    'o_postcode'       => $validated['postcode'],
+    'o_subtotal'       => $subtotal,
+    'o_shipping_cost'  => $shipping,
+    'o_total_amount'   => $grandTotal,
+    'o_payment_method' => 'online',
+    'o_payment_status' => 'pending',
+    'o_order_status'   => 'pending',
+    'o_created_at'     => now(),
+    'o_updated_at'     => now(),
+]);
+
 
     // Insert Order Items
     foreach ($cartItems as $item) {

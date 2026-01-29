@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+   <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+
 
     <title><?php echo $__env->yieldContent('title', 'My Laravel App'); ?></title>
 
@@ -136,6 +137,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
      
 
+
+    <script>
+        // CSRF Token setup for all AJAX requests
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+    
     
 <script>
     const searchInput = document.getElementById('searchInput');

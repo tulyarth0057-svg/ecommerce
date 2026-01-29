@@ -577,9 +577,10 @@
 
 <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-    <form method="POST" action="{{ url('signin') }}">
-      @csrf
-      <input type="hidden" name="redirect" value="{{ url()->current() }}">
+<form id="loginForm">
+    @csrf
+    <input type="hidden" name="redirect" value="{{ url()->current() }}">
+
       <div class="modal-content p-3">
             <div class="d-flex text-center justify-content-center">
            <img src="{{ asset('assetsofdash/images/Red and Black Modern Creative Agency Logo-old.png') }}" class="rounded-1 text-center" width="200px" height="80px">
@@ -684,51 +685,84 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 
-
+{{-- logout script --}}
 <script>
 $('#logoutForm').on('submit', function(e){
-    e.preventDefault(); // 🔥 important
+    e.preventDefault();
 
     $.ajax({
         url: "{{ route('logout') }}",
         type: "POST",
         data: $(this).serialize(),
+
         success: function(res){
-            if(res.status){
-                window.location.href = "/";// homepage
-            }
+            Swal.fire({
+                icon: 'success',
+                title: 'Logged Out',
+                text: res.message,
+                timer: 1200,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.href = "/";
+            });
         },
+
         error: function(){
-            alert('Logout failed!');
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops!',
+                text: 'Logout failed, try again'
+            });
         }
     });
 });
 </script>
 
 
+{{-- login sscript --}}
 <script>
-$('#loginForm').on('submit', function(e){
+$(document).on('submit', '#loginForm', function(e){
     e.preventDefault();
 
     $.ajax({
-        url: "{{ route('signin') }}", // apna route check kar lena
+        url: "{{ route('signin.submit') }}",
         type: "POST",
         data: $(this).serialize(),
+
         success: function(res){
-            if(res.status){
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Login Successful',
+                text: res.message || 'Welcome back!',
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+
+                $('#loginModal').modal('hide');
+
                 if(res.role === 'admin'){
                     window.location.href = "{{ route('admin.dashboard') }}";
                 }else{
-                    location.reload(); // user ke liye current page
+                           window.location.reload(); 
                 }
-            }
+            });
         },
+
         error: function(xhr){
-            $('#errorMsg').text(xhr.responseJSON.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: xhr.responseJSON?.message || 'Invalid email or password',
+            });
         }
     });
 });
 </script>
+
+
+
+
 
 
 

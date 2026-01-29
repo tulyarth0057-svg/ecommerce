@@ -342,21 +342,27 @@ textarea.checkout-input {
 </div>
 
 <div class="payment-option" onclick="selectPayment(this)">
-    <input type="radio" name="payment" value="online">
+    <input type="radio" id="onlinePayment" name="payment" value="online">
     <strong>Online Payment (Razorpay)</strong><br>
     <small>Pay securely using Card, UPI, Net Banking</small>
 </div>
 
-<button type="submit" class="checkout-btn">
+<!-- Pay Now button, hidden by default -->
+<button type="button" id="payNowBtn" class="checkout-btn" style="display:none;">
+    Pay Now
+</button>
+
+<button type="submit" id="placeOrderBtn" class="checkout-btn">
     Place Order
 </button>
+
 
 
         </div>
 
         
-        <input type="hidden" name="shipping_charge" id="shippingCharge" value="0">
-        <input type="hidden" name="distance_km" id="distanceKm" value="0">
+    <input type="hidden" name="shipping_charge" id="shippingCharge" value="0">
+     <input type="hidden" name="distance_km" id="distanceKm" value="0">
 
 </form>
 
@@ -364,14 +370,131 @@ textarea.checkout-input {
 
  </div>
 
-          
-    
-   
-   
 </main>
+
+<?php $__env->stopSection(); ?>
 <!-- main end -->
 
 <?php $__env->startPush('scripts'); ?>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const form = document.querySelector('form');
+    const payNowBtn = document.getElementById('payNowBtn');
+    const placeOrderBtn = document.getElementById('placeOrderBtn');
+
+    function resetPayBtn() {
+        payNowBtn.disabled = false;
+        payNowBtn.innerText = 'Pay Now';
+    }
+
+    // Payment toggle
+    window.selectPayment = function(el) {
+        document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('payment-selected'));
+        el.classList.add('payment-selected');
+        el.querySelector('input').checked = true;
+
+        const method = el.querySelector('input').value;
+        payNowBtn.style.display = method === 'online' ? 'block' : 'none';
+        placeOrderBtn.style.display = method === 'cash' ? 'block' : 'none';
+    };
+
+    // Razorpay flow
+    payNowBtn.addEventListener('click', async function() {
+        payNowBtn.disabled = true;
+        payNowBtn.innerText = 'Processing...';
+
+        try {
+            const total = parseFloat(document.getElementById('totalAmount').innerText.replace('₹',''));
+            const amount = Math.round(total * 100);
+
+            const res = await fetch("<?php echo e(route('razorpay.create')); ?>", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "<?php echo e(csrf_token()); ?>"
+                },
+                body: JSON.stringify({ amount })
+            });
+
+            const data = await res.json();
+
+            const rzp = new Razorpay({
+                key: "<?php echo e(config('services.razorpay.key')); ?>",
+                amount: amount,
+                currency: "INR",
+                order_id: data.razorpay_order_id,
+                name: "Rimberio",
+                description: "Order Payment",
+                handler: async function(response) {
+                    try {
+                        const verify = await fetch("<?php echo e(route('razorpay.verify')); ?>", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "<?php echo e(csrf_token()); ?>"
+                            },
+                            body: JSON.stringify({
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature,
+                                formData: Object.fromEntries(new FormData(form))
+                            })
+                        });
+
+                        const result = await verify.json();
+                        console.log('Verify result:', result); 
+
+                        if(result.success){
+                            window.location.href = "/order/success/" + result.order_id;
+                        } else {
+                            alert(result.message || "Payment failed");
+                            resetPayBtn();
+                        }
+                    } catch(err){
+                        alert("Error verifying payment!");
+                        resetPayBtn();
+                    }
+                },
+                modal: { ondismiss: resetPayBtn },
+                prefill: {
+                    name: "<?php echo e(auth()->user()->name); ?>",
+                    email: "<?php echo e(auth()->user()->email); ?>"
+                }
+            });
+
+            rzp.open();
+
+        } catch(err){
+            alert("Something went wrong!");
+            resetPayBtn();
+        }
+    });
+
+    // Cash on delivery
+    form.addEventListener('submit', function () {
+        const method = document.querySelector('input[name="payment"]:checked').value;
+        if(method === 'cash'){
+            placeOrderBtn.disabled = true;
+            placeOrderBtn.innerText = 'Processing...';
+        }
+    });
+
+});
+</script>
+
+
+
+
+
+
+
 
 
 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('success_order')): ?>
@@ -523,5 +646,4 @@ document.querySelector('form').addEventListener('submit', function () {
 
 <?php $__env->stopPush(); ?>
 
-<?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.frontend-layout', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laravel_git\ecommerce-web\resources\views/checkout.blade.php ENDPATH**/ ?>

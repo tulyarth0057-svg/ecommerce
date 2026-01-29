@@ -10,6 +10,7 @@ use App\Models\OrderItem;
 use App\Models\User;
 use App\Models\Product;
 use Carbon\Carbon;
+use DB;
 
 class CategoryController extends Controller
 {
@@ -220,9 +221,39 @@ public function howHomeDashboard()
 
         $todayOrders = Order::whereDate('o_created_at', Carbon::today())->count();
 
+        // sales 7days-trends charts
+        $salesTrend = Order::select(
+        DB::raw('DATE(o_created_at) as date'),
+        DB::raw('SUM(o_total_amount) as total_sales')
+    )
+    ->where('o_payment_status', 'completed')
+    ->where('o_created_at', '>=', Carbon::now()->subDays(7))
+    ->groupBy(DB::raw('DATE(o_created_at)'))
+    ->orderBy('date')
+    ->get();
+
+    // order per day
+
+    $ordersPerDay = Order::select(
+        DB::raw('DATE(o_created_at) as date'),
+        DB::raw('COUNT(*) as total_orders')
+    )
+    ->where('o_created_at', '>=', Carbon::now()->subDays(7))
+    ->groupBy(DB::raw('DATE(o_created_at)'))
+    ->orderBy('date')
+    ->get();
+
+
+    // todays order
+
+    $todayOrders = Order::whereDate('o_created_at', today())->count();
+
+
+
 
     return view('admin.dashboard', compact('categories','mainCategoriesCount','ordersCount','totalRevenue','itemsSold','customersCount','topSellingItem','leastSellingProducts','pendingOrders',
-    'shippedOrders','deliveredOrders','lowStockProducts','lowStockCount','todaySales','todayOrders','newCustomersToday'));
+    'shippedOrders','deliveredOrders','lowStockProducts','lowStockCount','todaySales','todayOrders','newCustomersToday','salesTrend','ordersPerDay'
+));
 }
 
 // controller of click btn to change the category cards dynamic---->

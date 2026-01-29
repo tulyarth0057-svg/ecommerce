@@ -28,7 +28,7 @@
                             <i class="icofont-chart-flow fs-5"></i> <span>Categories</span> <span class="arrow icofont-rounded-down ms-auto text-end fs-5"></span></a>
                             <!-- Menu: Sub menu ul -->
                             <ul class="sub-menu collapse" id="categories">
-                                  <li><a class="ms-link" href="{{ route('product.category') }}">Add Categories</a></li>
+                                  <li><a class="ms-link" href="{{ route('category.create') }}">Add Categories</a></li>
                                 <li><a class="ms-link" href="{{ route("category.list") }}">Categories List</a></li>
 
                             </ul>

@@ -132,16 +132,6 @@
                 </div>
             </div>
 
-              
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body-1">
-                        <h5 class="card-title">Total Customer</h5>
-                        <p class="card-text display-4">{{ $customersCount }}</p>
-                    </div>
-                </div>
-            </div>
-
                 <div class="col-md-3">
                     <div class="card text-center shadow-sm">
                         <div class="card-body-1">
@@ -152,6 +142,15 @@
                         </div>
                     </div>
                 </div>
+
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body-1">
+                        <h5 class="card-title">Total Customer</h5>
+                        <p class="card-text display-4">{{ $customersCount }}</p>
+                    </div>
+                </div>
+            </div>
 
 
 
@@ -244,7 +243,7 @@
         <div class="card shadow-sm text-center">
             <div class="card-body-1">
                 <h6 class="card-title">⏳ Pending Orders</h6>
-                <p class="display-5 fw-bold">{{ $pendingOrders }}</p>
+                <p class="display-5">{{ $pendingOrders }}</p>
             </div>
         </div>
     </div>
@@ -254,7 +253,7 @@
         <div class="card shadow-sm text-center">
             <div class="card-body-1">
                 <h6 class="card-title">🚚 Shipped Orders</h6>
-                <p class="display-5 fw-bold">{{ $shippedOrders }}</p>
+                <p class="display-5">{{ $shippedOrders }}</p>
             </div>
         </div>
     </div>
@@ -264,7 +263,7 @@
         <div class="card shadow-sm text-center">
             <div class="card-body-1">
                 <h6 class="card-title">✅ Delivered Orders</h6>
-                <p class="display-5 fw-bold">{{ $deliveredOrders }}</p>
+                <p class="display-5 ">{{ $deliveredOrders }}</p>
             </div>
         </div>
     </div>
@@ -272,7 +271,8 @@
              
 
     </div>
-
+    
+    <hr>
 
      {{-- 6 section cards start --}}
 
@@ -280,7 +280,7 @@
 
         <h2>Product</h2>
 
-           <div class="col-md-3">
+           <div class="col-md-4">
     <div class="card text-center shadow-sm">
         <div class="card-body-1">
             <h5 class="card-title">Low Stock Products</h5>
@@ -292,7 +292,7 @@
 </div>
 
 
-          <div class="col-md-3">
+<div class="col-md-4">
     <div class="card text-center shadow-sm">
         <div class="card-body-1">
             <h5 class="card-title">Today’s Sales</h5>
@@ -304,14 +304,71 @@
     </div>
 </div>
 
-
-  
-
+ <div class="col-md-4">
+    <div class="card text-center shadow-sm">
+        <div class="card-body-1">
+            <h5 class="card-title">Orders per day</h5>
+            <p class="card-text display-6">
+                {{$todayOrders}}
+            </p>
+           
+        </div>
+    </div>
+</div>
 
 
     </div>
 
     {{-- end counters --}}
+
+<hr>
+
+    {{-- sales trend charts start --}}
+
+<div class="card">
+    <div class="card-header">
+        <h5>Sales Trend (Last 7 Days)</h5>
+    </div>
+
+    <div class="card-body">
+        @if($salesTrend->count() > 0)
+            <canvas id="salesTrendChart" height="120"></canvas>
+        @else
+            <p class="text-center text-muted mb-0">
+                No sales data available
+            </p>
+        @endif
+    </div>
+</div>
+
+
+<hr>
+        {{-- charts end here --}}
+
+
+        {{-- order charts start --}}
+
+        <div class="col-md-12">
+    <div class="card shadow-sm">
+        <div class="card-header text-center">
+            <h5 class="mb-0">Orders Per Day (Last 7 Days)</h5>
+        </div>
+
+        <div class="card-body">
+            @if($ordersPerDay->count() > 0)
+                <canvas id="ordersPerDayChart" height="120"></canvas>
+            @else
+                <p class="text-center text-muted mb-0">
+                    No order data available
+                </p>
+            @endif
+        </div>
+    </div>
+</div>
+
+{{-- charts end --}}
+
+
 
     <hr>
 
@@ -385,14 +442,79 @@
 
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- SweetAlert2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+{{-- script of per day order --}}
+<script>
+    @if($ordersPerDay->count() > 0)
 
-<!-- SweetAlert2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    const ordersData = @json($ordersPerDay);
+
+    const orderLabels = ordersData.map(item => item.date);
+    const orderCounts = ordersData.map(item => item.total_orders);
+
+    const ctxOrders = document.getElementById('ordersPerDayChart').getContext('2d');
+
+    new Chart(ctxOrders, {
+        type: 'bar',
+        data: {
+            labels: orderLabels,
+            datasets: [{
+                label: 'Orders',
+                data: orderCounts,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+@endif
 
 
+{{-- script of sales-chart --}}
+<script>
+    const salesTrend = @json($salesTrend);
+
+    const salesLabels = salesTrend.map(item => item.date);
+    const salesData = salesTrend.map(item => item.total_sales);
+
+    const ctx = document.getElementById('salesTrendChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: salesLabels,
+            datasets: [{
+                label: 'Total Sales (₹)',
+                data: salesData,
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+
+{{-- script of sweetalert --}}
 @if(session('success'))
 <script>
     Swal.fire({
@@ -416,6 +538,12 @@
     });
 </script>
 @endif
+
+{{-- trendsales --}}
+<script>
+const salesData = @json($salesTrend);
+</script>
+
 
 {{-- script of category btn --}}
 <script>

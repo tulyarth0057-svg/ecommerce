@@ -41,55 +41,75 @@ class AuthController extends Controller
 }
 
 
-
-    public function signin(){
+public function signin(){
         return view ('signin');
     }
 
 
+    
+
       // Handle Login
-   public function post_signin(Request $request)
+public function post_signin(Request $request)
 {
-    // Validate input
     $request->validate([
         'email' => 'required|email',
         'password' => 'required|string',
     ]);
 
-    $credentials = $request->only('email', 'password');
+    if (Auth::attempt($request->only('email', 'password'))) {
 
-    // Attempt login
-    if (Auth::attempt($credentials)) {
-
-        $request->session()->regenerate(); // secure session
+        $request->session()->regenerate();
         $user = Auth::user();
 
-        if($user->role === 'admin'){
-            // Admin → dashboard
-            return redirect()->route('admin.dashboard')->with('success', 'Signin successful!');
-        } else {
-            // Normal user → current page
-            return back()->with('success', 'Signin successful!');
-        }
+        // Role based redirect
+if ($user->role === 'admin') {
+    $redirectUrl = route('admin.dashboard');
+} else {
+    $previousUrl = url()->previous();
+
+    // prevent redirect loop to login
+    if (str_contains($previousUrl, 'login')) {
+        $previousUrl = url('/');
     }
 
-    return back()->with('error', 'Invalid email or password')->withInput();
+    $redirectUrl = $previousUrl;
 }
+
+
+
+        return response()->json([
+            'status'   => true,
+            'role'     => $user->role,
+            'redirect' => $redirectUrl,
+            'message'  => 'Signin successful'
+        ]);
+    }
+
+    return response()->json([
+        'status' => false,
+        'message' => 'Invalid email or password'
+    ], 401);
+}
+
+
+
 
 
 
     // LOGOUT SYSTEM
-   public function logout(Request $request)
+public function logout(Request $request)
 {
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
+    Auth::logout(); // Log out the user
 
-    return response()->json([
-        'status' => true,
-        'message' => 'Logout successful!'
-    ]);
+    $request->session()->invalidate(); // Invalidate the session
+    $request->session()->regenerateToken(); // Regenerate CSRF token
+
+        // Flash a session message for SweetAlert
+    $request->session()->flash('success', 'Logout successful!');
+
+    return redirect('/'); // Redirect to home page
 }
+
 
 
 
