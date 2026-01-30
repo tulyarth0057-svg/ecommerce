@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\category;
 use Illuminate\Http\Request;
 use App\Models\MainCategory;
 use App\Models\Order;

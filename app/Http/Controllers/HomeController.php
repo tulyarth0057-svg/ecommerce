@@ -68,7 +68,10 @@ class HomeController extends Controller
         ->limit(6)
         ->get();
 
-    return view('home', compact('menProducts', 'womenProducts'));
+         $notifications = auth()->user()->notifications;
+ 
+
+    return view('home', compact('menProducts', 'womenProducts','notifications'));
 }
 
 

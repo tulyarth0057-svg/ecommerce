@@ -265,6 +265,10 @@ textarea.checkout-input {
        readonly onclick="getLocation()" required>
 
 <div  style="margin-top: 10px; color: #666;"></div>
+
+<input type="hidden" name="latitude" id="latitude">
+<input type="hidden" name="longitude" id="longitude">
+
             
             <label>Phone *</label>
             <input type="tel" name="phone" class="checkout-input" 
@@ -353,9 +357,12 @@ textarea.checkout-input {
     Pay Now
 </button>
 
+<!-- Place Order for COD -->
 <button type="submit" id="placeOrderBtn" class="checkout-btn">
     Place Order
 </button>
+
+
 
 
 
@@ -395,18 +402,30 @@ document.addEventListener('DOMContentLoaded', function () {
         payNowBtn.innerText = 'Pay Now';
     }
 
-    // Payment toggle
+    // 🔹 Payment toggle function
     window.selectPayment = function(el) {
         document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('payment-selected'));
         el.classList.add('payment-selected');
-        el.querySelector('input').checked = true;
 
         const method = el.querySelector('input').value;
+        el.querySelector('input').checked = true;
+
+        // Show/Hide buttons
         payNowBtn.style.display = method === 'online' ? 'block' : 'none';
         placeOrderBtn.style.display = method === 'cash' ? 'block' : 'none';
     };
 
-    // Razorpay flow
+    // 🔹 Default: check which payment is selected on page load
+    const defaultMethod = document.querySelector('input[name="payment"]:checked').value;
+    if(defaultMethod === 'online'){
+        payNowBtn.style.display = 'block';
+        placeOrderBtn.style.display = 'none';
+    } else {
+        payNowBtn.style.display = 'none';
+        placeOrderBtn.style.display = 'block';
+    }
+
+    // 🔹 Razorpay flow
     payNowBtn.addEventListener('click', async function() {
         payNowBtn.disabled = true;
         payNowBtn.innerText = 'Processing...';
@@ -430,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 key: "{{ config('services.razorpay.key') }}",
                 amount: amount,
                 currency: "INR",
-                order_id: data.razorpay_order_id,
+                order_id: data.o_razorpay_order_id,
                 name: "Rimberio",
                 description: "Order Payment",
                 handler: async function(response) {
@@ -450,8 +469,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
 
                         const result = await verify.json();
-                        console.log('Verify result:', result); 
-
                         if(result.success){
                             window.location.href = "/order/success/" + result.order_id;
                         } else {
@@ -478,17 +495,26 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Cash on delivery
+    // 🔹 COD form submit
     form.addEventListener('submit', function () {
         const method = document.querySelector('input[name="payment"]:checked').value;
-        if(method === 'cash'){
-            placeOrderBtn.disabled = true;
-            placeOrderBtn.innerText = 'Processing...';
+
+        // Add hidden input for backend
+        if(!form.querySelector('input[name="paymentMethod"]')){
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'paymentMethod';
+            hidden.value = method;
+            form.appendChild(hidden);
         }
+
+        placeOrderBtn.disabled = true;
+        placeOrderBtn.innerText = 'Processing...';
     });
 
 });
 </script>
+
 
 
 
@@ -516,9 +542,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+{{-- script of location --}}
 
 <label>Location</label>
-
 
 <script>
 // Your shop/warehouse location (Dehradun coordinates)
@@ -542,7 +568,11 @@ function getLocation() {
                 const latitude = position.coords.latitude;
                 const longitude = position.coords.longitude;
                 
-                // Fill location
+                // ✅ Fill hidden inputs for database
+                document.getElementById('latitude').value = latitude;
+                document.getElementById('longitude').value = longitude;
+                
+                // Fill location display
                 locationInput.value = `${latitude}, ${longitude}`;
                 
                 // Calculate distance
@@ -557,6 +587,14 @@ function getLocation() {
                 
                 // Update hidden inputs and total
                 updateShippingCharge(shippingCharge, distance);
+                
+                // ✅ Debug - check values
+                console.log('Location captured:', {
+                    latitude: latitude,
+                    longitude: longitude,
+                    distance: distance.toFixed(2) + ' km',
+                    shipping: '₹' + shippingCharge.toFixed(2)
+                });
             },
             function(error) {
                 switch(error.code) {
@@ -604,8 +642,7 @@ function toRad(degrees) {
     return degrees * (Math.PI / 180);
 }
 
-
-// ✅ UPDATE SHIPPING CHARGE AND TOTAL (BOTH PLACES)
+// ✅ UPDATE SHIPPING CHARGE AND TOTAL
 function updateShippingCharge(charge, distance) {
     // Update shipping charge hidden input
     document.getElementById('shippingCharge').value = charge.toFixed(2);
@@ -613,18 +650,21 @@ function updateShippingCharge(charge, distance) {
     // Update distance hidden input
     document.getElementById('distanceKm').value = distance.toFixed(2);
     
-    // ✅ UPDATE BOTH TOTAL ELEMENTS
-    const totalElement = document.getElementById('totalAmount');
-    const totalElementBottom = document.getElementById('totalAmountBottom');
+    // Update shipping display
+    document.getElementById('shippingInfo').innerHTML = `₹${charge.toFixed(2)}`;
     
+    // Update total amount
+    const totalElement = document.getElementById('totalAmount');
     const subtotal = parseFloat(totalElement.dataset.subtotal);
     const newTotal = subtotal + charge;
     
-    // Update top total
     totalElement.textContent = `₹${newTotal.toFixed(2)}`;
     
-    // ✅ Update bottom total
-    totalElementBottom.textContent = `₹${newTotal.toFixed(2)}`;
+    // ✅ If you have bottom total element too
+    const totalElementBottom = document.getElementById('totalAmountBottom');
+    if (totalElementBottom) {
+        totalElementBottom.textContent = `₹${newTotal.toFixed(2)}`;
+    }
     
     console.log('Shipping Updated:', {
         distance: distance.toFixed(2) + ' km',
@@ -633,15 +673,171 @@ function updateShippingCharge(charge, distance) {
         total: '₹' + newTotal.toFixed(2)
     });
 }
-</script>
 
-<script>
-document.querySelector('form').addEventListener('submit', function () {
-    const btn = document.getElementById('placeOrderBtn');
-    btn.disabled = true;
-    btn.innerText = 'Processing...';
+// ✅ Form submit validation
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    
+    form.addEventListener('submit', function(e) {
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
+        
+        // Check if location is filled
+        if (!latitude || !longitude) {
+            e.preventDefault();
+            alert('Please click on the location field to get your current location!');
+            return false;
+        }
+        
+        const btn = document.getElementById('placeOrderBtn');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerText = 'Processing...';
+        }
+    });
 });
 </script>
+
+
+
+{{-- <script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const form = document.querySelector('form');
+    const payNowBtn = document.getElementById('payNowBtn');
+    const placeOrderBtn = document.getElementById('placeOrderBtn');
+
+    function resetPayBtn() {
+        payNowBtn.disabled = false;
+        payNowBtn.innerText = 'Pay Now';
+    }
+
+    // 🔹 Payment toggle function
+    window.selectPayment = function(el) {
+        document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('payment-selected'));
+        el.classList.add('payment-selected');
+
+        const method = el.querySelector('input').value;
+        el.querySelector('input').checked = true;
+
+        // Show/Hide buttons
+        payNowBtn.style.display = method === 'online' ? 'block' : 'none';
+        placeOrderBtn.style.display = method === 'cash' ? 'block' : 'none';
+    };
+
+    // 🔹 Default: check which payment is selected on page load
+    const defaultMethod = document.querySelector('input[name="payment"]:checked').value;
+    if(defaultMethod === 'online'){
+        payNowBtn.style.display = 'block';
+        placeOrderBtn.style.display = 'none';
+    } else {
+        payNowBtn.style.display = 'none';
+        placeOrderBtn.style.display = 'block';
+    }
+
+    // 🔹 Razorpay flow
+    payNowBtn.addEventListener('click', async function() {
+        // ✅ Validate location before payment
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
+        
+        if (!latitude || !longitude) {
+            alert('Please click on the location field to get your current location!');
+            return;
+        }
+        
+        payNowBtn.disabled = true;
+        payNowBtn.innerText = 'Processing...';
+
+        try {
+            const total = parseFloat(document.getElementById('totalAmount').innerText.replace('₹','').replace(',',''));
+            const amount = Math.round(total * 100);
+
+            const res = await fetch("{{ route('razorpay.create') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ amount })
+            });
+
+            const data = await res.json();
+
+            const rzp = new Razorpay({
+                key: "{{ config('services.razorpay.key') }}",
+                amount: amount,
+                currency: "INR",
+                order_id: data.razorpay_order_id,
+                name: "Rimberio",
+                description: "Order Payment",
+                handler: async function(response) {
+                    try {
+                        const formData = new FormData(form);
+                        const formDataObj = Object.fromEntries(formData);
+                        
+                        const verify = await fetch("{{ route('razorpay.verify') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature,
+                                formData: formDataObj
+                            })
+                        });
+
+                        const result = await verify.json();
+                        if(result.success){
+                            window.location.href = "/order/success/" + result.order_id;
+                        } else {
+                            alert(result.message || "Payment failed");
+                            resetPayBtn();
+                        }
+                    } catch(err){
+                        console.error(err);
+                        alert("Error verifying payment!");
+                        resetPayBtn();
+                    }
+                },
+                modal: { ondismiss: resetPayBtn },
+                prefill: {
+                    name: "{{ auth()->user()->name }}",
+                    email: "{{ auth()->user()->email }}"
+                }
+            });
+
+            rzp.open();
+
+        } catch(err){
+            console.error(err);
+            alert("Something went wrong!");
+            resetPayBtn();
+        }
+    });
+
+    // 🔹 COD form submit
+    form.addEventListener('submit', function (e) {
+        const method = document.querySelector('input[name="payment"]:checked').value;
+
+        // Add hidden input for backend
+        if(!form.querySelector('input[name="paymentMethod"]')){
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'paymentMethod';
+            hidden.value = method;
+            form.appendChild(hidden);
+        }
+
+        placeOrderBtn.disabled = true;
+        placeOrderBtn.innerText = 'Processing...';
+    });
+
+});
+</script> --}}
 
 
 

@@ -8,8 +8,11 @@ use App\Models\color;
 use App\Models\size;
 use App\Models\Image;
 use App\Models\category;
-use App\Models\maincategory;
+use App\Models\MainCategory;
 use App\Models\whistlist;
+use App\Models\User;
+use App\Models\Order;
+use App\Notifications\NewProductNotification;
 
 class ProductController extends Controller
 {
@@ -53,6 +56,18 @@ class ProductController extends Controller
         'p_stock' => $request->p_stock ?? 0,
         'p_type' => $request->p_type ?? 'simple',
     ]);
+
+
+            // 🔔 ================== NOTIFICATION CODE START ==================
+       $users = \App\Models\User::whereHas('orders', function($query) {
+    $query->where('o_order_status', 1); // active orders
+})->get();
+
+foreach ($users as $user) {
+    $user->notify(new \App\Notifications\NewProductNotification($product));
+}
+
+
 
     // COLORS SAVE
     if ($request->colorname) {

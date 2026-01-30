@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Order;
 
 class User extends Authenticatable
 {
@@ -36,5 +37,11 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Product::class, 'wishlist', 'user_id', 'p_id')->withTimestamps();
     }
+
+    // order relationship
+   public function orders()
+{
+    return $this->hasMany(Order::class, 'o_user_id', 'id');
+}
 }
 

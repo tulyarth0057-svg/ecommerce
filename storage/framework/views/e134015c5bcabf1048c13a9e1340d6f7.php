@@ -61,6 +61,74 @@
 }
 
 
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background: red;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 35px;
+    width: 320px;
+    background: #fff;
+    border: 1px solid #eee;
+    box-shadow: 0 5px 15px rgba(0,0,0,.15);
+    z-index: 999;
+}
+
+.notification-dropdown .dropdown-item {
+    padding: 10px;
+    border-bottom: 1px solid #f1f1f1;
+    text-decoration: none;
+    color: #000;
+}
+
+.notification-dropdown .dropdown-item.unread {
+    background: #f0f8ff;
+}
+
+.notification-dropdown p {
+    margin: 0;
+    font-size: 13px;
+    color: #555;
+}
+
+.dropdown-header,
+.dropdown-footer {
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+.notification-bell-wrapper {
+    position: relative;
+}
+
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    top: 35px;
+    right: 0;
+    width: 320px;
+    background: #fff;
+    border: 1px solid #eee;
+    box-shadow: 0 5px 15px rgba(0,0,0,.15);
+    z-index: 999;
+}
+
+.notification-bell-wrapper:hover .notification-dropdown {
+    display: block;
+}
+
+
+
         </style>
 
 
@@ -429,6 +497,8 @@
                                          
                                         </div>
                                     </div>
+
+
                                     <!-- header-search end -->
                                     <ul class="ul-mt15 flex-nowrap align-items-center header-icon-element">
                                         <li class="header-icon-wrap toggler-wrap d-xl-none">
@@ -438,6 +508,55 @@
                                                 </a>
                                             </div>
                                         </li>
+
+
+                                        
+
+                                        
+                                        <li class="header-icon-wrap wishlist-wrap position-relative">
+    <a href="javascript:void(0)" id="notificationBell">
+        <i class="bi bi-bell"></i>
+
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(auth()->user()->unreadNotifications->count() > 0): ?>
+            <span class="notification-badge">
+                <?php echo e(auth()->user()->unreadNotifications->count()); ?>
+
+            </span>
+        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+    </a>
+
+    <!-- 🔔 Dropdown -->
+    <div class="notification-dropdown" id="notificationDropdown">
+        <div class="dropdown-header">
+            Notifications
+        </div>
+
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = auth()->user()->unreadNotifications->take(5); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notification): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
+            <a href="<?php echo e(route('notifications.open', $notification->id)); ?>"
+               class="dropdown-item unread">
+                <strong><?php echo e($notification->data['title']); ?></strong>
+                <p><?php echo e($notification->data['message']); ?></p>
+            </a>
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
+            <div class="dropdown-item text-muted">
+                No new notifications
+            </div>
+        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+        <div class="dropdown-footer">
+            <a href="<?php echo e(route('notifications.index')); ?>">View all</a>
+        </div>
+    </div>
+</li>
+
+
+
+
+
+
+
+
+
                                         <li class="header-icon-wrap search-wrap d-xxl-none">
                                             <div class="header-icon-wrapper">
                                                 <a href="#searchmodal" class="d-block header-icon-search" data-bs-toggle="modal" aria-label="Search modal">
@@ -445,6 +564,8 @@
                                                 </a>
                                             </div>
                                         </li>
+
+                                        
                                         <li class="header-icon-wrap user-wrap d-md-block d-none">
                                          <div class="header-icon-wrapper">
                                                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(auth()->guard()->check()): ?>
@@ -470,11 +591,11 @@
 
                                                             <li>
                                                                 <form id="logoutForm">
-    <?php echo csrf_field(); ?>
-    <button type="submit" class="dropdown-item text-secondary">
-        Logout <i class="bi bi-box-arrow-right"></i>
-    </button>
-</form>
+                                                                    <?php echo csrf_field(); ?>
+                                                                    <button type="submit" class="dropdown-item text-secondary">
+                                                                        Logout <i class="bi bi-box-arrow-right"></i>
+                                                                    </button>
+                                                                </form>
 
                                                             </li>
                                                         </ul>
@@ -990,7 +1111,25 @@ document.addEventListener('wishlist-updated', function (e) {
 });
 </script>
 
+<script>
+const bell = document.getElementById('notificationBell');
+const dropdown = document.getElementById('notificationDropdown');
 
+bell.addEventListener('click', () => {
+    if (dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+    } else {
+        dropdown.style.display = 'block';
+    }
+});
+
+document.addEventListener('click', (e) => {
+    if (!bell.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+    }
+});
+
+</script>
 
 
 </body>

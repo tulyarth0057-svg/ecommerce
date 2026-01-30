@@ -1591,6 +1591,11 @@
             <!-- testimonial end -->
 
 
+            <a href="{{ route('notifications.index') }}">
+    Notifications ({{ auth()->user()->unreadNotifications->count() }})
+</a>
+
+
             <!-- category-product start -->
             <section class="category-product section-pt">
                 <div class="container-fluid">

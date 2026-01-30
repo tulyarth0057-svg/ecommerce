@@ -169,7 +169,7 @@
             </thead>
 
             <tbody>
-                <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
                 <tr>
 
                     <!-- Sr No -->
@@ -179,7 +179,9 @@
                     <td class="">
                         <a href="<?php echo e(route('product.edit', $p->p_id)); ?>" class="btn btn-sm btn-edit bg-primary text-white">Edit</a>
                         <a href="<?php echo e(route('product.view', $p->p_id)); ?>" class="btn btn-sm btn-view bg-warning text-white">View</a>
-                 
+
+                        
+                    
 
 
 
@@ -192,12 +194,12 @@
 
 
                     <td>
-    <?php if($p->category): ?>
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($p->category): ?>
         <?php echo e($p->category->c_name); ?>
 
     <?php else: ?>
         <span style="color:red;">No Category Found</span>
-    <?php endif; ?>
+    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 </td>
 
 
@@ -208,12 +210,12 @@
 
                     <!-- Old Price -->
                     <td>
-                        <?php if($p->p_old_price): ?>
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($p->p_old_price): ?>
                             ₹<?php echo e(($p->p_old_price)); ?>
 
                         <?php else: ?>
                             -
-                        <?php endif; ?>
+                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </td>
 
 
@@ -221,11 +223,11 @@
 
                     <!-- Stock -->
                    <td class="stock-cell">
-    <?php if($p->p_stock > 0): ?>
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($p->p_stock > 0): ?>
         <span class="badge badge-stock bg-info p-2"><?php echo e($p->p_stock); ?></span>
     <?php else: ?>
         <span class="badge badge-out">0</span>
-    <?php endif; ?>
+    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 </td>
 
 
@@ -235,7 +237,7 @@
                     <td><?php echo e(ucfirst($p->p_type)); ?></td>
 
                 </tr>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
             </tbody>
         </table>
     </div>

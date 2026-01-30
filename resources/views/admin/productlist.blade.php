@@ -182,13 +182,15 @@
                     <td class="">
                         <a href="{{ route('product.edit', $p->p_id) }}" class="btn btn-sm btn-edit bg-primary text-white">Edit</a>
                         <a href="{{ route('product.view', $p->p_id) }}" class="btn btn-sm btn-view bg-warning text-white">View</a>
-                 {{-- <form action="{{ route('product.destroy', $p->p_id) }}" method="POST">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="btn btn-sm btn-view deleteBtn bg-danger text-white">
-        Delete
-    </button>
-</form> --}}
+
+                        {{-- delect btn --}}
+                    {{-- <form action="{{ route('product.destroy', $p->p_id) }}" method="POST">
+                        @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-view deleteBtn bg-danger text-white">
+                        Delete
+                    </button>
+                </form> --}}
 
 
 

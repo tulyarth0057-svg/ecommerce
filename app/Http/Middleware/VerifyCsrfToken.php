@@ -11,7 +11,10 @@ class VerifyCsrfToken extends Middleware
      *
      * @var array<int, string>
      */
+   // VerifyCsrfToken.php
+
     protected $except = [
-        //
+        'razorpay/verify'
     ];
+
 }

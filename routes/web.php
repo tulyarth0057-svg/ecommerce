@@ -1,165 +1,169 @@
 <?php
 
-
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{
-    HomeController,
-    AuthController,
-    ProductController,
-    CategoryController,
-    MainCategoryController,
-    AddtocardController,
-    OrderController,
-    WhistlistController,
-    ImageController,
-    ColorController,
-    SizeController,
-    showController,
-    RazorpayController
-};
+use App\Http\Controllers\WhistlistController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ImageController;
+use App\Http\Controllers\ColorController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SizeController;
+use App\Http\Controllers\MainCategoryController;
+use App\Http\Controllers\showController;
+use App\Http\Controllers\AddtocardController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\HomeController;
+use App\Models\MainCategory;
+use App\Models\category;
+use App\Http\Controllers\NotificationController;
+
 
 /*
 |--------------------------------------------------------------------------
-| FRONTEND ROUTES (PUBLIC)
+| Web Routes
 |--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
 */
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::view('/about', 'about');
-Route::view('/order', 'order');
-Route::view('/payment', 'payment');
-Route::view('/product', 'product');
+Route::get('/', [HomeController::class, 'index']);
 
-/*
-|--------------------------------------------------------------------------
-| AUTH ROUTES
-|--------------------------------------------------------------------------
-*/
+
+
+
+
+
+route::get('/about',function (){
+    return view('about');
+});
+
+
+route ::get('/order',function (){
+    return view('order');
+});
+
+route ::get('/payment',function (){
+    return view('payment');
+});
+
+route ::get('/product',function (){
+    return view('product');
+});
+
 
 Route::get('/sign-up', [AuthController::class, 'showsignup'])->name('signup');
+
 Route::post('/sign-up', [AuthController::class, 'signup']);
 
-Route::get('/signin', [AuthController::class, 'signin'])->name('signin.form');
-Route::post('/signin', [AuthController::class, 'post_signin'])->name('signin.submit');
+Route::get('/signin', [AuthController::class, 'signin'])
+    ->name('signin.form');
+    
+
+Route::post('/signin', [AuthController::class, 'post_signin'])
+    ->name('signin.submit');
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->name('logout');
+
+
+
+
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('admin.dashboard');
+
+    });
+
+
+
+
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN ROUTES 🔐 (AUTH + ADMIN)
-|--------------------------------------------------------------------------
-*/
 
-Route::prefix('admin')
-    ->middleware(['auth', 'admin'])
-    ->group(function () {
 
-    // Dashboard
-    Route::get('/dashboard', [CategoryController::class, 'howHomeDashboard'])
-        ->name('admin.dashboard');
+// product routes
+Route::get('/admin/add-product', [ProductController::class, 'create'])->name('product.create');
+Route::post('/admin/add-product', [ProductController::class, 'store'])->name('product.store');
+Route::get('/admin/product-list', [ProductController::class, 'productlist'])->name('product.list');
+Route::get('/admin/edit-product/{id}', [ProductController::class, 'edit'])->name('product.edit');
+Route::put('/admin/update-product/{id}',[ProductController::class, 'update'])->name('product.update');
+Route::delete('/admin/delete-product/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
+ Route::get('/admin/product-view/{id}', [ProductController::class, 'view'])->name('product.view');
 
-    // Products
-    Route::get('/add-product', [ProductController::class, 'create'])->name('product.create');
-    Route::post('/add-product', [ProductController::class, 'store'])->name('product.store');
-    Route::get('/product-list', [ProductController::class, 'productlist'])->name('product.list');
-    Route::get('/edit-product/{id}', [ProductController::class, 'edit'])->name('product.edit');
-    Route::put('/update-product/{id}', [ProductController::class, 'update'])->name('product.update');
-    Route::delete('/delete-product/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
-    Route::get('/product-view/{id}', [ProductController::class, 'view'])->name('product.view');
 
-    // Categories
-    Route::get('/add-category', [CategoryController::class, 'create'])->name('category.create');
-    Route::post('/categories', [CategoryController::class, 'store'])->name('category.store');
-    Route::get('/categories-list', [CategoryController::class, 'categorylist'])->name('category.list');
-    Route::get('/categories-edit/{id}', [CategoryController::class, 'edit'])->name('category.edit');
-    Route::put('/category-update/{id}', [CategoryController::class, 'update'])->name('category.update');
-    Route::delete('/categories-delete/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
-    Route::get('/categories-by-main/{main_id}', [CategoryController::class, 'getCategoriesByMain'])
-        ->name('admin.categories.byMain');
 
-    // Orders
-    Route::get('/order-list', [OrderController::class, 'showOrderlist'])->name('order.list');
-    Route::get('/view-order/{orderId}', [OrderController::class, 'AdminVieworder'])->name('view.order');
 
-    // Contacts
-    Route::get('/contact-list', [AuthController::class, 'showContactlist'])->name('contact.list');
 
-    // Users
-    Route::delete('/user-delete/{id}', [AuthController::class, 'deleteUser'])
-        ->name('admin.user.delete');
+// category routes---->
+ Route::get('/admin/add-category', [CategoryController::class, 'create'])->name('category.create');
+ Route::post('/admin/categories', [CategoryController::class, 'store'])->name('category.store');
+ Route::get('/admin/categories-list', [CategoryController::class, 'categorylist'])->name('category.list');
+ Route::get('/admin/categories-edit/{id}', [CategoryController::class, 'edit'])  ->name('category.edit');
+ Route::delete('/admin/categories-delete/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
+ Route::put('/admin/category-update/{id}',[CategoryController::class, 'update'])->name('category.update');
+
+// Product creation page
+Route::get('/admin/product/create', [CategoryController::class, 'createProduct'])->name('product.create');
+
+// AJAX route → fetch sub-categories based on main category
+Route::get('/get-subcategories/{main_id}', [ProductController::class, 'getByMainCategory']);
+Route::get('/admin/get-categories/{main_id}', [CategoryController::class, 'getByMainCategory']);
+
+
+// show category in admin panel--->
+// Display all categories in card layout
+Route::get('/admin/dashboard', [CategoryController::class, 'howHomeDashboard'])->name('admin.dashboard');
+
+// route of categroy btn--->
+Route::get('/admin/categories-by-main/{main_id}', [CategoryController::class, 'getCategoriesByMain'])->name('admin.categories.byMain');
+
+
+
+
+
+
+
+Route::get('admin/add-product', function () {
+    $mainCategories = MainCategory::all();
+    $categories = Category::all(); // sub-categories
+
+    return view('admin.add-product', compact('mainCategories', 'categories'));
 });
 
-/*
-|--------------------------------------------------------------------------
-| AUTHENTICATED USER ROUTES
-|--------------------------------------------------------------------------
-*/
 
-Route::middleware('auth')->group(function () {
-
-    Route::get('/cart', [AddtocardController::class, 'index'])->name('cart');
-    Route::post('/add-to-cart', [AddtocardController::class, 'addToCart'])->name('add-to-cart');
-
-    Route::get('/checkout', [AddtocardController::class, 'getCheckout'])->name('checkout');
-    Route::post('/checkout/process', [OrderController::class, 'processCheckout'])->name('checkout.process');
-
-Route::delete('/cart/{cart}', [AddtocardController::class, 'removeFromCart'])->name('cart.remove');
-
-Route::post('/cart/clear', [AddtocardController::class, 'clear'])->name('cart.clear');
-
-// Update quantity of a cart item
-Route::post('/cart/set-quantity', [AddtocardController::class, 'setQuantity'])->name('cart.setQuantity');
-
-    Route::get('/wishlist', [WhistlistController::class, 'wishlist'])->name('wishlist.index');
-    Route::post('/wishlist', [WhistlistController::class, 'store'])->name('wishlist.store');
-    Route::delete('/wishlist/{id}', [WhistlistController::class, 'removeWishlist'])->name('wishlist.remove');
-
-    Route::get('/my-order/{orderId}', [OrderController::class, 'myorder'])->name('my.order');
-    Route::get('/order-detail/{orderId}', [OrderController::class, 'getOrderdetail'])->name('view.details');
-    Route::get('/track-order/{order_number}', [OrderController::class, 'trackOrder'])->name('order.track');
-    // Show order success page
-    Route::get('/order/success/{order}', [OrderController::class, 'orderSuccess'])
-        ->name('order.success');
-});
-
-/*
-|--------------------------------------------------------------------------
-| COLLECTIONS & PRODUCT VIEW
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/product-view/{id}', [showController::class, 'productview'])->name('productview');
-Route::get('/collection/{category}', [showController::class, 'showByCategory']);
-
-Route::get('/search-products', [ProductController::class, 'search'])->name('products.search');
-
-/*
-|--------------------------------------------------------------------------
-| SUPPORT DATA
-|--------------------------------------------------------------------------
-*/
 
 Route::get('/main-categories', [MainCategoryController::class, 'index']);
-Route::get('/get-subcategories/{main_id}', [ProductController::class, 'getByMainCategory']);
 
-// Media / attributes
+
+
+
+
+
+//  image routes
+
 Route::get('images', [ImageController::class, 'index']);
 Route::post('images', [ImageController::class, 'store']);
+
+// color routes
 
 Route::get('product-colors', [ColorController::class, 'index']);
 Route::post('product-colors', [ColorController::class, 'store']);
 
+// size routes
+
 Route::get('sizes', [SizeController::class, 'index']);
 Route::post('sizes', [SizeController::class, 'store']);
 
-
-
-
-// |--------------------------------------------------------------------------
-// | Frontend Collection Routes (PUBLIC)
-// |--------------------------------------------------------------------------
-// */
 
 // show men collection--->
 Route::get('/MenShrits-collection', [showController::class, 'getMenShirtCollection'])->name('menshirtcollection');
@@ -187,6 +191,125 @@ Route::get('/Kidscategroy', [showController::class, 'KidsMaincollection'])->name
 
 
 
+
+// whistlist route---->
+
+// ADD to wishlist (button / form)
+Route::post('/wishlist', [WhistlistController::class, 'store'])
+    ->name('wishlist.store');
+
+
+// SHOW wishlist page
+Route::get('/wishlist', [WhistlistController::class, 'wishlist'])
+    ->name('wishlist.index')
+    ->middleware('auth');
+
+// REMOVE single item
+Route::delete('/wishlist/{id}', [WhistlistController::class, 'removeWishlist'])
+    ->name('wishlist.remove');
+
+
+Route::post('/wishlist/add-to-cart', [WhistlistController::class, 'addToCart'])
+     ->name('wishlist.addToCart');
+
+// add to card route--->
+Route::post('/cart/add-from-wishlist', [AddtocartController::class, 'addFromWishlist'])->name('cart.add.from.wishlist');
+
+
+
+// product view route--->
+Route::get('/product-view/{id}', [showController::class, 'productview'])->name('productview');
+
+
+// add to cart route--->
+Route::get('/cart', [AddtocardController::class, 'index'])
+     ->name('cart')
+     ->middleware('auth');
+
+Route::post('/add-to-cart', [AddtocardController::class, 'addToCart'])
+    ->name('add-to-cart');
+
+    Route::delete('/cart/remove/{cart_id}', [AddtocardController::class, 'removeFromCart'])->name('cart.remove');
+
+    Route::post('/cart/clear', [AddtocardController::class, 'clear'])->name('cart.clear');
+
+//  Route::post('/cart/update-quantity', [AddtocardController::class, 'updateQuantity'])
+//     ->name('cart.updateQuantity');
+
+    Route::post('/cart/set-quantity', [AddtocardController::class, 'setQuantity'])
+    ->name('cart.setQuantity');
+
+
+
+    // search route---->
+Route::get('/search-products', [ProductController::class, 'search'])->name('products.search');
+
+
+
+// checkout route in cart controller---->
+
+  // routes/web.php
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout', [AddtocardController::class, 'getCheckout'])->name('checkout');
+    
+});
+
+Route::post('/checkout/process', [OrderController::class, 'processCheckout'])
+    ->name('checkout.process');
+
+Route::get('/order/success/{orderId}', [OrderController::class, 'orderSuccess'])
+    ->name('order.success');
+
+// my order---->
+    
+Route::get('/my-order/{orderId}', [OrderController::class, 'myorder'])
+    ->name('my.order')
+    ->middleware('auth'); 
+
+    // order-details-->
+
+Route::get('/order-detail/{orderId}', [OrderController::class, 'getOrderdetail'])
+    ->name('view.details')
+    ->middleware('auth');
+
+
+    // tracking-order-routes----->
+
+Route::get('/track-order/{order_number}', [OrderController::class, 'trackOrder'])
+    ->name('order.track')
+    ->middleware('auth');
+
+
+//     Route::get('/track-order', [OrderController::class, 'trackForm'])->name('track.form');
+// Route::post('/track-order', [OrderController::class, 'trackOrder']);
+
+
+
+    // chat routes
+
+// Route::post('/send-message', [ChatController::class, 'send']);
+
+
+// route of order list in admin panel---->
+
+    Route::get('/admin/order-list', [OrderController::class, 'showOrderlist'])->name('order.list');
+
+    Route::get('/view-order/{orderId}', [OrderController::class, 'AdminVieworder'])
+        ->name('view.order');
+   
+
+
+   // route of contact-list in admin panel---->
+
+    Route::get('/admin/contact-list', [AuthController::class, 'showContactlist'])->name('contact.list');
+    // delect route---->
+
+    Route::delete('/admin/user-delete/{id}', [AuthController::class, 'deleteUser'])
+    ->name('admin.user.delete'); 
+
+
+    
 //   razorpay routes--->
 
 Route::post('/razorpay/create', [RazorpayController::class, 'createRazorpayOrder'])
@@ -195,3 +318,26 @@ Route::post('/razorpay/create', [RazorpayController::class, 'createRazorpayOrder
 Route::post('/razorpay/verify', [RazorpayController::class, 'verifyRazorpayPayment'])
     ->name('razorpay.verify');
 
+// webhook routes--->
+
+Route::post('/webhooks/ecommerce', [WebhookController::class, 'handle']);
+
+
+
+// notification routes--->
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('notifications.index');
+
+    Route::get('/notifications/unread', [NotificationController::class, 'unread'])
+        ->name('notifications.unread');
+
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])
+        ->name('notifications.markAllRead');
+
+    Route::post('/notifications/{id}/mark-read', [NotificationController::class, 'markRead'])
+        ->name('notifications.markRead');
+
+});

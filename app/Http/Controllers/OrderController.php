@@ -34,6 +34,9 @@ public function processCheckout(Request $request)
         'postcode' => 'required',
          'o_order_notes' => 'nullable|string|max:500',
         'shipping_charge' => 'required|numeric',
+         'distance_km' => 'nullable|numeric',
+         'latitude' => 'required|numeric', 
+        'longitude' => 'required|numeric', 
 
     ]);
 
@@ -50,8 +53,8 @@ public function processCheckout(Request $request)
             'addtocart.p_id',
             'addtocart.size_id',
             'addtocart.color_id',
-            'addtocart.p_quantity',  // ✅ Real quantity
-            'products.p_name',       // ✅ Product name yahi se
+            'addtocart.p_quantity',  
+            'products.p_name',      
             'products.p_price',
             'color.color_name',
             'color.color_price_adjustment',
@@ -102,9 +105,11 @@ public function processCheckout(Request $request)
     'o_subtotal'       => $subtotal,
     'o_shipping_cost'  => $shipping,
     'o_total_amount'   => $grandTotal,
-    'o_payment_method' => 'online',
+    'o_payment_method' => 'cash',
     'o_payment_status' => 'pending',
     'o_order_status'   => 'pending',
+    'o_latitude'       => $validated['latitude'] ?? null,
+    'o_longitude'      => $validated['longitude'] ?? null,  
     'o_created_at'     => now(),
     'o_updated_at'     => now(),
 ]);
@@ -135,6 +140,7 @@ public function processCheckout(Request $request)
     return redirect()->route('order.success', $orderId)
            ->with('success', 'Order placed successfully!');
 }
+
 
 /**
  * ✅ ORDER SUCCESS PAGE

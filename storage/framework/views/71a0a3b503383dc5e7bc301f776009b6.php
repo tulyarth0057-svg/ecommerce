@@ -1591,6 +1591,11 @@
             <!-- testimonial end -->
 
 
+            <a href="<?php echo e(route('notifications.index')); ?>">
+    Notifications (<?php echo e(auth()->user()->unreadNotifications->count()); ?>)
+</a>
+
+
             <!-- category-product start -->
             <section class="category-product section-pt">
                 <div class="container-fluid">

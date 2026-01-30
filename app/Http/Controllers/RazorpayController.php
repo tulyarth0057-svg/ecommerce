@@ -17,7 +17,26 @@ class RazorpayController extends Controller
             $userId = Auth::id();
             if (!$userId) return response()->json(['error' => 'Unauthorized'], 401);
 
-            $request->validate(['amount' => 'required|numeric|min:1']);
+            $request->validate([
+                'amount' => 'required|numeric|min:1',
+                'name' => 'required',
+                'email' => 'required|email',
+                'phone' => 'required',
+                'address' => 'required',
+                'city' => 'required',
+                'state' => 'nullable',
+                'postcode' => 'required',
+                'o_order_notes' => 'nullable|string|max:500',
+                'shipping_charge' => 'required|numeric',
+                'distance_km' => 'nullable|numeric',
+                'latitude' => 'required|numeric', 
+                'longitude' => 'required|numeric', 
+                'razorpay_payment_id' => 'required',
+                'razorpay_order_id' => 'required',
+                'razorpay_signature' => 'required',
+                'formData' => 'required|array',
+
+                ]);
             $amount = (int) $request->amount;
 
             $api = new Api(config('services.razorpay.key'), config('services.razorpay.secret'));
@@ -40,19 +59,38 @@ class RazorpayController extends Controller
         }
     }
 
+
+
+
     // VERIFY PAYMENT AND PLACE ORDER
     public function verifyRazorpayPayment(Request $request)
     {
+
+
         $request->validate([
-            'razorpay_payment_id' => 'required',
-            'razorpay_order_id' => 'required',
-            'razorpay_signature' => 'required',
-            'formData' => 'required|array'
+
+        'name' => 'required',
+        'email' => 'required|email',
+        'phone' => 'required',
+        'address' => 'required',
+        'city' => 'required',
+        'state' => 'nullable',
+        'postcode' => 'required',
+         'o_order_notes' => 'nullable|string|max:500',
+        'shipping_charge' => 'required|numeric',
+         'distance_km' => 'nullable|numeric',
+         'latitude' => 'required|numeric', 
+        'longitude' => 'required|numeric', 
+        'razorpay_payment_id' => 'required',
+        'razorpay_order_id' => 'required',
+        'razorpay_signature' => 'required',
+        'formData' => 'required|array',
+
         ]);
 
         $generatedSignature = hash_hmac(
             'sha256',
-            $request->razorpay_order_id . '|' . $request->razorpay_payment_id,
+            $request->o_razorpay_order_id . '|' . $request->o_razorpay_payment_id,
             config('services.razorpay.secret')
         );
 
@@ -98,9 +136,11 @@ class RazorpayController extends Controller
             'o_payment_method' => 'online',
             'o_payment_status' => 'paid',
             'o_order_status' => 'confirmed',
-            'o_razorpay_order_id' => $request->razorpay_order_id,
+            'o_razorpay_order_id' => $request->o_razorpay_order_id,
             'o_razorpay_payment_id' => $request->razorpay_payment_id,
             'o_razorpay_signature' => $request->razorpay_signature,
+            'o_latitude' => $validated['latitude'] ?? null,
+            'o_longitude' => $validated['longitude'] ?? null,  
             'o_created_at' => now(),
             'o_updated_at' => now(),
         ]);
