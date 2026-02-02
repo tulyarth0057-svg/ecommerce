@@ -409,28 +409,19 @@
                                             </li>
                                             <li class="menu-li">
                                                 <a href="javascript:void(0)" class="menu-link d-flex align-items-center ptb-5 plr-15">
-                                                    <span class="menu-title text-uppercase heading-weight">Page</span>
+                                                    <span class="menu-title text-uppercase heading-weight">signup</span>
                                                     <span class="icon-16 fw-normal"><i class="ri-arrow-down-s-line d-block lh-1"></i></span>
                                                 </a>
                                                 <div class="menu-dropdown menu-sub collapse position-absolute top-auto body-bg z-2 DropDownSlide box-shadow">
                                                     <ul class="menudrop-ul ptb-25">
                                                         <li class="menudrop-li position-relative">
                                                             <div class="menu-sublink ptb-5 plr-30">
-                                                                <a href="about-us.html" class="d-flex flex-wrap align-items-center">
-                                                                    <span class="menusub-title width-calc-16">About us</span>
+                                                                <a href="<?php echo e(route('courierboy.signup')); ?>" class="d-flex flex-wrap align-items-center">
+                                                                    <span class="menusub-title width-calc-16">courierboysignup</span>
                                                                     <span class="width-16 icon-16 fw-normal"><i class="ri-arrow-right-s-line d-block lh-1"></i></span>
                                                                 </a>
                                                             </div>
-                                                            <div class="menusub-dropdown collapse position-absolute w-100 body-bg DropDownSlide box-shadow">
-                                                                <ul class="menusub-ul ptb-25">
-                                                                    <li class="menusub-li">
-                                                                        <span class="d-block ptb-5 plr-30"><a href="about-us.html" class="d-inline-block body-primary-color">01 Modern aboutus</a></span>
-                                                                    </li>
-                                                                    <li class="menusub-li">
-                                                                        <span class="d-block ptb-5 plr-30"><a href="about-us2.html" class="d-inline-block body-primary-color">02 Creative aboutus</a></span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
+                                                        
                                                         </li>
                                                         <li class="menudrop-li position-relative">
                                                             <div class="menu-sublink ptb-5 plr-30">
@@ -483,6 +474,37 @@
                                                     </ul>
                                                 </div>
                                             </li>
+                                            
+                                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(auth()->guard()->check()): ?>
+<li class="menu-li">
+    <a href="javascript:void(0)" class="menu-link d-flex align-items-center ptb-5 plr-15">
+        <span class="menu-title text-uppercase heading-weight">Orders</span>
+        <span class="icon-16 fw-normal"><i class="ri-arrow-down-s-line d-block lh-1"></i></span>
+    </a>
+    <div class="menu-dropdown menu-sub collapse position-absolute top-auto body-bg z-2 DropDownSlide box-shadow">
+        <ul class="menudrop-ul ptb-25">
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($order): ?>
+                <li class="menudrop-li position-relative">
+                    <div class="menu-sublink ptb-5 plr-30">
+                        <a href="<?php echo e(route('my.order', ['orderId' => $order->o_id])); ?>" class="d-flex flex-wrap align-items-center">
+                            <span class="menusub-title width-calc-16">My order</span>
+                            <span class="width-16 icon-16 fw-normal"><i class="ri-arrow-right-s-line d-block lh-1"></i></span>
+                        </a>
+                    </div>
+                </li>
+            <?php else: ?>
+                <li class="menudrop-li position-relative">
+                    <div class="menu-sublink ptb-5 plr-30">
+                        <span class="menusub-title width-calc-16 text-muted">No orders yet</span>
+                    </div>
+                </li>
+            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+        </ul>
+    </div>
+</li>
+<?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+
                                         </ul>
                                     </div>
                                 </div>
@@ -509,13 +531,14 @@
                                             </div>
                                         </li>
 
-
                                         
 
-                                        
-                                        <li class="header-icon-wrap wishlist-wrap position-relative">
+   <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(auth()->guard()->check()): ?>
+<li class="header-icon-wrap wishlist-wrap position-relative">
     <a href="javascript:void(0)" id="notificationBell">
-        <i class="bi bi-bell"></i>
+          <span class="d-block header-block-icon primary-link font-16 font-xl-20 fw-bold">
+            <i class="bi bi-bell"></i>
+           </span>
 
         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(auth()->user()->unreadNotifications->count() > 0): ?>
             <span class="notification-badge">
@@ -532,13 +555,13 @@
         </div>
 
         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = auth()->user()->unreadNotifications->take(5); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notification): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
-            <a href="<?php echo e(route('notifications.open', $notification->id)); ?>"
+            <a href="<?php echo e(route('notifications.index', $notification->id)); ?>"
                class="dropdown-item unread">
                 <strong><?php echo e($notification->data['title']); ?></strong>
                 <p><?php echo e($notification->data['message']); ?></p>
             </a>
         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
-            <div class="dropdown-item text-muted">
+            <div class="dropdown-item text-center text-muted">
                 No new notifications
             </div>
         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
@@ -548,16 +571,11 @@
         </div>
     </div>
 </li>
+<?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
 
 
-
-
-
-
-
-
-                                        <li class="header-icon-wrap search-wrap d-xxl-none">
+                                        <li class="header-icon-wrap search-wrap ">
                                             <div class="header-icon-wrapper">
                                                 <a href="#searchmodal" class="d-block header-icon-search" data-bs-toggle="modal" aria-label="Search modal">
                                                     <span class="d-block header-block-icon primary-link font-16 font-xl-20"><i class="ri-search-line"></i></span>

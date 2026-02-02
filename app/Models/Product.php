@@ -79,6 +79,9 @@ class Product extends Model
         return $this->belongsTo(Color::class, 'p_color_id', 'color_id');
     }
 
+  
+
+
 
 }
 

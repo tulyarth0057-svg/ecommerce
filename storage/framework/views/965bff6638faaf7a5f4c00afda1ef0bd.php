@@ -3,20 +3,25 @@
 <?php $__env->startSection('title', 'Track Order'); ?>
 
 <?php $__env->startPush('styles'); ?>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-  
+    /* ------------------ Container ------------------ */
+    .tracking-main {
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
 
     .container {
         max-width: 900px;
         margin: 0 auto;
         background: white;
         border-radius: 10px;
-      
         overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     }
 
     .header {
-        background: #ff6633;
+        background: linear-gradient(135deg, #ff6633  100%);
         padding: 40px 30px;
         color: white;
         text-align: center;
@@ -198,101 +203,98 @@
         text-transform: uppercase;
     }
 
-    .status-placed {
-        background: #e3f2fd;
-        color: #1976d2;
+    .status-pending { background: #e3f2fd; color: #1976d2; }
+    .status-processing { background: #fff3e0; color: #f57c00; }
+    .status-shipped { background: #ffe4d6; color: #ff6b35; }
+    .status-out_for_delivery { background: #fff8e1; color: #f9a825; }
+    .status-delivered { background: #e8f5e9; color: #388e3c; }
+    .status-cancelled { background: #ffebee; color: #d32f2f; }
+
+    .checkmark { 
+        display: inline-block; 
+        width: 20px; 
+        height: 20px; 
     }
 
-    .status-processing {
-        background: #fff3e0;
-        color: #f57c00;
-    }
-
-    .status-shipped {
-        background: #ffe4d6;
-        color: #ff6b35;
-    }
-
-    .status-out_for_delivery {
-        background: #fff8e1;
-        color: #f9a825;
-    }
-
-    .status-delivered {
-        background: #e8f5e9;
-        color: #388e3c;
-    }
-
-    .status-cancelled {
-        background: #ffebee;
-        color: #d32f2f;
-    }
-
-    .checkmark {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
+    /* Map container */
+    #map { 
+        height: 300px; 
+        margin-top: 30px; 
+        border-radius: 10px; 
+        overflow: hidden;
+        border: 2px solid #ffe4d6;
     }
 
     @media (max-width: 768px) {
-        .tracking-main {
-            padding: 20px 10px;
+        .tracking-main { 
+            padding: 20px 10px; 
         }
-
-        .header h1 {
-            font-size: 24px;
+        
+        .header h1 { 
+            font-size: 24px; 
         }
-
-        .order-id {
-            font-size: 14px;
+        
+        .order-id { 
+            font-size: 14px; 
+            padding: 6px 16px;
         }
-
-        .content {
-            padding: 30px 20px;
+        
+        .content { 
+            padding: 30px 20px; 
         }
-
-        .tracking-progress {
-            flex-direction: column;
-            align-items: center;
+        
+        .tracking-progress { 
+            flex-direction: column; 
+            align-items: center; 
         }
-
-        .progress-line {
-            width: 4px;
-            height: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            top: 0;
+        
+        .progress-line { 
+            width: 4px; 
+            height: 100%; 
+            left: 30px;
+            top: 0; 
         }
-
-        .progress-line-fill {
-            width: 100% !important;
-            height: 0%;
-            transition: height 1s ease;
+        
+        .progress-line-fill { 
+            width: 100% !important; 
+            height: 0%; 
+            transition: height 1s ease; 
         }
-
-        .step {
-            width: 100%;
-            flex-direction: row;
-            justify-content: flex-start;
-            margin: 20px 0;
+        
+        .step { 
+            width: 100%; 
+            flex-direction: row; 
+            justify-content: flex-start; 
+            margin: 20px 0; 
         }
-
-        .step-circle {
-            margin-bottom: 0;
-            margin-right: 20px;
+        
+        .step-circle { 
+            margin-bottom: 0; 
+            margin-right: 20px; 
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
         }
-
-        .step-label {
+        
+        .step-info {
             text-align: left;
         }
-
-        .detail-row {
-            flex-direction: column;
-            gap: 5px;
+        
+        .step-label { 
+            text-align: left; 
         }
-
-        .detail-value {
-            text-align: left;
+        
+        .detail-row { 
+            flex-direction: column; 
+            gap: 5px; 
+        }
+        
+        .detail-value { 
+            text-align: left; 
+        }
+        
+        #map {
+            height: 250px;
         }
     }
 </style>
@@ -300,130 +302,211 @@
 
 <?php $__env->startSection('content'); ?>
 <div class="tracking-main">
-
-     <div class="header">
+    <div class="container-fluid">
+        <div class="header">
             <h1>Track Your Order</h1>
             <div class="order-id">Order #<?php echo e($order->o_order_number); ?></div>
         </div>
-    <div class="container">
-       
 
-       <div class="content">
-    <div class="tracking-container">
+        <div class="content">
+            <div class="tracking-container">
 
-        
-        <div class="tracking-progress">
-            <?php
-                $statuses = ['pending' => 1, 'processing' => 2, 'shipped' => 3, 'out_for_delivery' => 4, 'delivered' => 5];
-                $currentStep = $statuses[$order->o_order_status] ?? 1;
-            ?>
+                
+                <div class="tracking-progress">
+                    <?php
+                        $statuses = ['pending' => 1, 'processing' => 2, 'shipped' => 3, 'out_for_delivery' => 4, 'delivered' => 5];
+                        $currentStep = $statuses[$order->o_order_status] ?? 1;
+                    ?>
 
-            <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status => $step): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <div class="step <?php echo e($currentStep >= $step ? 'completed' : ''); ?> <?php echo e($currentStep == $step ? 'active' : ''); ?>" data-step="<?php echo e($step); ?>">
-                    <div class="step-circle <?php echo e($currentStep == $step ? 'pulse' : ''); ?>">
-                        <?php if($currentStep > $step): ?>
-                            
-                            <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
-                            </svg>
-                        <?php else: ?>
-                            
-                            <span><?php echo e($step); ?></span>
-                        <?php endif; ?>
-                    </div>
-                    <div class="step-info">
-                        <div class="step-label"><?php echo e(ucfirst(str_replace('_', ' ', $status))); ?></div>
-                        <div class="step-date">
-                            <?php if($currentStep >= $step): ?>
-                                <?php echo e($order->o_updated_at ? $order->o_updated_at->format('M d, Y') : 'Completed'); ?>
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status => $step): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
+                        <div class="step <?php echo e($currentStep >= $step ? 'completed' : ''); ?> <?php echo e($currentStep == $step ? 'active' : ''); ?>" data-step="<?php echo e($step); ?>">
+                            <div class="step-circle <?php echo e($currentStep == $step ? 'pulse' : ''); ?>">
+                                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($currentStep > $step): ?>
+                                    <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                                    </svg>
+                                <?php else: ?>
+                                    <span><?php echo e($step); ?></span>
+                                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                            </div>
+                            <div class="step-info">
+                                <div class="step-label"><?php echo e(ucfirst(str_replace('_', ' ', $status))); ?></div>
+                                <div class="step-date">
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($currentStep >= $step): ?>
+                                        <?php echo e(\Carbon\Carbon::parse($order->o_updated_at)->format('d M Y, h:i A')); ?>
 
-                            <?php else: ?>
-                                Pending
-                            <?php endif; ?>
+                                    <?php else: ?>
+                                        Pending
+                                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                </div> 
+                            </div>
                         </div>
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
+
+                    <div class="progress-line">
+                        <div class="progress-line-fill" style="width: <?php echo e(($currentStep - 1) / (count($statuses) - 1) * 100); ?>%;"></div>
                     </div>
                 </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-            
-            <div class="progress-line">
-                <div class="progress-line-fill" style="width: <?php echo e(($currentStep - 1) / (count($statuses) - 1) * 100); ?>%;"></div>
-            </div>
-        </div>
+                
+                
 
-        
-        <div class="order-details">
-            <h3>Order Details</h3>
-            <div class="detail-row">
-                <span class="detail-label">Status</span>
-                <span class="detail-value">
-                    <span class="status-badge status-<?php echo e($order->o_order_status); ?>">
-                        <?php echo e(ucfirst(str_replace('_', ' ', $order->o_order_status))); ?>
+                
+                <div class="order-details">
+                    <h3>Order Details</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">
+                            <span class="status-badge status-<?php echo e($order->o_order_status); ?>">
+                                <?php echo e(ucfirst(str_replace('_', ' ', $order->o_order_status))); ?>
 
-                    </span>
-                </span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Order Date</span>
-                <span class="detail-value"><?php echo e($order->o_created_at ? $order->o_created_at->format('M d, Y h:i A') : 'N/A'); ?></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Total Amount</span>
-                <span class="detail-value">₹<?php echo e(number_format($order->o_total_amount, 2)); ?></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Shipping Address</span>
-                <span class="detail-value"><?php echo e($order->o_street_address); ?>, <?php echo e($order->o_city); ?>, <?php echo e($order->o_state); ?>, <?php echo e($order->o_postcode); ?></span>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Order Date</span>
+                        <span class="detail-value"><?php echo e(\Carbon\Carbon::parse($order->o_created_at)->format('d M Y, h:i A')); ?></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Total Amount</span>
+                        <span class="detail-value">₹<?php echo e(number_format($order->o_total_amount, 2)); ?></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Shipping Address</span>
+                        <span class="detail-value"><?php echo e($order->o_street_address); ?>, <?php echo e($order->o_city); ?>, <?php echo e($order->o_state); ?>, <?php echo e($order->o_postcode); ?></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<?php $__env->stopSection(); ?>
 
-    </div>
-</div>
-
+<?php $__env->startPush('scripts'); ?>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get order status from Laravel
-        const orderStatus = '<?php echo e($order->o_order_status); ?>';
-        
-        // Map status to step number
-        const statusMap = {
-            'placed': 1,
-            'processing': 2,
-            'shipped': 3,
-            'out_for_delivery': 4,
-            'delivered': 5
-        };
-        
-        const currentStep = statusMap[orderStatus] || 1;
-        const progressFill = document.getElementById('progressFill');
-        const isMobile = window.innerWidth <= 768;
-        
-        // Calculate progress percentage
-        const progressPercentage = ((currentStep - 1) / 4) * 100;
-        
-        // Animate progress bar
-        setTimeout(() => {
-            if (isMobile) {
-                progressFill.style.height = progressPercentage + '%';
-            } else {
-                progressFill.style.width = progressPercentage + '%';
-            }
-        }, 300);
+document.addEventListener('DOMContentLoaded', function() {
+    const orderNumber = '<?php echo e($order->o_order_number); ?>';
+    const statusMap = {
+        'pending': 1,
+        'processing': 2,
+        'shipped': 3,
+        'out_for_delivery': 4,
+        'delivered': 5
+    };
 
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            const nowMobile = window.innerWidth <= 768;
-            if (nowMobile) {
-                progressFill.style.width = '100%';
-                progressFill.style.height = progressPercentage + '%';
-            } else {
-                progressFill.style.height = '100%';
-                progressFill.style.width = progressPercentage + '%';
+    // Initialize map
+    let map = L.map('map').setView([28.6139, 77.2090], 13); // Default to Delhi
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    let marker;
+
+    function updateLocation(lat, lng) {
+        if(lat && lng){
+            const latNum = parseFloat(lat);
+            const lngNum = parseFloat(lng);
+            
+            if(!isNaN(latNum) && !isNaN(lngNum)){
+                if(!marker){
+                    marker = L.marker([latNum, lngNum]).addTo(map);
+                    map.setView([latNum, lngNum], 13);
+                } else {
+                    marker.setLatLng([latNum, lngNum]);
+                    map.setView([latNum, lngNum], 13);
+                }
+            }
+        }
+    }
+
+    function updateOrderStatus(data) {
+        if(!data || !data.status) return;
+        
+        const currentStep = statusMap[data.status] || 1;
+
+        // Update progress line
+        const progressFill = document.querySelector('.progress-line-fill');
+        if(progressFill){
+            const progressPercentage = ((currentStep - 1) / (Object.keys(statusMap).length - 1)) * 100;
+            progressFill.style.width = progressPercentage + '%';
+        }
+
+        // Update step circles
+        document.querySelectorAll('.step').forEach(stepEl => {
+            const stepNum = parseInt(stepEl.dataset.step);
+            stepEl.classList.remove('active', 'completed');
+            
+            const stepCircle = stepEl.querySelector('.step-circle');
+            if(stepCircle){
+                stepCircle.classList.remove('pulse');
+            }
+            
+            if(stepNum < currentStep) {
+                stepEl.classList.add('completed');
+            }
+            if(stepNum === currentStep) {
+                stepEl.classList.add('active');
+                if(stepCircle){
+                    stepCircle.classList.add('pulse');
+                }
             }
         });
-    });
+
+        // Update status badge
+        const badge = document.querySelector('.status-badge');
+        if(badge){
+            badge.className = 'status-badge status-' + data.status;
+            badge.innerText = data.status.replace(/_/g, ' ').toUpperCase();
+        }
+
+        // Update step dates
+        document.querySelectorAll('.step').forEach(stepEl => {
+            const stepNum = parseInt(stepEl.dataset.step);
+            const stepDateEl = stepEl.querySelector('.step-date');
+            
+            if(stepDateEl){
+                if(stepNum <= currentStep && data.updated_at){
+                    const date = new Date(data.updated_at);
+                    stepDateEl.innerText = date.toLocaleString('en-IN', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                } else {
+                    stepDateEl.innerText = 'Pending';
+                }
+            }
+        });
+
+        // Update map
+        if(data.latitude && data.longitude){
+            updateLocation(data.latitude, data.longitude);
+        }
+    }
+
+    function fetchOrderStatus() {
+        fetch(`/api/order/${orderNumber}/track`)
+            .then(res => {
+                if(!res.ok) throw new Error('Network response was not ok');
+                return res.json();
+            })
+            .then(data => {
+                updateOrderStatus(data);
+            })
+            .catch(err => {
+                console.error('Error fetching order status:', err);
+            });
+    }
+
+    // Initial fetch
+    fetchOrderStatus();
+
+    // Poll every 10 seconds
+    setInterval(fetchOrderStatus, 10000);
+});
 </script>
-<?php $__env->stopSection(); ?>
+<?php $__env->stopPush(); ?>
 <?php echo $__env->make('layouts.frontend-layout', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laravel_git\ecommerce-web\resources\views/track-order.blade.php ENDPATH**/ ?>

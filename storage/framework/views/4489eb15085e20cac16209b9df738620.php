@@ -436,7 +436,7 @@
     <!-- Order Header -->
     <div class="order-header">
         <h1><i class="ri-file-text-line me-2"></i>Order #<?php echo e($order->o_order_number); ?></h1>
-        <p><i class="ri-calendar-line me-2"></i>Placed on <?php echo e(\Carbon\Carbon::parse($order->created_at)->format('d M Y, h:i A')); ?></p>
+        <p><i class="ri-calendar-line me-2"></i>Placed on <?php echo e(\Carbon\Carbon::parse($order->o_created_at)->format('d M Y, h:i A')); ?></p>
     </div>
 
     <!-- Order Information Card -->
@@ -458,7 +458,7 @@
                     <i class="ri-calendar-check-line"></i>
                     Order Date
                 </div>
-                <div class="info-value"><?php echo e(\Carbon\Carbon::parse($order->created_at)->format('d M Y')); ?></div>
+                <div class="info-value"><?php echo e(\Carbon\Carbon::parse($order->o_created_at)->format('d M Y')); ?></div>
             </div>
             <div class="info-item">
                 <div class="info-label">
@@ -550,7 +550,10 @@
             <!-- Right: Product Info -->
             <div class="col-md-12">
                 <div class="card-body">
-                    <h2 class="product-title"><?php echo e($order->o_i_product_name); ?></h2>
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $orderItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
+    <h2 class="product-title"><?php echo e($item->o_i_product_name); ?></h2>
+<?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
+
                     
                   <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $orderItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
 <div class="card order-card mb-4">

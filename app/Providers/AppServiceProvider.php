@@ -9,40 +9,43 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
+    public function boot(): void
+    {
+        View::composer('*', function ($view) {
 
-public function boot()
-{
-    View::composer('*', function ($view) {
+            $wishlistCount = 0;
+            $cartCount = 0;
+            $order = null;
 
-        $wishlistCount = 0;
-        $cartCount = 0;
+            if (Auth::check()) {
 
-        if (Auth::check()) {
-            $wishlistCount = DB::table('wishlist')
-                ->where('user_id', Auth::id())
-                ->count();
+                $userId = Auth::id();
 
-            $cartCount = DB::table('addtocart')
-                ->where('user_id', Auth::id())
-                ->count();
-        }
+                $wishlistCount = DB::table('wishlist')
+                    ->where('user_id', $userId)
+                    ->count();
 
-        $view->with([
-            'wishlistCount' => $wishlistCount,
-            'cartCount' => $cartCount,
-        ]);
-    });
-}
+                $cartCount = DB::table('addtocart')
+                    ->where('user_id', $userId)
+                    ->count();
 
+                // ✅ LATEST ORDER (SAFE)
+                $order = DB::table('tbl_orders')
+                    ->where('o_user_id', $userId)
+                    ->latest('o_created_at')
+                    ->first();
+            }
+
+            $view->with([
+                'wishlistCount' => $wishlistCount,
+                'cartCount' => $cartCount,
+                'order' => $order, // ✅ IMPORTANT
+            ]);
+        });
+    }
 }

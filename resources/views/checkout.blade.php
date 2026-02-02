@@ -224,7 +224,8 @@ textarea.checkout-input {
         <div class="checkout-grid">
     <div class="checkout-box">
         <h2 class="checkout-h2">Billing details</h2>
-        <form action="{{ route('checkout.process') }}" method="POST">
+       <form id="checkoutForm" action="{{ route('checkout.process') }}" method="POST">
+
             @csrf
             <label>Email address *</label>
             <input type="email" name="email" class="checkout-input" 
@@ -389,11 +390,10 @@ textarea.checkout-input {
 
 {{-- script of razorpay --}}
 
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    const form = document.querySelector('form');
+    const form = document.querySelector('#checkoutForm');
     const payNowBtn = document.getElementById('payNowBtn');
     const placeOrderBtn = document.getElementById('placeOrderBtn');
 
@@ -402,125 +402,153 @@ document.addEventListener('DOMContentLoaded', function () {
         payNowBtn.innerText = 'Pay Now';
     }
 
-    // 🔹 Payment toggle function
     window.selectPayment = function(el) {
-        document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('payment-selected'));
+        document.querySelectorAll('.payment-option')
+            .forEach(opt => opt.classList.remove('payment-selected'));
+
         el.classList.add('payment-selected');
 
         const method = el.querySelector('input').value;
         el.querySelector('input').checked = true;
 
-        // Show/Hide buttons
         payNowBtn.style.display = method === 'online' ? 'block' : 'none';
         placeOrderBtn.style.display = method === 'cash' ? 'block' : 'none';
     };
 
-    // 🔹 Default: check which payment is selected on page load
-    const defaultMethod = document.querySelector('input[name="payment"]:checked').value;
-    if(defaultMethod === 'online'){
-        payNowBtn.style.display = 'block';
-        placeOrderBtn.style.display = 'none';
-    } else {
-        payNowBtn.style.display = 'none';
-        placeOrderBtn.style.display = 'block';
-    }
-
-    // 🔹 Razorpay flow
-    payNowBtn.addEventListener('click', async function() {
+    payNowBtn.addEventListener('click', async function () {
         payNowBtn.disabled = true;
         payNowBtn.innerText = 'Processing...';
 
         try {
-            const total = parseFloat(document.getElementById('totalAmount').innerText.replace('₹',''));
-            const amount = Math.round(total * 100);
+            // Total amount को सही से parse करो (comma या space भी handle कर सकता है)
+            const totalText = document.getElementById('totalAmount').innerText;
+            const total = parseFloat(totalText.replace(/[^0-9.]/g, '')); 
+            if (isNaN(total) || total <= 0) {
+                throw new Error("Invalid amount");
+            }
+
+            const amountInPaise = Math.round(total * 100);
 
             const res = await fetch("{{ route('razorpay.create') }}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Accept": "application/json"
                 },
-                body: JSON.stringify({ amount })
+                body: JSON.stringify({ amount: total })  // rupees में भेजो, backend paise में convert करेगा
             });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.message || "Failed to create order");
+            }
 
             const data = await res.json();
 
-            const rzp = new Razorpay({
-                key: "{{ config('services.razorpay.key') }}",
-                amount: amount,
-                currency: "INR",
-                order_id: data.o_razorpay_order_id,
-                name: "Rimberio",
-                description: "Order Payment",
-                handler: async function(response) {
-                    try {
-                        const verify = await fetch("{{ route('razorpay.verify') }}", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                            },
-                            body: JSON.stringify({
-                                razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_order_id: response.razorpay_order_id,
-                                razorpay_signature: response.razorpay_signature,
-                                formData: Object.fromEntries(new FormData(form))
-                            })
-                        });
+            if (!data.razorpay_order_id) {
+                throw new Error("No order ID received");
+            }
 
-                        const result = await verify.json();
-                        if(result.success){
-                            window.location.href = "/order/success/" + result.order_id;
-                        } else {
-                            alert(result.message || "Payment failed");
-                            resetPayBtn();
-                        }
-                    } catch(err){
-                        alert("Error verifying payment!");
+            const options = {
+                key: "{{ config('services.razorpay.key') }}",
+                amount: amountInPaise,
+                currency: "INR",
+                name: "Rimberio",
+                description: "Order Payment",  // optional लेकिन अच्छा लगता है
+                order_id: data.razorpay_order_id,
+
+                // Theme customize (तुम्हारा favorite color डाल सकती हो)
+                theme: {
+                    color: "#e91e63"   // pinkish, या जो चाहो
+                },
+
+                // Prefill ज्यादा info → बेहतर UX
+                prefill: {
+                    name: "{{ auth()->user()->name ?? '' }}",
+                    email: "{{ auth()->user()->email ?? '' }}",
+                    contact: "{{ auth()->user()->phone ?? auth()->user()->mobile ?? '' }}"  // अगर phone field है तो add करो
+                },
+
+               handler: async function (response) {
+    try {
+        const formData = Object.fromEntries(new FormData(form));
+
+        const verifyRes = await fetch("{{ route('razorpay.verify') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                formData: formData
+            })
+        });
+
+        const result = await verifyRes.json();
+
+        if (result.success) {
+            Swal.fire({
+                title: 'Order Placed Successfully!',
+                text: 'Thank you for shopping with us.',
+                icon: 'success',
+                confirmButtonText: 'View Order',
+                allowOutsideClick: false
+            }).then(() => {
+                window.location.href = "/order/success/" + result.order_id;
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Payment Failed',
+                text: result.message || 'Something went wrong!'
+            });
+            resetPayBtn();
+        }
+    } catch (err) {
+        console.error(err);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'Payment processed but verification failed. Please contact support.'
+        });
+        resetPayBtn();
+    }
+},
+
+
+                modal: {
+                    ondismiss: function () {
                         resetPayBtn();
+                        // alert("Payment popup closed");  // optional
                     }
                 },
-                modal: { ondismiss: resetPayBtn },
-                prefill: {
-                    name: "{{ auth()->user()->name }}",
-                    email: "{{ auth()->user()->email }}"
-                }
+
+                // Optional: notes add कर सकते हो backend verification के लिए
+                // notes: { address: "some info" }
+            };
+
+            const rzp = new Razorpay(options);
+
+            rzp.on('payment.failed', function (response) {
+                alert(response.error.description || "Payment failed");
+                resetPayBtn();
             });
 
             rzp.open();
 
-        } catch(err){
-            alert("Something went wrong!");
+        } catch (e) {
+            console.error("Payment init error:", e);
+            alert(e.message || "Something went wrong. Please try again.");
             resetPayBtn();
         }
     });
-
-    // 🔹 COD form submit
-    form.addEventListener('submit', function () {
-        const method = document.querySelector('input[name="payment"]:checked').value;
-
-        // Add hidden input for backend
-        if(!form.querySelector('input[name="paymentMethod"]')){
-            const hidden = document.createElement('input');
-            hidden.type = 'hidden';
-            hidden.name = 'paymentMethod';
-            hidden.value = method;
-            form.appendChild(hidden);
-        }
-
-        placeOrderBtn.disabled = true;
-        placeOrderBtn.innerText = 'Processing...';
-    });
-
 });
 </script>
-
-
-
-
-
-
-
 
 
 
@@ -697,148 +725,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
-
-
-{{-- <script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    const form = document.querySelector('form');
-    const payNowBtn = document.getElementById('payNowBtn');
-    const placeOrderBtn = document.getElementById('placeOrderBtn');
-
-    function resetPayBtn() {
-        payNowBtn.disabled = false;
-        payNowBtn.innerText = 'Pay Now';
-    }
-
-    // 🔹 Payment toggle function
-    window.selectPayment = function(el) {
-        document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('payment-selected'));
-        el.classList.add('payment-selected');
-
-        const method = el.querySelector('input').value;
-        el.querySelector('input').checked = true;
-
-        // Show/Hide buttons
-        payNowBtn.style.display = method === 'online' ? 'block' : 'none';
-        placeOrderBtn.style.display = method === 'cash' ? 'block' : 'none';
-    };
-
-    // 🔹 Default: check which payment is selected on page load
-    const defaultMethod = document.querySelector('input[name="payment"]:checked').value;
-    if(defaultMethod === 'online'){
-        payNowBtn.style.display = 'block';
-        placeOrderBtn.style.display = 'none';
-    } else {
-        payNowBtn.style.display = 'none';
-        placeOrderBtn.style.display = 'block';
-    }
-
-    // 🔹 Razorpay flow
-    payNowBtn.addEventListener('click', async function() {
-        // ✅ Validate location before payment
-        const latitude = document.getElementById('latitude').value;
-        const longitude = document.getElementById('longitude').value;
-        
-        if (!latitude || !longitude) {
-            alert('Please click on the location field to get your current location!');
-            return;
-        }
-        
-        payNowBtn.disabled = true;
-        payNowBtn.innerText = 'Processing...';
-
-        try {
-            const total = parseFloat(document.getElementById('totalAmount').innerText.replace('₹','').replace(',',''));
-            const amount = Math.round(total * 100);
-
-            const res = await fetch("{{ route('razorpay.create') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ amount })
-            });
-
-            const data = await res.json();
-
-            const rzp = new Razorpay({
-                key: "{{ config('services.razorpay.key') }}",
-                amount: amount,
-                currency: "INR",
-                order_id: data.razorpay_order_id,
-                name: "Rimberio",
-                description: "Order Payment",
-                handler: async function(response) {
-                    try {
-                        const formData = new FormData(form);
-                        const formDataObj = Object.fromEntries(formData);
-                        
-                        const verify = await fetch("{{ route('razorpay.verify') }}", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                            },
-                            body: JSON.stringify({
-                                razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_order_id: response.razorpay_order_id,
-                                razorpay_signature: response.razorpay_signature,
-                                formData: formDataObj
-                            })
-                        });
-
-                        const result = await verify.json();
-                        if(result.success){
-                            window.location.href = "/order/success/" + result.order_id;
-                        } else {
-                            alert(result.message || "Payment failed");
-                            resetPayBtn();
-                        }
-                    } catch(err){
-                        console.error(err);
-                        alert("Error verifying payment!");
-                        resetPayBtn();
-                    }
-                },
-                modal: { ondismiss: resetPayBtn },
-                prefill: {
-                    name: "{{ auth()->user()->name }}",
-                    email: "{{ auth()->user()->email }}"
-                }
-            });
-
-            rzp.open();
-
-        } catch(err){
-            console.error(err);
-            alert("Something went wrong!");
-            resetPayBtn();
-        }
-    });
-
-    // 🔹 COD form submit
-    form.addEventListener('submit', function (e) {
-        const method = document.querySelector('input[name="payment"]:checked').value;
-
-        // Add hidden input for backend
-        if(!form.querySelector('input[name="paymentMethod"]')){
-            const hidden = document.createElement('input');
-            hidden.type = 'hidden';
-            hidden.name = 'paymentMethod';
-            hidden.value = method;
-            form.appendChild(hidden);
-        }
-
-        placeOrderBtn.disabled = true;
-        placeOrderBtn.innerText = 'Processing...';
-    });
-
-});
-</script> --}}
-
 
 
 @endpush

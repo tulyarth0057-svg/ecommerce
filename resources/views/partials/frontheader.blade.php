@@ -409,28 +409,19 @@
                                             </li>
                                             <li class="menu-li">
                                                 <a href="javascript:void(0)" class="menu-link d-flex align-items-center ptb-5 plr-15">
-                                                    <span class="menu-title text-uppercase heading-weight">Page</span>
+                                                    <span class="menu-title text-uppercase heading-weight">signup</span>
                                                     <span class="icon-16 fw-normal"><i class="ri-arrow-down-s-line d-block lh-1"></i></span>
                                                 </a>
                                                 <div class="menu-dropdown menu-sub collapse position-absolute top-auto body-bg z-2 DropDownSlide box-shadow">
                                                     <ul class="menudrop-ul ptb-25">
                                                         <li class="menudrop-li position-relative">
                                                             <div class="menu-sublink ptb-5 plr-30">
-                                                                <a href="about-us.html" class="d-flex flex-wrap align-items-center">
-                                                                    <span class="menusub-title width-calc-16">About us</span>
+                                                                <a href="{{ route('courierboy.signup') }}" class="d-flex flex-wrap align-items-center">
+                                                                    <span class="menusub-title width-calc-16">courierboysignup</span>
                                                                     <span class="width-16 icon-16 fw-normal"><i class="ri-arrow-right-s-line d-block lh-1"></i></span>
                                                                 </a>
                                                             </div>
-                                                            <div class="menusub-dropdown collapse position-absolute w-100 body-bg DropDownSlide box-shadow">
-                                                                <ul class="menusub-ul ptb-25">
-                                                                    <li class="menusub-li">
-                                                                        <span class="d-block ptb-5 plr-30"><a href="about-us.html" class="d-inline-block body-primary-color">01 Modern aboutus</a></span>
-                                                                    </li>
-                                                                    <li class="menusub-li">
-                                                                        <span class="d-block ptb-5 plr-30"><a href="about-us2.html" class="d-inline-block body-primary-color">02 Creative aboutus</a></span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
+                                                        
                                                         </li>
                                                         <li class="menudrop-li position-relative">
                                                             <div class="menu-sublink ptb-5 plr-30">
@@ -483,6 +474,37 @@
                                                     </ul>
                                                 </div>
                                             </li>
+                                            {{-- myorderli --}}
+                                            @auth
+<li class="menu-li">
+    <a href="javascript:void(0)" class="menu-link d-flex align-items-center ptb-5 plr-15">
+        <span class="menu-title text-uppercase heading-weight">Orders</span>
+        <span class="icon-16 fw-normal"><i class="ri-arrow-down-s-line d-block lh-1"></i></span>
+    </a>
+    <div class="menu-dropdown menu-sub collapse position-absolute top-auto body-bg z-2 DropDownSlide box-shadow">
+        <ul class="menudrop-ul ptb-25">
+            @if($order)
+                <li class="menudrop-li position-relative">
+                    <div class="menu-sublink ptb-5 plr-30">
+                        <a href="{{ route('my.order', ['orderId' => $order->o_id]) }}" class="d-flex flex-wrap align-items-center">
+                            <span class="menusub-title width-calc-16">My order</span>
+                            <span class="width-16 icon-16 fw-normal"><i class="ri-arrow-right-s-line d-block lh-1"></i></span>
+                        </a>
+                    </div>
+                </li>
+            @else
+                <li class="menudrop-li position-relative">
+                    <div class="menu-sublink ptb-5 plr-30">
+                        <span class="menusub-title width-calc-16 text-muted">No orders yet</span>
+                    </div>
+                </li>
+            @endif
+        </ul>
+    </div>
+</li>
+@endauth
+
+
                                         </ul>
                                     </div>
                                 </div>
@@ -528,13 +550,14 @@
                                             </div>
                                         </li>
 
-
-                                        
-
                                         {{-- notification start  --}}
-                                        <li class="header-icon-wrap wishlist-wrap position-relative">
+
+   @auth
+<li class="header-icon-wrap wishlist-wrap position-relative">
     <a href="javascript:void(0)" id="notificationBell">
-        <i class="bi bi-bell"></i>
+          <span class="d-block header-block-icon primary-link font-16 font-xl-20 fw-bold">
+            <i class="bi bi-bell"></i>
+           </span>
 
         @if(auth()->user()->unreadNotifications->count() > 0)
             <span class="notification-badge">
@@ -550,13 +573,13 @@
         </div>
 
         @forelse(auth()->user()->unreadNotifications->take(5) as $notification)
-            <a href="{{ route('notifications.open', $notification->id) }}"
+            <a href="{{ route('notifications.index', $notification->id) }}"
                class="dropdown-item unread">
                 <strong>{{ $notification->data['title'] }}</strong>
                 <p>{{ $notification->data['message'] }}</p>
             </a>
         @empty
-            <div class="dropdown-item text-muted">
+            <div class="dropdown-item text-center text-muted">
                 No new notifications
             </div>
         @endforelse
@@ -566,16 +589,11 @@
         </div>
     </div>
 </li>
+@endauth
 
+{{-- notification end here --}}
 
-
-
-
-
-
-
-
-                                        <li class="header-icon-wrap search-wrap d-xxl-none">
+                                        <li class="header-icon-wrap search-wrap ">
                                             <div class="header-icon-wrapper">
                                                 <a href="#searchmodal" class="d-block header-icon-search" data-bs-toggle="modal" aria-label="Search modal">
                                                     <span class="d-block header-block-icon primary-link font-16 font-xl-20"><i class="ri-search-line"></i></span>

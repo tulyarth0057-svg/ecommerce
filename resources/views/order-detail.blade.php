@@ -436,7 +436,7 @@
     <!-- Order Header -->
     <div class="order-header">
         <h1><i class="ri-file-text-line me-2"></i>Order #{{ $order->o_order_number }}</h1>
-        <p><i class="ri-calendar-line me-2"></i>Placed on {{ \Carbon\Carbon::parse($order->created_at)->format('d M Y, h:i A') }}</p>
+        <p><i class="ri-calendar-line me-2"></i>Placed on {{ \Carbon\Carbon::parse($order->o_created_at)->format('d M Y, h:i A') }}</p>
     </div>
 
     <!-- Order Information Card -->
@@ -458,7 +458,7 @@
                     <i class="ri-calendar-check-line"></i>
                     Order Date
                 </div>
-                <div class="info-value">{{ \Carbon\Carbon::parse($order->created_at)->format('d M Y') }}</div>
+                <div class="info-value">{{ \Carbon\Carbon::parse($order->o_created_at)->format('d M Y') }}</div>
             </div>
             <div class="info-item">
                 <div class="info-label">
@@ -548,7 +548,10 @@
             <!-- Right: Product Info -->
             <div class="col-md-12">
                 <div class="card-body">
-                    <h2 class="product-title">{{ $order->o_i_product_name }}</h2>
+        @foreach ($orderItems as $item)
+    <h2 class="product-title">{{ $item->o_i_product_name }}</h2>
+@endforeach
+
                     
                   @foreach ($orderItems as $item)
 <div class="card order-card mb-4">

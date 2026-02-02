@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\OrderItem;
+use App\Models\OrderStatus;
+
 
 class Order extends Model
 {
@@ -42,6 +45,8 @@ class Order extends Model
         'o_total_amount' => 'decimal:2',
         'o_latitude' => 'decimal:7',
         'o_longitude' => 'decimal:7',
+          'o_created_at' => 'datetime',
+    'o_updated_at' => 'datetime',
     ];
 
     // Relationship with order items

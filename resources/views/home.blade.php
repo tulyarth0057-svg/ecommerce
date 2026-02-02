@@ -880,22 +880,35 @@
                         <div class="collection-wrap">
                             <div class="collection-product-slider swiper" id="feature-product-slider">
                                 <div class="swiper-wrapper">
+                                      @foreach($featuredProducts as $product)
                                     <div class="swiper-slide" data-animate="animate__fadeIn">
+                                      
                                         <div class="single-product">
                                             <div class="row single-product-wrap">
                                                 <div class="product-image-col">
                                                     <div class="product-image">
-                                                        <a href="product.html" class="pro-img">
-                                                            <img src="assets/image/product/p-11.jpg" class="w-100 img-fluid img1" alt="p-11">
-                                                            <img src="assets/image/product/p-12.jpg" class="w-100 img-fluid img2" alt="p-12">
-                                                            <span class="product-label product-label-sale product-label-left">Sale</span>
-                                                        </a>
+                                                        <a href="{{ url('product-view/'.$product->p_id) }}" class="pro-img">
+                                                                <img src="{{ asset('storage/colors/' . $product->img_path) }}"
+                                                                    class="w-100 img-fluid img1"
+                                                                    alt="{{ $product->img_alt_text ?? $product->p_name }}"
+                                                                  >
+
+                                                                @if(!empty($product->hover_img_path))
+                                                                <img src="{{ asset('storage/colors/' . $product->hover_img_path) }}"
+                                                                    class="w-100 img-fluid img2"
+                                                                    alt="{{ $product->img_alt_text ?? $product->p_name }}">
+                                                                @endif                          
+                                                          <span class="product-label product-label-sale product-label-left">Sale</span>
+                                                            </a>
+
                                                         <div class="product-action-wrap">
                                                             <div class="product-action">
-                                                                <a href="javascript:void(0)" class="add-to-wishlist">
-                                                                    <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">wishlist</span>
-                                                                </a>
+                                                                 <a href="javascript:void(0)"
+                                                                        data-product-id="{{ $product->p_id }}"
+                                                                            data-redirect="{{ route('wishlist.index') }}" class="add-to-wishlist">
+                                                                            <span class="product-icon"><i class="ri-heart-line d-block icon-16 lh-1"></i></span>
+                                                                            <span class="tooltip-text">wishlist</span>
+                                                                        </a>
                                                                 <a href="javascript:void(0)" class="add-to-cart">
                                                                     <span class="product-icon">
                                                                         <span class="product-bag-icon icon-16"><i class="ri-shopping-bag-3-line d-block lh-1"></i></span>
@@ -904,26 +917,37 @@
                                                                     </span>
                                                                     <span class="tooltip-text">add to cart</span>
                                                                 </a>
-                                                                <a href="#quickview-modal" data-bs-toggle="modal" class="quick-view">
-                                                                    <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
-                                                                    <span class="tooltip-text">quickview</span>
-                                                                </a>
+                                                               <a href="{{ url('product-view/'.$product->p_id) }}" data-bs-toggle="modal" class="quick-view">
+                                                                            <span class="product-icon"><i class="ri-eye-line d-block icon-16 lh-1"></i></span>
+                                                                            <span class="tooltip-text">quickview</span>
+                                                                        </a>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="product-content">
                                                     <div class="pro-content">
-                                                        <div class="product-title">
-                                                            <span class="d-block meb-7">Viscose / Sleeveless</span>
-                                                            <span class="d-block heading-weight"><a href="product.html" class="primary-link">Flowy midi dress</a></span>
-                                                        </div>
-                                                        <div class="product-price">
-                                                            <div class="price-box heading-weight">
-                                                                <span class="new-price primary-color">$79.00</span>
-                                                                <span class="old-price"><span class="mer-3">~</span><span class="text-decoration-line-through">$84.00</span></span>
+                                                       <div class="product-title mb-1">
+                                                                <a href="{{ url('product-view/'.$product->p_id) }}"
+                                                                class="primary-link">
+                                                                    {{ $product->p_name }}
+                                                                </a>
                                                             </div>
+                                                            <div class="product-price">
+                                                            <div class="product-price mb-1 heading-weight">
+                                                            <span class="new-price primary-color">
+                                                                ₹{{ number_format($product->p_price, 2) }}
+                                                            </span>
+
+                                                            @if($product->p_old_price)
+                                                            <span class="old-price ms-2">
+                                                                <span class="text-decoration-line-through">
+                                                                    ₹{{ number_format($product->p_old_price, 2) }}
+                                                                </span>
+                                                            </span>
+                                                            @endif
                                                         </div>
+                                                        
                                                         <div class="product-ratting">
                                                             <span class="review-ratting">
                                                                 <span class="review-star">
@@ -964,7 +988,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="swiper-slide" data-animate="animate__fadeIn">
+                                   
+                                    </div>
+                                    @endforeach
+                                 
+                                     {{-- <div class="swiper-slide" data-animate="animate__fadeIn">
                                         <div class="single-product">
                                             <div class="row single-product-wrap">
                                                 <div class="product-image-col">
@@ -1462,7 +1490,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                             <div class="swiper-buttons">
@@ -1589,11 +1617,6 @@
                 </div>
             </section>
             <!-- testimonial end -->
-
-
-            <a href="{{ route('notifications.index') }}">
-    Notifications ({{ auth()->user()->unreadNotifications->count() }})
-</a>
 
 
             <!-- category-product start -->

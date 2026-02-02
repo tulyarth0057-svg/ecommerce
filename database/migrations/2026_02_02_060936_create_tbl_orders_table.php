@@ -25,7 +25,7 @@ return new class extends Migration
             $table->decimal('o_total_amount', 10, 2);
             $table->enum('o_payment_method', ['cash', 'online'])->default('cash');
             $table->enum('o_payment_status', ['pending', 'paid', 'failed'])->default('pending');
-            $table->enum('o_order_status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending')->index();
+           $table->enum('o_order_status', ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending')->index();
             $table->string('o_razorpay_order_id')->nullable();
             $table->string('o_razorpay_payment_id')->nullable();
             $table->string('o_razorpay_signature')->nullable();

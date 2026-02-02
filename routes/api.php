@@ -23,4 +23,7 @@ Route::get('/products/{id}', [ProductController::class, 'getProductById']);
 Route::get('/products/main-category/{main_id}', [ProductController::class, 'getProductsByMainCategory']);
 
 
+// api route of track order---->
+Route::get('/api/order/{orderNumber}/track', [OrderController::class, 'trackOrderApi']);
+
 ?>

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\OrderItem;
 use App\Models\Order;
 use Razorpay\Api\Api;
+use App\Models\OrderStatus;
+
 
 class OrderController extends Controller
 {
@@ -107,13 +109,19 @@ public function processCheckout(Request $request)
     'o_total_amount'   => $grandTotal,
     'o_payment_method' => 'cash',
     'o_payment_status' => 'pending',
-    'o_order_status'   => 'pending',
+      'o_order_status'   => 'pending',
     'o_latitude'       => $validated['latitude'] ?? null,
     'o_longitude'      => $validated['longitude'] ?? null,  
     'o_created_at'     => now(),
     'o_updated_at'     => now(),
 ]);
 
+// 🔥 THIS WAS MISSING
+OrderStatus::create([
+    'order_id' => $orderId,
+    'status'   => 'pending',
+    'notes'    => 'Order placed successfully',
+]);
 
     // Insert Order Items
     foreach ($cartItems as $item) {
@@ -305,10 +313,8 @@ public function trackOrder($order_number)
 
 public function AdminVieworder($orderId)
 {
-    // Get the order (NO user restriction for admin)
-    $order = Order::where('o_id', $orderId)->firstOrFail();
+    $order = Order::findOrFail($orderId);
 
-    // Get order items with color + image
     $orderItems = DB::table('tbl_order_items as oi')
         ->leftJoin('color as c', 'c.color_id', '=', 'oi.o_i_color_id')
         ->leftJoin('images as i', function ($join) {
@@ -320,27 +326,27 @@ public function AdminVieworder($orderId)
                  )');
         })
         ->where('oi.o_i_order_id', $orderId)
-        ->select(
-            'oi.*',
-            'c.color_name',
-            'c.color_code',
-            'i.img_path'
-        )
+        ->select('oi.*', 'c.color_name', 'c.color_code', 'i.img_path')
         ->get();
 
-    // Calculate totals
-    $totalItemsPrice = $orderItems->sum('o_i_total_price');
-    $grandTotal = $totalItemsPrice + ($order->o_shipping_cost ?? 0);
-
-    // Return admin view
-    return view('admin.view-order', compact(
-        'order',
-        'orderItems',
-        'totalItemsPrice',
-        'grandTotal'
-    ));
+    return view('admin.view-order', compact('order', 'orderItems'));
 }
 
+
+
+// track-order-withapi-routes---->
+public function trackOrderApi($order_number)
+{
+    $order = Order::where('o_order_number', $order_number)->firstOrFail();
+
+    return response()->json([
+        'order_number' => $order->o_order_number,
+        'status' => $order->o_order_status,
+        'updated_at' => $order->o_updated_at,
+        'latitude' => $order->o_latitude,
+        'longitude' => $order->o_longitude,
+    ]);
+}
 
 
 
