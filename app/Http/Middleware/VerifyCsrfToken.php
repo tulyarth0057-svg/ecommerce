@@ -13,8 +13,11 @@ class VerifyCsrfToken extends Middleware
      */
    // VerifyCsrfToken.php
 
-    protected $except = [
-        'razorpay/verify'
-    ];
+protected $except = [
+    'razorpay/verify',
+    'razorpay/webhook',
+];
+
+    
 
 }

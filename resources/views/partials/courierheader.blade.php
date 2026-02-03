@@ -9,31 +9,42 @@
                         <div class="h-right d-flex align-items-center mr-5 mr-lg-0 order-1 ms-auto">
                             <div class="dropdown user-profile ml-2 ml-sm-3 d-flex align-items-center zindex-popover ">
                                 <div class="u-info me-2">
-                                    <p class="mb-0 text-end line-height-sm "><span class="font-weight-bold">John Quinn</span></p>
-                                    <small>Admin Profile</small>
+                                    @php
+                                        $courier = auth('courier')->user();
+                                    @endphp
+
+                                    <p class="mb-0 text-end line-height-sm">
+                                        <span class="font-weight-bold">{{ $courier->name }}</span>
+                                    </p>
+                                    <small>Courier Profile</small>
+
                                 </div>
                                 <a class="nav-link dropdown-toggle pulse p-0" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static">
-                                <img class="avatar lg rounded-circle img-thumbnail" src="{{ asset('assetsofdash/images/profile_av.svg') }}" alt="profile">
+                              <img class="avatar lg rounded-circle img-thumbnail"
+                                src="{{ $courier->profile_photo 
+                                    ? asset('storage/'.$courier->profile_photo) 
+                                    : asset('assetsofdash/images/profile_av.svg') }}"
+                                alt="profile">
+
                                 </a>
                                 <div class="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-end p-0 m-0">
                                     <div class="card border-0 w280">
                                         <div class="card-body pb-0">
-                                            <div class="d-flex py-1">
-                                                <img class="avatar rounded-circle" src="{{ asset('assetsofdash/images/profile_av.svg') }}" alt="profile">
-                                                <div class="flex-fill ms-3">
-                                                    <p class="mb-0"><span class="font-weight-bold">John	Quinn</span></p>
-                                                    <small class="">Johnquinn@gmail.com</small>
-                                                </div>
+                                           <div class="flex-fill ms-3">
+                                                <p class="mb-0">
+                                                    <span class="font-weight-bold">{{ $courier->name }}</span>
+                                                </p>
+                                                <small>{{ $courier->email }}</small>
                                             </div>
 
                                             <div><hr class="dropdown-divider border-dark"></div>
                                         </div>
                                         <div class="list-group m-2 ">
-                                            <a href="admin-profile.html" class="list-group-item list-group-item-action border-0 "><i class="icofont-ui-user fs-5 me-3"></i>Profile Page</a>
+                                            <a href="{{ route('courier.courierboy.profile') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-ui-user fs-5 me-3"></i>Profile Page</a>
                                             <a href="order-invoices.html" class="list-group-item list-group-item-action border-0 "><i class="icofont-file-text fs-5 me-3"></i>Order Invoices</a>
-                                            <form action="{{ route('logout') }}" method="POST">
+                                            <form action="{{ route('courier.logout') }}" method="POST">
                                                 @csrf
-                                              <button id="logoutBtn" type="submit" class="list-group-item list-group-item-action border-0 bg-primary text-center text-white w-100" >Signout</button>
+                                              <button id="logoutBtn" type="submit" class="list-group-item list-group-item-action border-0 bg-primary text-center text-white w-100" >logout</button>
                                     {{-- <a href="{{ route('logout') }}" class="list-group-item list-group-item-action border-0 "><i class="icofont-logout fs-5 me-3"></i>Signout</a> --}}
 
                                                </form>

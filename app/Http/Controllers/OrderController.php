@@ -311,26 +311,35 @@ public function trackOrder($order_number)
     // vieworder-admin-controller--->
        
 
-public function AdminVieworder($orderId)
-{
-    $order = Order::findOrFail($orderId);
+// Controller
 
-    $orderItems = DB::table('tbl_order_items as oi')
-        ->leftJoin('color as c', 'c.color_id', '=', 'oi.o_i_color_id')
-        ->leftJoin('images as i', function ($join) {
-            $join->on('i.img_color_id', '=', 'c.color_id')
-                 ->whereRaw('i.img_id = (
-                     SELECT MIN(i2.img_id)
-                     FROM images i2
-                     WHERE i2.img_color_id = c.color_id
-                 )');
-        })
-        ->where('oi.o_i_order_id', $orderId)
-        ->select('oi.*', 'c.color_name', 'c.color_code', 'i.img_path')
-        ->get();
 
-    return view('admin.view-order', compact('order', 'orderItems'));
-}
+    public function AdminVieworder($orderId)
+    {
+        // Fetch order info from tbl_orders
+        $order = Order::findOrFail($orderId);
+
+        // Fetch order items with color & first image
+        $orderItems = DB::table('tbl_order_items as oi')
+            ->leftJoin('color as c', 'c.color_id', '=', 'oi.o_i_color_id')
+            ->leftJoin('images as i', function ($join) {
+                $join->on('i.img_color_id', '=', 'c.color_id')
+                     ->whereRaw('i.img_id = (
+                         SELECT MIN(i2.img_id)
+                         FROM images i2
+                         WHERE i2.img_color_id = c.color_id
+                     )');
+            })
+            ->where('oi.o_i_order_id', $orderId)
+            ->select('oi.*', 'c.color_name', 'c.color_code', 'i.img_path')
+            ->get();
+
+        // Calculate grand total (items + shipping)
+        $grandTotal = $orderItems->sum('o_i_total_price') + ($order->o_shipping_cost ?? 0);
+
+        return view('admin.view-order', compact('order', 'orderItems', 'grandTotal'));
+    }
+
 
 
 

@@ -266,6 +266,21 @@
             grid-template-columns: 1fr;
         }
     }
+     .extra-links {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .extra-links a {
+        color: #db3700;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .extra-links a:hover {
+        text-decoration: underline;
+    }
+       
 </style>
 @endpush
 
@@ -462,6 +477,12 @@
 
             <button type="submit" class="submit-btn" id="submitBtn">Complete Registration 🚀</button>
         </form>
+
+        {{-- btnfor login --}}
+
+        <div class="extra-links">
+            <p>Already have an account ? <a href="{{ route('courier.login') }}">Login</a></p>
+        </div>
     </div>
 </div>
 

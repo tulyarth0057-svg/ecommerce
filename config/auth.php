@@ -35,12 +35,20 @@ return [
     |
     */
 
-    'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+
+
+  'guards' => [
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
     ],
+// make a signin route handler----->
+    'courier' => [
+        'driver' => 'session',
+        'provider' => 'courier_boys',
+    ],
+],
+
 
     /*
     |--------------------------------------------------------------------------
@@ -59,17 +67,19 @@ return [
     |
     */
 
-    'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
-        ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+    // make a signin route hander---->
+'providers' => [
+    'users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\User::class,
     ],
+
+    'courier_boys' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\CourierBoy::class,
+    ],
+],
+
 
     /*
     |--------------------------------------------------------------------------

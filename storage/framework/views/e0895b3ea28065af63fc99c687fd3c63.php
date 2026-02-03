@@ -726,11 +726,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 
-
-
-
-
-
 <?php $__env->stopPush(); ?>
 
 <?php echo $__env->make('layouts.frontend-layout', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laravel_git\ecommerce-web\resources\views/checkout.blade.php ENDPATH**/ ?>

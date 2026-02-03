@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\CourierBoy;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+
 
 class CourierBoyController extends Controller
 {
@@ -33,10 +35,10 @@ class CourierBoyController extends Controller
             'account_holder_name' => 'required|string|max:255',
         ]);
 
-        $idProofPath = $request->file('id_proof')->store('courier/id_proofs', 'public');
-        $vehicleRcPath = $request->file('vehicle_rc')->store('courier/vehicle_rcs', 'public');
-        $profilePhotoPath = $request->file('profile_photo')
-            ->store('courier/profile_photos', 'public');
+       // 2️⃣ Store files (single files)
+    $profilePhotoPath = $request->file('profile_photo')->store('courier/profile_photos', 'public');
+    $idProofPath = $request->file('id_proof')->store('courier/id_proofs', 'public');
+    $vehicleRcPath = $request->file('vehicle_rc')->store('courier/vehicle_rcs', 'public');
 
 
         CourierBoy::create([
@@ -61,4 +63,54 @@ class CourierBoyController extends Controller
     'message' => 'Signup successful! Waiting for admin verification.'
 ]);
     }
+
+    // signinhandler
+
+    // show login form
+    public function showLoginForm()
+    {
+        return view('courierboy.loginform'); // blade path
+    }
+
+    // handle login
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        $credentials = $request->only('email', 'password');
+
+        // courier guard login
+        if (Auth::guard('courier')->attempt($credentials)) {
+
+            $request->session()->regenerate();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Login successful',
+                'redirect' => route('courier.dashboard')
+            ]);
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Invalid email or password'
+        ], 401);
+    }
+
+    // logout
+    public function logout(Request $request)
+    {
+        Auth::guard('courier')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+               // Flash a session message for SweetAlert
+        $request->session()->flash('success', 'Logout successful!');
+        return redirect('/'); 
+    }
+
 }

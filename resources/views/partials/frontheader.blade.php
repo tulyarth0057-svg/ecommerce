@@ -425,8 +425,8 @@
                                                         </li>
                                                         <li class="menudrop-li position-relative">
                                                             <div class="menu-sublink ptb-5 plr-30">
-                                                                <a href="contact-us.html" class="d-flex flex-wrap align-items-center">
-                                                                    <span class="menusub-title width-calc-16">Contact us</span>
+                                                                <a href="{{ route('courier.login') }}" class="d-flex flex-wrap align-items-center">
+                                                                    <span class="menusub-title width-calc-16">Courierlogin</span>
                                                                     <span class="width-16 icon-16 fw-normal"><i class="ri-arrow-right-s-line d-block lh-1"></i></span>
                                                                 </a>
                                                             </div>

@@ -1,89 +1,92 @@
 @extends('layouts.frontend-layout')
 
-@section('title', 'View Order')
-
-@push('styles')
-<style>
-    :root {
-        --orange-primary: #f97316;
-        --orange-dark: #ea580c;
-    }
-
-    .order-container { max-width:1200px; margin:0 auto; padding:2rem 1rem; }
-    .order-header { background:linear-gradient(135deg,var(--orange-primary),var(--orange-dark)); border-radius:10px; padding:2rem; color:white; margin-bottom:2rem; }
-    .order-card { border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.08); background:white; margin-bottom:2rem; }
-    .info-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; padding:1.5rem; }
-    .info-label { font-size:0.8rem; color:#6b7280; text-transform:uppercase; }
-    .info-value { font-weight:600; }
-
-    .product-card { display:flex; flex-wrap:wrap; border:1px solid #eee; border-radius:10px; margin-bottom:1.5rem; overflow:hidden; }
-    .product-image { width:250px; height:200px; object-fit:cover; }
-    .product-details { flex:1; padding:1rem 1.5rem; }
-
-    .payment-paid { background:#16a34a; color:white; padding:1rem; border-radius:10px; text-align:center; }
-    .payment-pending { background:#f59e0b; color:white; padding:1rem; border-radius:10px; text-align:center; }
-</style>
-@endpush
+@section('title', 'Order Details')
 
 @section('content')
 <div class="order-container">
 
-    {{-- ORDER HEADER --}}
-    {{-- <div class="order-header">
-        <h1>Order #{{ $order->o_order_number }}</h1>
-        <p>Placed on {{ $order->o_created_at?->format('d M Y, h:i A') }}</p>
-    </div> --}}
+    <!-- Order Header -->
+    <div class="order-header">
+        <h1>Order #{{ optional($order)->o_order_number }}</h1>
+        <p>Placed on {{ \Carbon\Carbon::parse($order->o_created_at)->format('d M Y') }}</p>
+    </div>
 
-    {{-- ORDER INFO --}}
-    {{-- <div class="order-card">
+    <!-- Order Info -->
+    <div class="card order-card mb-4">
         <div class="info-grid">
-            <div><div class="info-label">Order ID</div><div class="info-value">{{ $order->o_id }}</div></div>
-            <div><div class="info-label">User ID</div><div class="info-value">{{ $order->o_user_id }}</div></div>
-            <div><div class="info-label">Payment</div><div class="info-value">{{ ucfirst($order->o_payment_method) }}</div></div>
-            <div><div class="info-label">Status</div><div class="info-value">{{ ucfirst($order->o_order_status) }}</div></div>
-            <div><div class="info-label">Total</div><div class="info-value">₹{{ number_format($order->o_total_amount,2) }}</div></div>
+            <div class="info-item">
+                <div class="info-label">Order Number</div>
+                <div class="info-value">{{ optional($order)->o_order_number }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Order Date</div>
+                <div class="info-value">{{ \Carbon\Carbon::parse($order->o_created_at)->format('d M Y') }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Payment Method</div>
+                <div class="info-value">{{ ucfirst(optional($order)->o_payment_method) }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Payment Status</div>
+                <div class="info-value">{{ ucfirst(optional($order)->o_payment_status) }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Order Status</div>
+                <div class="info-value">{{ ucfirst(optional($order)->o_order_status) }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Total Amount</div>
+                <div class="info-value highlight">₹{{ number_format($grandTotal, 2) }}</div>
+            </div>
         </div>
-    </div> --}}
+    </div>
 
-    {{-- SHIPPING ADDRESS --}}
-    {{-- <div class="order-card">
-        <div class="info-grid">
-            <div><div class="info-label">Name</div><div class="info-value">{{ $order->o_name }}</div></div>
-            <div><div class="info-label">Email</div><div class="info-value">{{ $order->o_email }}</div></div>
-            <div><div class="info-label">Phone</div><div class="info-value">{{ $order->o_phone }}</div></div>
-            <div>
-                <div class="info-label">Address</div>
-                <div class="info-value">
-                    {{ $order->o_street_address }},
-                    {{ $order->o_city }},
-                    {{ $order->o_state }} - {{ $order->o_postcode }}
+    <!-- Shipping Address -->
+    <div class="card order-card mb-4">
+        <h5>Shipping Address</h5>
+        <div class="address-content">
+            <p>Name: {{ optional($order)->o_name }}</p>
+            <p>Email: {{ optional($order)->o_email }}</p>
+            <p>Phone: {{ optional($order)->o_phone }}</p>
+            <p>Address: {{ optional($order)->o_street_address }}, {{ optional($order)->o_city }}, {{ optional($order)->o_state }} - {{ optional($order)->o_postcode }}</p>
+        </div>
+    </div>
+
+    <!-- Products -->
+    <div class="card order-card mb-4">
+        <h5>Products</h5>
+        @foreach($orderItems as $item)
+        <div class="card mb-3">
+            <div class="row g-0">
+                <!-- Image -->
+                <div class="col-md-4">
+                    <img src="{{ $item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png') }}"
+                         class="w-100" alt="{{ $item->o_i_product_name }}">
+                </div>
+                <!-- Info -->
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5>{{ $item->o_i_product_name }}</h5>
+                        <p>Quantity: {{ $item->o_i_quantity }}</p>
+                        <p>Size: {{ $item->o_i_size ?? 'N/A' }}</p>
+                        @if($item->color_code)
+                        <p>Color: <span style="display:inline-block;width:20px;height:20px;background:{{ $item->color_code }}"></span></p>
+                        @endif
+                        <p>Subtotal: ₹{{ number_format($item->o_i_total_price,2) }}</p>
+                        <p>Shipping: ₹{{ number_format(optional($order)->o_shipping_cost / max(count($orderItems),1),2) }}</p>
+                        <p>Total: ₹{{ number_format($item->o_i_total_price + (optional($order)->o_shipping_cost / max(count($orderItems),1)),2) }}</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div> --}}
+        @endforeach
+    </div>
 
-    {{-- PRODUCTS LOOP (ONLY HERE) --}}
-    @foreach($orderItems as $item)
-        <div class="product-card">
-            <img class="product-image"
-                 src="{{ $item->img_path ? asset('storage/colors/'.$item->img_path) : asset('assets/no-image.png') }}">
-
-            <div class="product-details">
-                <h5>{{ $item->o_i_product_name }}</h5>
-                <p>Qty: {{ $item->o_i_quantity }}</p>
-                <p>Price: ₹{{ number_format($item->o_i_total_price,2) }}</p>
-            </div>
-        </div>
-    @endforeach
-
-    {{-- PAYMENT STATUS --}}
-    {{-- <div class="{{ $order->o_payment_status === 'paid' ? 'payment-paid' : 'payment-pending' }}">
-        Payment {{ ucfirst($order->o_payment_status) }}
-    </div> --}}
-
-    {{-- ACTIONS --}}
-    <div style="margin-top:1rem">
-        <a href="{{ route('order.list') }}">← Back to Orders</a>
+    <!-- Payment Status -->
+    <div class="mb-4">
+        <button class="payment-status-btn {{ strtolower(optional($order)->o_payment_status)=='paid'?'payment-paid':'payment-pending' }}">
+            Payment {{ ucfirst(optional($order)->o_payment_status) }}
+        </button>
     </div>
 
 </div>

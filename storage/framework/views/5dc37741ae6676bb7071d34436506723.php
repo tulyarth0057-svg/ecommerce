@@ -40,6 +40,16 @@
                             <li><a class="ms-link" href="order-invoices.html">Order Invoices</a></li>
                         </ul>
                     </li>
+                      
+                     <li class="collapsed">
+                        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#menu-sale" href="#">
+                          <i class="icofont-funky-man fs-5"></i><span>Couriers</span> <span class="arrow icofont-rounded-down ms-auto text-end fs-5"></span></a>
+                        <!-- Menu: Sub menu ul -->
+                        <ul class="sub-menu collapse" id="menu-sale">
+                            <li><a class="ms-link" href="<?php echo e(route('courierboy.list')); ?>">Courierboy List</a></li>
+                      
+                        </ul>
+                    </li>
                     <li class="collapsed">
                         <a class="m-link" data-bs-toggle="collapse" data-bs-target="#customers-info" href="#">
                         <i class="icofont-funky-man fs-5"></i> <span>Customers</span> <span class="arrow icofont-rounded-down ms-auto text-end fs-5"></span></a>
@@ -49,6 +59,7 @@
                             <li><a class="ms-link" href="customer-detail.html">Customers Details</a></li>
                         </ul>
                     </li>
+                     
                     <li class="collapsed">
                         <a class="m-link" data-bs-toggle="collapse" data-bs-target="#menu-sale" href="#">
                         <i class="icofont-sale-discount fs-5"></i> <span>Sales Promotion</span> <span class="arrow icofont-rounded-down ms-auto text-end fs-5"></span></a>

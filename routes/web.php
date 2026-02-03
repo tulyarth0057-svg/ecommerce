@@ -101,6 +101,15 @@ Route::get('/admin/get-categories/{main_id}', [ProductController::class, 'getByM
     // Users
     Route::delete('/user-delete/{id}', [AuthController::class, 'deleteUser'])
         ->name('admin.user.delete');
+
+       // routes of courierboylist---->
+    Route::get('/courierboy-list', [AuthController::class, 'showCourierboylist'])->name('courierboy.list');
+
+Route::get('/courierboys/{id}/view',[AuthController::class, 'viewCourierboy'])->name('courierboys.view');
+
+
+  
+
 });
 
 /*
@@ -210,7 +219,7 @@ Route::post('/razorpay/verify', [RazorpayController::class, 'verifyRazorpayPayme
 
 // webhook routes--->
 
-Route::post('/webhooks/ecommerce', [WebhookController::class, 'handle']);
+Route::post('/razorpay/webhook', [RazorpayController::class, 'webhook']);
 
 
 
@@ -234,13 +243,15 @@ Route::middleware(['auth'])->group(function () {
 
 
 // routes of curiordashboard---->
+Route::prefix('courier')
+    ->name('courier.')
+    ->middleware('auth:courier')
+    ->group(function () {
 
-
-Route::prefix('courier')->name('courier.')->middleware('auth')->group(function () {
     Route::get('/dashboard', [CourierDashboardController::class, 'index'])
         ->name('dashboard');
 
-            Route::get('/assigned-orders', [CourierDashboardController::class, 'assigned'])
+    Route::get('/assigned-orders', [CourierDashboardController::class, 'assigned'])
         ->name('courier.assigned');
 
     Route::get('/pending-deliveries', [CourierDashboardController::class, 'pending'])
@@ -248,7 +259,20 @@ Route::prefix('courier')->name('courier.')->middleware('auth')->group(function (
 
     Route::get('/completed-deliveries', [CourierDashboardController::class, 'completed'])
         ->name('courier.completed');
+
+        // profile page-of-coueierboy---->
+    Route::get('/profile', [CourierDashboardController::class, 'profile'])
+           ->name('courierboy.profile');
+
+    Route::get('/profile/update', [CourierDashboardController::class, 'getProfileUpdate'])
+          ->name('profile.update');
+
+    Route::post('/profile/update', [CourierDashboardController::class, 'profileUpdate'])
+          ->name('profile.update');
+
+        
 });
+
 
 
 
@@ -256,3 +280,15 @@ Route::prefix('courier')->name('courier.')->middleware('auth')->group(function (
 
 Route::get('/courierboy/signup', [CourierBoyController::class, 'courierBoycreate'])->name('courierboy.signup');
 Route::post('/courierboy/signup', [CourierBoyController::class, 'courierBoystore'])->name('courierboy.signup.store');
+
+Route::get('/courier/loginform', [CourierBoyController::class, 'showLoginForm'])
+    ->name('courier.login');
+
+Route::post('/courier/login', [CourierBoyController::class, 'login'])
+    ->name('courier.login.submit');
+
+Route::post('/courier/logout', [CourierBoyController::class, 'logout'])
+    ->name('courier.logout');
+
+ 
+

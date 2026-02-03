@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Models\CourierBoy;
 
 class AuthController extends Controller
 {
@@ -92,10 +93,6 @@ if ($user->role === 'admin') {
 }
 
 
-
-
-
-
     // LOGOUT SYSTEM
 public function logout(Request $request)
 {
@@ -133,6 +130,26 @@ public function logout(Request $request)
 
         return redirect()->back()->with('success', 'User deleted successfully!');
     }
+
+// route of courier-boy-list---->
+public function showCourierboylist()
+{
+    // Fetch all courier boys
+    $courierboys = CourierBoy::all(); // Make sure you have the Courier model
+
+    // Pass to the view
+    return view('admin.courierboy-list', compact('courierboys'));
+}
+
+public function viewCourierboy($id)
+{
+    $courier = CourierBoy::findOrFail($id);
+    return view('admin.courierboy-view', compact('courier'));
+}
+
+
+
+    
 
 }
 
