@@ -231,8 +231,8 @@
              <div class="col-md-3">
                 <div class="card text-center shadow-sm">
                     <div class="card-body-1">
-                        <h5 class="card-title">Total Orders</h5>
-                        <p class="card-text display-4">{{ $ordersCount }}</p>
+                        <h5 class="card-title">Todays Order</h5>
+                        <p class="card-text display-4">{{ $todayOrders }}</p>
                     </div>
                 </div>
             </div>

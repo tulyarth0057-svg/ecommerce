@@ -459,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Theme customize (तुम्हारा favorite color डाल सकती हो)
                 theme: {
-                    color: "#e91e63"   // pinkish, या जो चाहो
+                    color: "#f56c3e"   // pinkish, या जो चाहो
                 },
 
                 // Prefill ज्यादा info → बेहतर UX

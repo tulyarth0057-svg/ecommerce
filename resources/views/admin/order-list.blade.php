@@ -181,6 +181,7 @@ table.dataTable thead .sorting_desc:after {
                 <thead>
                     <tr>
                         <th>S:No</th>
+                        <th>courier</th>
                         <th>Order Number</th>
                         <th>Customer Name</th>
                         <th>Date</th>
@@ -194,6 +195,25 @@ table.dataTable thead .sorting_desc:after {
                     @forelse($orders ?? [] as $order)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
+                     
+                        <td>
+                           <form method="POST" class="assign-courier-form" action="{{ route('assign.courier') }}">
+    @csrf
+    <input type="hidden" name="order_id" value="{{ $order->o_id }}">
+    <select name="courier_id" class="form-control">
+        <option value="">Select Courier</option>
+        @foreach($couriers as $courier)
+            <option value="{{ $courier->id }}" {{ $order->courier_id == $courier->id ? 'selected' : '' }}>
+                {{ $courier->name }} ({{ $courier->mobile }})
+            </option>
+        @endforeach
+    </select>
+    <button type="submit" class="btn btn-success mt-2">Assign Courier</button>
+</form>
+
+                        </td>
+
+
                         <td>#{{ $order->o_order_number ?? 'N/A' }}</td>
                         <td>{{ $order->o_name ?? 'Guest' }}</td>
                         <td>{{ $order->o_created_at ? \Carbon\Carbon::parse($order->o_created_at)->format('M d, Y') : 'N/A' }}</td>
@@ -214,11 +234,9 @@ table.dataTable thead .sorting_desc:after {
                             </span>
                         </td>
                         <td>
-                           <button
-    onclick="window.location='{{ route('view.order', ['orderId' => $order->o_id]) }}'"
-    class="action-btn btn-view">
-    View
-</button>
+                           
+                       <a href="{{ route('view.order', $order->o_id) }}" class="btn btn-primary">View Order</a>
+
 
                         </td>
                     </tr>
@@ -237,6 +255,48 @@ table.dataTable thead .sorting_desc:after {
 @endsection
 
 @push('scripts')
+
+{{-- axjax of asign-courierboy --}}
+<script>
+$(document).ready(function(){
+
+    // AJAX submit for all forms with class 'assign-courier-form'
+    $(document).on('submit', '.assign-courier-form', function(e){
+        e.preventDefault(); // Prevent page refresh
+
+        let form = $(this);
+        let url = form.attr('action');
+        let data = form.serialize();
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: data,
+            success: function(res){
+                if(res.status){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: res.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire('Error', res.message, 'error');
+                }
+            },
+            error: function(xhr, status, error){
+                Swal.fire('Error', 'Something went wrong', 'error');
+                console.error(error);
+            }
+        });
+    });
+
+});
+
+</script>
+
+
 <script>
 $(document).ready(function () {
     if ($.fn.DataTable.isDataTable('#productTable')) {
@@ -255,4 +315,7 @@ $(document).ready(function () {
     });
 });
 </script>
+
+
+
 @endpush

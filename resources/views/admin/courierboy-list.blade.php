@@ -139,7 +139,8 @@
 
                             <td>
                                 <a href="{{ route('courierboys.view', $courier->id) }}" class="btn btn-view btn-sm"> View</a>
-
+                               
+                                 <a href="{{ route('courierboy.edit', $courier->id) }}" class="btn btn-view btn-sm bg-warning">Edit</a>
                             </td>
 
                             <td>{{ $courier->name ?? '-' }}</td>

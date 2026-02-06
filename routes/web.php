@@ -46,6 +46,8 @@ Route::view('/product', 'product');
 
 Route::get('/sign-up', [AuthController::class, 'showsignup'])->name('signup');
 Route::post('/sign-up', [AuthController::class, 'signup']);
+// opt-verify routes------>
+Route::post('/verify-otp',[AuthController::class,'verifyOtp'])->name('verify.otp');
 
 Route::get('/signin', [AuthController::class, 'signin'])->name('signin.form');
 Route::post('/signin', [AuthController::class, 'post_signin'])->name('signin.submit');
@@ -93,7 +95,14 @@ Route::get('/admin/get-categories/{main_id}', [ProductController::class, 'getByM
 
     // Orders
     Route::get('/order-list', [OrderController::class, 'showOrderlist'])->name('order.list');
+    
     Route::get('/view-order/{orderId}', [OrderController::class, 'AdminVieworder'])->name('view.order');
+      
+    // route of courierboy assign
+    Route::post('/assign-courier',[OrderController::class,'assignCourier'])
+      ->name('assign.courier');
+
+    
 
     // Contacts
     Route::get('/contact-list', [AuthController::class, 'showContactlist'])->name('contact.list');
@@ -106,6 +115,47 @@ Route::get('/admin/get-categories/{main_id}', [ProductController::class, 'getByM
     Route::get('/courierboy-list', [AuthController::class, 'showCourierboylist'])->name('courierboy.list');
 
 Route::get('/courierboys/{id}/view',[AuthController::class, 'viewCourierboy'])->name('courierboys.view');
+
+Route::get('/courierboys/{id}/edit', [AuthController::class, 'getEditCourierboy'])->name('courierboy.edit');
+
+
+Route::post('/courierboy/update', [AuthController::class, 'postEditCourierboy'])
+     ->name('courierboy.update');
+
+
+
+     /*
+|--------------------------------------------------------------------------
+| 🔔 ADMIN NOTIFICATIONS
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/notifications/unread', function () {
+
+    return response()->json([
+        'count' => auth()->user()->unreadNotifications->count(),
+        'notifications' => auth()->user()->unreadNotifications
+    ]);
+
+})->name('notifications.unread');
+
+
+Route::post('/notifications/mark-read/{id}', function ($id) {
+
+    $notification = auth()->user()
+        ->notifications()
+        ->where('id', $id)
+        ->first();
+
+    if ($notification) {
+        $notification->markAsRead();
+    }
+
+    return response()->json([
+        'status' => true
+    ]);
+
+})->name('notifications.markRead');
 
 
   
@@ -143,6 +193,7 @@ Route::post('/cart/set-quantity', [AddtocardController::class, 'setQuantity'])->
     // Show order success page
     Route::get('/order/success/{order}', [OrderController::class, 'orderSuccess'])
         ->name('order.success');
+
 });
 
 /*
@@ -254,6 +305,9 @@ Route::prefix('courier')
     Route::get('/assigned-orders', [CourierDashboardController::class, 'assigned'])
         ->name('courier.assigned');
 
+          Route::get('/view-order/{orderId}', [CourierDashboardController::class, 'viewOrder'])
+        ->name('assigned.view');
+
     Route::get('/pending-deliveries', [CourierDashboardController::class, 'pending'])
         ->name('courier.pending');
 
@@ -269,6 +323,48 @@ Route::prefix('courier')
 
     Route::post('/profile/update', [CourierDashboardController::class, 'profileUpdate'])
           ->name('profile.update');
+
+        //   courierboypickedup-btn-in assigned order list------->
+        Route::post('/picked-up/{id}', [CourierDashboardController::class, 'markPickedUp'])
+    ->name('pickedUp');
+
+    Route::get('/picked-up-orders',
+    [CourierDashboardController::class, 'getPickedUpOrders']
+)->name('pickedup.list');
+
+// delivered-btn-postmethod-in-pickuplist--->
+Route::post('/delivered/{id}',
+    [CourierDashboardController::class, 'markDelivered']
+)->name('courier.delivered');
+
+
+// assigned courierboy-order-bell notification routes------------------>
+
+Route::get('/courier/notifications', function () {
+
+$notifications = auth('courier')->user()->unreadNotifications;
+
+return response()->json([
+'count' => $notifications->count(),
+'notifications' => $notifications
+]);
+
+})->name('notifications.unread');
+
+
+Route::post('/courier/notifications/mark-read/{id}', function ($id) {
+
+$notification = auth('courier')->user()->notifications()->find($id);
+
+if($notification){
+$notification->markAsRead();
+}
+
+return response()->json(['success'=>true]);
+
+});
+
+
 
         
 });

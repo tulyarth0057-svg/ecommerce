@@ -4,10 +4,10 @@
 
 @push('styles')
 <style>
-/* Same styling as other courier pages for consistency */
 body {
     font-family: 'Poppins', sans-serif;
     background: rgb(245, 243, 241);
+    
 }
 
 .page-header h1 {
@@ -20,6 +20,7 @@ body {
     background: white;
     border-radius: 5px;
     box-shadow: 0 4px 6px rgba(234, 88, 12, 0.1);
+    padding: 10px 20px;
 }
 
 table {
@@ -55,12 +56,13 @@ tbody td {
 .badge-pending { background: #3b82f6; }
 .badge-delivered { background: #22c55e; }
 </style>
+
 @endpush
 
 @section('content')
 <div class="order-container">
     <div class="page-header">
-        <h1>Completed Deliveries</h1>
+        <h1 class="mb-3">Completed Deliveries list</h1>
     </div>
 
     <div class="table-card">
@@ -76,39 +78,60 @@ tbody td {
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse($orders as $order)
+              <tbody>
+
+                    @forelse($orders ?? [] as $order)
+
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>#{{ $order->o_order_number ?? 'N/A' }}</td>
+
+                        <td>#{{ $order->o_order_number }}</td>
+
                         <td>{{ $order->o_name ?? 'Guest' }}</td>
-                        <td>{{ $order->o_delivery_address ?? 'N/A' }}</td>
+
                         <td>
-                            @php
-                                $status = $order->o_order_status;
-                                $badgeClass = match($status) {
-                                    'assigned' => 'badge-assigned',
-                                    'pending' => 'badge-pending',
-                                    'delivered' => 'badge-delivered',
-                                    default => 'badge-delivered'
-                                };
-                            @endphp
-                            <span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>
+                            {{ $order->o_street_address }},
+                            {{ $order->o_city }},
+                            {{ $order->o_state }},
+                            {{ $order->o_postcode }}
                         </td>
+
                         <td>
-                            <button onclick="window.location='{{ route('courier.view-order', $order->id) }}'"
+                            <span class="badge badge-pending">
+                                Out For Delivery
+                            </span>
+                        </td>
+
+                        <td>
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <a href="{{ route('courier.assigned.view', $order->o_id) }}"
                                     class="action-btn btn-view">
-                                View
-                            </button>
+                                        View
+                                    </a>
+
+                                    @if($order->o_payment_method == 'cash')
+                                        <span class="badge bg-success">COD Collected</span>
+                                    @else
+                                        <span class="badge bg-primary">Paid Online</span>
+                                    @endif
+
+                                </div>
                         </td>
+
+
                     </tr>
+
                     @empty
+
                     <tr>
-                        <td colspan="6" style="text-align:center; padding:2rem; color:#78716c;">
-                            No completed deliveries found
+                        <td colspan="6" class="text-center p-4">
+                            No deliveries found
                         </td>
                     </tr>
+
                     @endforelse
+
                 </tbody>
             </table>
         </div>

@@ -66,7 +66,7 @@ tbody td {
     <div class="table-card">
         <div class="table-wrapper">
             <table id="pendingOrdersTable" class="display">
-                <thead>
+               <thead>
                     <tr>
                         <th>S.No</th>
                         <th>Order Number</th>
@@ -76,39 +76,50 @@ tbody td {
                         <th>Action</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    @forelse($orders as $order)
+
+                    @forelse($orders ?? [] as $order)
+
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>#{{ $order->o_order_number ?? 'N/A' }}</td>
+
+                        <td>#{{ $order->o_order_number }}</td>
+
                         <td>{{ $order->o_name ?? 'Guest' }}</td>
-                        <td>{{ $order->o_delivery_address ?? 'N/A' }}</td>
+
                         <td>
-                            @php
-                                $status = $order->o_order_status;
-                                $badgeClass = match($status) {
-                                    'assigned' => 'badge-assigned',
-                                    'pending' => 'badge-pending',
-                                    'delivered' => 'badge-delivered',
-                                    default => 'badge-pending'
-                                };
-                            @endphp
-                            <span class="badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>
+                            {{ $order->o_street_address }},
+                            {{ $order->o_city }},
+                            {{ $order->o_state }},
+                            {{ $order->o_postcode }}
                         </td>
+
                         <td>
-                            <button onclick="window.location='{{ route('courier.view-order', $order->id) }}'"
-                                    class="action-btn btn-view">
+                            <span class="badge badge-pending">
+                                Out For Delivery
+                            </span>
+                        </td>
+
+                        <td>
+                            {{-- <a href="{{ route('courier.view-order', $order->o_id) }}"
+                               class="action-btn btn-view">
                                 View
-                            </button>
+                            </a> --}}
                         </td>
+
                     </tr>
+
                     @empty
+
                     <tr>
-                        <td colspan="6" style="text-align:center; padding:2rem; color:#78716c;">
+                        <td colspan="6" class="text-center p-4">
                             No pending deliveries found
                         </td>
                     </tr>
+
                     @endforelse
+
                 </tbody>
             </table>
         </div>
@@ -116,19 +127,26 @@ tbody td {
 </div>
 @endsection
 
+
+
 @push('scripts')
 <script>
 $(document).ready(function () {
+
+    if ($.fn.DataTable.isDataTable('#pendingOrdersTable')) {
+        $('#pendingOrdersTable').DataTable().destroy();
+    }
+
     $('#pendingOrdersTable').DataTable({
-        dom: 'lfrtip',
         paging: true,
         searching: true,
         ordering: true,
         info: true,
-        lengthMenu: [5, 10, 25, 50],
         pageLength: 5,
-        order: [[1, 'desc']] // Order by Order Number
+        lengthMenu: [5, 10, 25, 50],
+        order: [[1, 'desc']]
     });
+
 });
 </script>
 @endpush

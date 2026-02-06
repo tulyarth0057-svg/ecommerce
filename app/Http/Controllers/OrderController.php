@@ -9,6 +9,12 @@ use App\Models\OrderItem;
 use App\Models\Order;
 use Razorpay\Api\Api;
 use App\Models\OrderStatus;
+use App\Models\CourierBoy;
+use App\Models\User;
+use App\Notifications\NewOrderNotification;
+use App\Notifications\CourierAssignedNotification;
+                      
+
 
 
 class OrderController extends Controller
@@ -122,6 +128,18 @@ OrderStatus::create([
     'status'   => 'pending',
     'notes'    => 'Order placed successfully',
 ]);
+
+
+// 🔥 Admin notification controller -------->
+$order = Order::find($orderId);
+
+// Admin user fetch karo
+$admins = User::where('role', 'admin')->get();
+
+foreach($admins as $admin){
+    $admin->notify(new NewOrderNotification($order));
+}
+
 
     // Insert Order Items
     foreach ($cartItems as $item) {
@@ -303,42 +321,73 @@ public function trackOrder($order_number)
     {
       
        $orders = Order::latest()->get();
+        $couriers = CourierBoy::all();
 
         
-        return view('admin.order-list', compact('orders'));
+        return view('admin.order-list', compact('orders','couriers'));
     }
 
     // vieworder-admin-controller--->
        
+public function AdminVieworder($orderId)
+{
+    $couriers = CourierBoy::all();
 
-// Controller
+    $order = Order::where('o_id', $orderId)->firstOrFail(); // ✅ singular
+
+    $orderItems = DB::table('tbl_order_items as oi')
+        ->leftJoin('color as c', 'c.color_id', '=', 'oi.o_i_color_id')
+        ->leftJoin('images as i', function ($join) {
+            $join->on('i.img_color_id', '=', 'c.color_id')
+                 ->whereRaw('i.img_id = (
+                     SELECT MIN(i2.img_id)
+                     FROM images i2
+                     WHERE i2.img_color_id = c.color_id
+                 )');
+        })
+        ->where('oi.o_i_order_id', $orderId)
+        ->select('oi.*','c.color_name','c.color_code','i.img_path')
+        ->get();
+
+    $totalItemsPrice = $orderItems->sum('o_i_total_price');
+    $grandTotal = $totalItemsPrice + ($order->o_shipping_cost ?? 0);
+
+    return view('admin.view-order', compact(
+        'order', // ✅ same name
+        'orderItems',
+        'totalItemsPrice',
+        'grandTotal',
+        'couriers'
+    ));
+}
 
 
-    public function AdminVieworder($orderId)
-    {
-        // Fetch order info from tbl_orders
-        $order = Order::findOrFail($orderId);
 
-        // Fetch order items with color & first image
-        $orderItems = DB::table('tbl_order_items as oi')
-            ->leftJoin('color as c', 'c.color_id', '=', 'oi.o_i_color_id')
-            ->leftJoin('images as i', function ($join) {
-                $join->on('i.img_color_id', '=', 'c.color_id')
-                     ->whereRaw('i.img_id = (
-                         SELECT MIN(i2.img_id)
-                         FROM images i2
-                         WHERE i2.img_color_id = c.color_id
-                     )');
-            })
-            ->where('oi.o_i_order_id', $orderId)
-            ->select('oi.*', 'c.color_name', 'c.color_code', 'i.img_path')
-            ->get();
+public function assignCourier(Request $request)
+{
+    $request->validate([
+        'order_id' => 'required|exists:tbl_orders,o_id',
+        'courier_id' => 'required|exists:courier_boys,id',
+    ]);
 
-        // Calculate grand total (items + shipping)
-        $grandTotal = $orderItems->sum('o_i_total_price') + ($order->o_shipping_cost ?? 0);
+    $order = \App\Models\Order::where('o_id', $request->order_id)->firstOrFail();
+    $order->courier_id = $request->courier_id;
+    $order->save();
 
-        return view('admin.view-order', compact('order', 'orderItems', 'grandTotal'));
-    }
+    return response()->json([
+        'status' => true,
+        'message' => 'Courier Assigned Successfully'
+    ]);
+
+        $courier = CourierBoy::find($request->courier_id);
+
+    $courier->notify(new \App\Notifications\CourierAssignedNotification($order));
+
+}
+
+
+
+
 
 
 

@@ -551,10 +551,12 @@
                 </div>
 
                 <!-- Bank Details -->
-                <div class="up-section-label" style="margin-top:34px;">
+                {{-- <div class="up-section-label" style="margin-top:34px;">
                     <div class="sl-dot" style="background:var(--accent-soft); box-shadow:0 0 6px rgba(245,147,50,0.3);"></div>
                     Bank Details
                 </div>
+
+              
                 <div class="up-grid">
 
                     <div class="up-group">
@@ -590,7 +592,9 @@
                         <span class="up-error" id="err-ifsc_code"></span>
                     </div>
 
-                </div>
+                </div> --}}
+
+                  {{-- bank details end here --}}
 
                 <!-- Submit -->
                 <div class="up-submit-wrap">

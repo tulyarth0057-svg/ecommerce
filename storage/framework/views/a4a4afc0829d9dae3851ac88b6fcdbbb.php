@@ -27,9 +27,9 @@
                 </a>
 
                 <ul class="sub-menu collapse" id="my-deliveries">
-                    <li><a class="ms-link" href="<?php echo e(route('courier.courier.assigned')); ?>">Assigned Orders</a></li>
-                    <li><a class="ms-link" href="<?php echo e(route('courier.courier.pending')); ?>">Pending Deliveries</a></li>
-                    <li><a class="ms-link" href="<?php echo e(route('courier.courier.completed')); ?>">Completed Deliveries</a></li>
+                    <li><a class="ms-link" href="<?php echo e(route('courier.courier.assigned')); ?>">Assigned Orders list</a></li>
+                    <li><a class="ms-link" href="<?php echo e(route('courier.courier.pending')); ?>">Pending Deliveries list</a></li>
+                   
                 </ul>
             </li>
 
@@ -42,9 +42,8 @@
                 </a>
 
                 <ul class="sub-menu collapse" id="update-status">
-                    <li><a class="ms-link" href="#">Picked Up</a></li>
-                    <li><a class="ms-link" href="#">Out for Delivery</a></li>
-                    <li><a class="ms-link" href="#">Delivered</a></li>
+                    <li><a class="ms-link" href="<?php echo e(route('courier.pickedup.list')); ?>">Picked Up list</a></li>
+                     <li><a class="ms-link" href="<?php echo e(route('courier.courier.completed')); ?>">Completed Deliveries list</a></li>
                 </ul>
             </li>
 
@@ -79,18 +78,11 @@
                 </a>
 
                 <ul class="sub-menu collapse" id="profile">
-                    <li><a class="ms-link" href="#">View Profile</a></li>
+                    <li><a class="ms-link" href="<?php echo e(route('courier.courierboy.profile')); ?>">View Profile</a></li>
                     <li><a class="ms-link" href="#">Change Password</a></li>
                 </ul>
             </li>
 
-            <!-- Logout -->
-            <li>
-                <a class="m-link" href="<?php echo e(route('logout')); ?>">
-                    <i class="icofont-logout fs-5"></i>
-                    <span>Logout</span>
-                </a>
-            </li>
 
         </ul>
 

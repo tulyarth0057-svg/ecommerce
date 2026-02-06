@@ -551,46 +551,9 @@
                 </div>
 
                 <!-- Bank Details -->
-                <div class="up-section-label" style="margin-top:34px;">
-                    <div class="sl-dot" style="background:var(--accent-soft); box-shadow:0 0 6px rgba(245,147,50,0.3);"></div>
-                    Bank Details
-                </div>
-                <div class="up-grid">
+                
 
-                    <div class="up-group">
-                        <label for="account_holder_name">Account Holder Name</label>
-                        <div class="up-input-wrap">
-                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>
-                            </svg>
-                            <input type="text" id="account_holder_name" name="account_holder_name" value="<?php echo e(old('account_holder_name', $courier->account_holder_name)); ?>" class="up-input" placeholder="Full legal name">
-                        </div>
-                        <span class="up-error" id="err-account_holder_name"></span>
-                    </div>
-
-                    <div class="up-group">
-                        <label for="bank_account">Bank Account Number</label>
-                        <div class="up-input-wrap">
-                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
-                            </svg>
-                            <input type="text" id="bank_account" name="bank_account" value="<?php echo e(old('bank_account', $courier->bank_account)); ?>" class="up-input" placeholder="Account number">
-                        </div>
-                        <span class="up-error" id="err-bank_account"></span>
-                    </div>
-
-                    <div class="up-group" style="grid-column: span 2;">
-                        <label for="ifsc_code">IFSC Code</label>
-                        <div class="up-input-wrap">
-                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                            </svg>
-                            <input type="text" id="ifsc_code" name="ifsc_code" value="<?php echo e(old('ifsc_code', $courier->ifsc_code)); ?>" class="up-input" placeholder="e.g. UTIB0000001">
-                        </div>
-                        <span class="up-error" id="err-ifsc_code"></span>
-                    </div>
-
-                </div>
+                  
 
                 <!-- Submit -->
                 <div class="up-submit-wrap">

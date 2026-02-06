@@ -5,12 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\OrderItem;
 use App\Models\OrderStatus;
+ use App\Models\CourierBoy;
 
 
 class Order extends Model
 {
     protected $table = 'tbl_orders';
     protected $primaryKey = 'o_id';
+     public $incrementing = true;
+
+    protected $keyType = 'int';
     
     const CREATED_AT = 'o_created_at';
     const UPDATED_AT = 'o_updated_at';
@@ -72,4 +76,14 @@ class Order extends Model
     {
         return $this->hasOne(OrderStatus::class, 'order_id', 'o_id')->latestOfMany();
     }
+   
+
+
+
+public function courier()
+{
+    return $this->belongsTo(CourierBoy::class,'courier_id','id');
+}
+
+
 }

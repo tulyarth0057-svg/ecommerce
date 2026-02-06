@@ -694,52 +694,39 @@
         
 
 
-           <!-- Login Modal -->
-
+<!-- Login Modal -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-<form id="loginForm">
-    <?php echo csrf_field(); ?>
-    <input type="hidden" name="redirect" value="<?php echo e(url()->current()); ?>">
-
+    <form id="loginForm">
+      <?php echo csrf_field(); ?>
+      <input type="hidden" name="redirect" value="<?php echo e(url()->current()); ?>">
       <div class="modal-content p-3">
-            <div class="d-flex text-center justify-content-center">
-           <img src="<?php echo e(asset('assetsofdash/images/Red and Black Modern Creative Agency Logo-old.png')); ?>" class="rounded-1 text-center" width="200px" height="80px">
-              </div>
-        <div class="modal-header text-center justify-content-center">
-          <h5 class="modal-title text-warnings fs-3 fw-bold text-center">Login</h5>
-          <button type="button" class="btn-close text-warning" data-bs-dismiss="modal"></button>
+        <div class="d-flex justify-content-center">
+          <img src="<?php echo e(asset('assetsofdash/images/Red and Black Modern Creative Agency Logo-old.png')); ?>" class="rounded-1" width="200" height="80">
+        </div>
+        <div class="modal-header justify-content-center">
+          <h5 class="modal-title fs-3 fw-bold">Login</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <label for="" class="mt-2">Enter your Email</label> <br>
-          <input type="text" class="password-input mt-3" name="email" placeholder="email"/><br><br>
-          <label for="" class="mt-2">Enter your password</label><br>
-
-          <div class="password-wrapper mb-3 mt-3">
-    <input 
-        type="password" 
-        name="password" 
-        id="signinPassword"
-        class="password-input"
-        placeholder="Enter your password" >
-
-    <span class="toggle-password" data-target="signinPassword">
-        <i class="bi bi-eye-slash"></i>
-    </span>
-</div>
-
-<p id="errorMsg" style="color:red;"></p>
-
+          <label>Email</label>
+          <input type="text" name="email" class="password-input mt-2 w-100" placeholder="Enter your email">
+          <br><br>
+          <label>Password</label>
+          <div class="input-group mb-3 mt-2">
+            <input type="password" name="password" id="signinPassword" class="password-input w-100" placeholder="Enter your password">
+            <span class="input-group-text bg-white toggle-password" data-target="signinPassword">
+              <i class="bi bi-eye-slash"></i>
+            </span>
+          </div>
+          <p id="loginErrorMsg" class="text-danger"></p>
         </div>
-        
-        <div class="text-center justify-content-center flex-column">
-          <button class="btn btn-dark w-75 text-center" type="submit">Login</button>
+        <div class="text-center mb-3">
+          <button type="submit" class="btn btn-dark w-75">Login</button>
         </div>
         <hr>
-        <div class="text-center justify-content-center flex-column md-3">
-          <h6 class="font-18">Don't have an account? <a href="javascript:void(0);" id="openSignup" class="text-secondary">  Create Account </a></h6>
-      
-           
+        <div class="text-center mb-2">
+          <h6>Don't have an account? <a href="javascript:void(0);" id="openSignup" class="text-secondary">Create Account</a></h6>
         </div>
       </div>
     </form>
@@ -749,311 +736,274 @@
 <!-- Signup Modal -->
 <div class="modal fade" id="signupModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-    <form id="signupForm" id="registerForm" action="<?php echo e(route('signup')); ?>" method="POST" >
+    <form id="signupForm" action="<?php echo e(route('signup')); ?>" method="POST">
       <?php echo csrf_field(); ?>
       <div class="modal-content p-3">
-        <div class="d-flex text-center justify-content-center">
-           <img src="<?php echo e(asset('assetsofdash/images/Red and Black Modern Creative Agency Logo-old.png')); ?>" class="rounded-1 text-center" width="200px" height="80px">
-              </div>
+        <div class="d-flex justify-content-center">
+          <img src="<?php echo e(asset('assetsofdash/images/Red and Black Modern Creative Agency Logo-old.png')); ?>" class="rounded-1" width="200" height="80">
+        </div>
         <div class="modal-header justify-content-center">
           <h5 class="modal-title">Sign Up</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <label>Name</label>
-          <input type="text" name="name" class="password-input mt-3" placeholder="Enter your name" > <br><br>
-          <label>Email</label><br>
-          <input type="email" name="email" class="password-input mt-3" placeholder="Enter your email"><br><br>
-            <label>Mobile Number</label>
-          <input type="number" name="phone" class="password-input mt-3" placeholder="Enter your number"><br><br>
+          <input type="text" name="name" class="password-input mt-2 w-100" placeholder="Enter your name"><br><br>
+
+          <label>Email</label>
+          <input type="email" name="email" class="password-input mt-2 w-100" placeholder="Enter your email"><br><br>
+
+          <label>Mobile Number</label>
+          <input type="number" name="phone" class="password-input mt-2 w-100" placeholder="Enter your number"><br><br>
+
           <label>Password</label>
-       <div class="input-group mb-3 mt-3">
-         <input 
-        type="password" 
-        name="password" 
-        id="signupPassword"
-        class="password-input"
-        placeholder="Enter your password"><br><br>
-    <span class="input-group-text bg-white toggle-password" data-target="signupPassword">
-        <i class="bi bi-eye-slash"></i>
-    </span>
-        </div>
+          <div class="input-group mb-3 mt-2">
+            <input type="password" name="password" id="signupPassword" class="password-input w-100" placeholder="Enter your password">
+            <span class="input-group-text bg-white toggle-password" data-target="signupPassword">
+              <i class="bi bi-eye-slash"></i>
+            </span>
+          </div>
+
           <div class="form-check mb-2 d-flex align-items-center">
-            <input class="fs-3" type="checkbox" id="terms">
-            <label class="form-check-label ms-3">I agree to the <a href="terms-condition.html">terms & guidelines</a></label>
+            <input type="checkbox" id="terms">
+            <label class="form-check-label ms-2">I agree to the <a href="terms-condition.html">terms & guidelines</a></label>
           </div>
         </div>
-        <div class="text-center">
+
+        <div class="text-center mb-2">
           <button type="submit" class="btn btn-dark w-75">Signup</button>
-        </div>
-        <hr>
-         <div class="text-center justify-content-center flex-column mb-3">
-          <h6 class="font-18">You have an account<a href="javascript:void(0);" id="openLogin" class="text-secondary"> signin  </a></h6>
         </div>
       </div>
     </form>
   </div>
 </div>
 
-
-
-
-
-<!-- starting scripts -->
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-
-
 <script>
-$('#logoutForm').on('submit', function(e){
-    e.preventDefault();
-
-    $.ajax({
-        url: "<?php echo e(route('logout')); ?>",
-        type: "POST",
-        data: $(this).serialize(),
-
-        success: function(res){
-            Swal.fire({
-                icon: 'success',
-                title: 'Logged Out',
-                text: res.message,
-                timer: 1200,
-                showConfirmButton: false
-            }).then(() => {
-                window.location.href = "/";
-            });
-        },
-
-        error: function(){
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops!',
-                text: 'Logout failed, try again'
-            });
-        }
-    });
-});
-</script>
-
-
-
-<script>
-$(document).on('submit', '#loginForm', function(e){
-    e.preventDefault();
-
-    $.ajax({
-        url: "<?php echo e(route('signin.submit')); ?>",
-        type: "POST",
-        data: $(this).serialize(),
-
-        success: function(res){
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Login Successful',
-                text: res.message || 'Welcome back!',
-                timer: 1500,
-                showConfirmButton: false
-            }).then(() => {
-
-                $('#loginModal').modal('hide');
-
-                if(res.role === 'admin'){
-                    window.location.href = "<?php echo e(route('admin.dashboard')); ?>";
-                }else{
-                           window.location.reload(); 
-                }
-            });
-        },
-
-        error: function(xhr){
-            Swal.fire({
-                icon: 'error',
-                title: 'Login Failed',
-                text: xhr.responseJSON?.message || 'Invalid email or password',
-            });
-        }
-    });
-});
-</script>
-
-
-
-
-
-
-
-<script>
-document.querySelectorAll('.check-login').forEach(link => {
-
-    link.addEventListener('click', function (e) {
-
-        <?php if(!Auth::check()): ?>
-            e.preventDefault(); 
-
-            Swal.fire({
-                icon: 'warning',
-                title: 'Login Required',
-                text: 'Please login to continue',
-                showCancelButton: true,
-                confirmButtonText: 'Login',
-                cancelButtonText: 'Cancel',
-                confirmButtonColor: '#ff5722'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                 
-                    const loginModal = bootstrap.Modal.getOrCreateInstance(
-                        document.getElementById('loginModal')
-                    );
-                    loginModal.show();
-                }
-            });
-        <?php endif; ?>
-
-    });
-
-});
-</script>
-
-
-
-
-
-
-
-
-<script>
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Saare toggle buttons select karo
-    const toggleButtons = document.querySelectorAll('.toggle-password');
-    
-    toggleButtons.forEach(button => {
+    const loginModalEl = document.getElementById('loginModal');
+    const signupModalEl = document.getElementById('signupModal');
+
+    // ----------------------
+    // Password toggle
+    // ----------------------
+    document.querySelectorAll('.toggle-password').forEach(button => {
         button.addEventListener('click', function() {
-            // Data-target attribute se password field ka ID lo
-            const targetId = this.getAttribute('data-target');
-            const passwordField = document.getElementById(targetId);
+            const target = document.getElementById(this.dataset.target);
             const icon = this.querySelector('i');
-            
-            // Password show/hide toggle karo
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                icon.classList.remove('bi-eye-slash');
-                icon.classList.add('bi-eye');
+            if(target.type === 'password'){
+                target.type = 'text';
+                icon.classList.replace('bi-eye-slash','bi-eye');
             } else {
-                passwordField.type = 'password';
-                icon.classList.remove('bi-eye');
-                icon.classList.add('bi-eye-slash');
+                target.type = 'password';
+                icon.classList.replace('bi-eye','bi-eye-slash');
             }
         });
     });
-});
 
-</script>
-
- 
-
-<!-- Login ↔ Signup Modal Switching -->
-<script>
-    const loginModalEl  = document.getElementById('loginModal');
-    const signupModalEl = document.getElementById('signupModal');
-
-    // Open Signup from Login
+    // ----------------------
+    // Modal switching
+    // ----------------------
     document.getElementById('openSignup')?.addEventListener('click', () => {
-        const loginModal = bootstrap.Modal.getInstance(loginModalEl) || bootstrap.Modal.getOrCreateInstance(loginModalEl);
-        
+        bootstrap.Modal.getInstance(loginModalEl).hide();
         loginModalEl.addEventListener('hidden.bs.modal', () => {
             bootstrap.Modal.getOrCreateInstance(signupModalEl).show();
-        }, { once: true });
-
-        loginModal.hide();
+        }, { once:true });
     });
 
-    // Open Login from Signup
-    document.getElementById('openLogin')?.addEventListener('click', () => {
-        const signupModal = bootstrap.Modal.getInstance(signupModalEl) || bootstrap.Modal.getOrCreateInstance(signupModalEl);
-        
-        signupModalEl.addEventListener('hidden.bs.modal', () => {
-            bootstrap.Modal.getOrCreateInstance(loginModalEl).show();
-        }, { once: true });
+    // ----------------------
+    // OTP popup with timer & resend limit
+    // ----------------------
+    function showOtpPopup(email) {
+        let timerInterval;
+        let timeLeft = 120; // 2 minutes in seconds
+        let resendCount = 0;
+        const maxResend = 3;
 
-        signupModal.hide();
-    });
+        function createPopup() {
+            Swal.fire({
+                title: 'Enter OTP',
+                html: `<p>OTP sent to your email: <strong>${email}</strong></p>
+                       <p id="otp-timer">02:00</p>`,
+                input: 'text',
+                inputPlaceholder: 'Enter OTP',
+                showCancelButton: true,
+                confirmButtonText: 'Verify',
+                cancelButtonText: 'Cancel',
+                showDenyButton: true,
+                denyButtonText: resendCount >= maxResend ? 'Resend OTP (Limit reached)' : 'Resend OTP',
+                allowOutsideClick: () => !Swal.isLoading(),
+                didOpen: () => {
+                    const timerEl = Swal.getHtmlContainer().querySelector('#otp-timer');
+                    timerInterval = setInterval(() => {
+                        let minutes = Math.floor(timeLeft / 60).toString().padStart(2,'0');
+                        let seconds = (timeLeft % 60).toString().padStart(2,'0');
+                        timerEl.textContent = `${minutes}:${seconds}`;
+                        timeLeft--;
+                        if(timeLeft < 0){
+                            clearInterval(timerInterval);
+                            Swal.update({
+                                title: 'OTP Expired',
+                                html: `<p>OTP has expired. Please signup again.</p>`,
+                                showDenyButton: false,
+                                showCancelButton: false,
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    }, 1000);
+                },
+                preConfirm: (otp) => {
+                    if(timeLeft < 0){
+                        Swal.showValidationMessage("OTP expired, please signup again");
+                        return false;
+                    }
+                    return fetch("<?php echo e(route('verify.otp')); ?>", {
+                        method:'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                            'Accept':'application/json',
+                            'Content-Type':'application/json'
+                        },
+                        body: JSON.stringify({ otp: otp })
+                    })
+                    .then(res => res.json())
+                    .then(resp => {
+                        if(!resp.status) throw new Error(resp.message);
+                        return resp;
+                    })
+                    .catch(err => Swal.showValidationMessage(err.message));
+                }
+            }).then((result) => {
+                clearInterval(timerInterval);
 
-    // Clean up modal backdrop & body scroll on any modal hide
-    [loginModalEl, signupModalEl].forEach(modalEl => {
-        if (!modalEl) return;
-        modalEl.addEventListener('hidden.bs.modal', () => {
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-            document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
-        });
-    });
-</script>
+                // Verified successfully
+                if(result.isConfirmed){
+                    Swal.fire({
+                        icon:'success',
+                        title:'Registered!',
+                        text: result.value.message,
+                        timer:2000,
+                        showConfirmButton:false
+                    }).then(() => {
+                        bootstrap.Modal.getOrCreateInstance(loginModalEl).show();
+                    });
+                }
 
-<!-- Signup Form AJAX Submission -->
-<script>
-    document.getElementById('signupForm')?.addEventListener('submit', function(e) {
+                // Resend OTP
+                if(result.isDenied){
+                    if(resendCount >= maxResend){
+                        Swal.fire('Limit Reached','You cannot resend OTP more than 3 times','warning');
+                        return;
+                    }
+
+                    resendCount++;
+                    Swal.fire({title:'Resending OTP...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
+                    fetch("<?php echo e(route('signup')); ?>", {
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,'Accept':'application/json'},
+                        body: new FormData(document.getElementById('signupForm'))
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        Swal.close();
+                        if(data.status){
+                            timeLeft = 120; // reset timer
+                            createPopup(); // reopen OTP popup
+                        } else {
+                            Swal.fire('Error', data.message,'error');
+                        }
+                    })
+                    .catch(err=>{
+                        Swal.close();
+                        Swal.fire('Error','Failed to resend OTP','error');
+                        console.error(err);
+                    });
+                }
+            });
+        }
+
+        createPopup();
+    }
+
+    // ----------------------
+    // Signup form submission
+    // ----------------------
+    document.getElementById('signupForm').addEventListener('submit', function(e){
         e.preventDefault();
         const formData = new FormData(this);
+        const email = formData.get('email');
+
+        Swal.fire({title:'Sending OTP...', text:'Please wait...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
 
         fetch("<?php echo e(route('signup')); ?>", {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": document.querySelector('input[name="_token"]')?.value || '',
-                "Accept": "application/json"
-            },
+            method:'POST',
+            headers: {'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,'Accept':'application/json'},
             body: formData
         })
         .then(res => res.json())
         .then(data => {
-            const signupModal = bootstrap.Modal.getInstance(signupModalEl) || bootstrap.Modal.getOrCreateInstance(signupModalEl);
-
-            if (data.status) {
-                signupModal.hide();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: data.message || 'Registration successful!',
-                    timer: 2500,
-                    showConfirmButton: false
-                });
+            Swal.close();
+            if(data.status){
+                bootstrap.Modal.getInstance(signupModalEl).hide();
+                showOtpPopup(email);
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: data.message || 'Signup failed!',
-                });
+                Swal.fire('Error', data.message,'error');
             }
         })
-        .catch(err => {
+        .catch(err=>{
+            Swal.close();
+            Swal.fire('Server Error','Please try again later','error');
             console.error(err);
-            Swal.fire({
-                icon: 'error',
-                title: 'Server Error',
-                text: 'Please try again later.',
-            });
         });
     });
+
+    // ----------------------
+    // Login form submission
+    // ----------------------
+    $('#loginForm').on('submit', function(e){
+        e.preventDefault();
+        $.ajax({
+            url:"<?php echo e(route('signin.submit')); ?>",
+            type:"POST",
+            data: $(this).serialize(),
+            success: function(res){
+                Swal.fire({icon:'success', title:'Login Successful', text:res.message || 'Welcome!', timer:1500, showConfirmButton:false})
+                .then(()=>{
+                    $('#loginModal').modal('hide');
+                    if(res.role==='admin') window.location.href="<?php echo e(route('admin.dashboard')); ?>";
+                    else window.location.reload();
+                });
+            },
+            error:function(xhr){
+                Swal.fire({icon:'error', title:'Login Failed', text: xhr.responseJSON?.message || 'Invalid email or password'});
+            }
+        });
+    });
+
+    // ----------------------
+    // Clean up modal backdrops
+    // ----------------------
+    [loginModalEl, signupModalEl].forEach(modalEl=>{
+        if(!modalEl) return;
+        modalEl.addEventListener('hidden.bs.modal', ()=>{
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow='';
+            document.body.style.paddingRight='';
+            document.querySelectorAll('.modal-backdrop').forEach(b=>b.remove());
+        });
+    });
+
+});
 </script>
 
-<!-- Session-based SweetAlert Messages -->
-<?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('success') || session('error')): ?>
-<script>
-    Swal.fire({
-        icon: '<?php echo e(session('success') ? 'success' : 'error'); ?>',
-        title: '<?php echo e(session('success') ? 'Success!' : 'Oops...'); ?>',
-        text: "<?php echo e(session('success') ?? session('error')); ?>",
-        timer: 2500,
-        showConfirmButton: false
-    });
-</script>
-<?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+
+
+
+
 
 <!-- Wishlist Button – Show Login Modal if not authenticated -->
 <script>
@@ -1149,6 +1099,77 @@ document.addEventListener('click', (e) => {
 
 </script>
 
+
+
+
+
+
+<script>
+$('#logoutForm').on('submit', function(e){
+    e.preventDefault();
+
+    $.ajax({
+        url: "<?php echo e(route('logout')); ?>",
+        type: "POST",
+        data: $(this).serialize(),
+
+        success: function(res){
+            Swal.fire({
+                icon: 'success',
+                title: 'Logged Out',
+                text: res.message,
+                timer: 1200,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.href = "/";
+            });
+        },
+
+        error: function(){
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops!',
+                text: 'Logout failed, try again'
+            });
+        }
+    });
+});
+</script>
+
+
+
+
+<script>
+document.querySelectorAll('.check-login').forEach(link => {
+
+    link.addEventListener('click', function (e) {
+
+        <?php if(!Auth::check()): ?>
+            e.preventDefault(); 
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Login Required',
+                text: 'Please login to continue',
+                showCancelButton: true,
+                confirmButtonText: 'Login',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#ff5722'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                 
+                    const loginModal = bootstrap.Modal.getOrCreateInstance(
+                        document.getElementById('loginModal')
+                    );
+                    loginModal.show();
+                }
+            });
+        <?php endif; ?>
+
+    });
+
+});
+</script>
 
 </body>
 
