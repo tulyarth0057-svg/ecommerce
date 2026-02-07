@@ -121,7 +121,7 @@
                             <th>Email</th>
                             <th>Vehicle</th>
                             <th>Vehicle No.</th>
-                            <th>Status</th>
+                            <th>Verified</th>
                             <th>Created</th>
                         </tr>
                     </thead>
@@ -150,10 +150,30 @@
                             <td>{{ $courier->vehicle_number ?? '-' }}</td>
 
                             <td>
-                                <span class="badge badge-status {{ $courier->is_verified ? 'bg-success' : 'bg-warning' }}">
-                                    {{ $courier->is_verified ? 'Verified' : 'Pending' }}
-                                </span>
-                            </td>
+                                @if($courier->is_verified == 0)
+
+                                    <button class="btn btn-success btn-sm approveCourier"
+                                        data-id="{{ $courier->id }}">
+                                        Approve
+                                    </button>
+
+                                    <button class="btn btn-danger btn-sm rejectCourier"
+                                        data-id="{{ $courier->id }}">
+                                        Reject
+                                    </button>
+
+                                @elseif($courier->is_verified == 1)
+
+                                    <span class="badge bg-success">Approved</span>
+
+                                @elseif($courier->is_verified == 2)
+
+                                    <span class="badge bg-danger">Rejected</span>
+
+                                @endif
+
+                                </td>
+
 
                             <td>{{ $courier->created_at->format('d M Y') }}</td>
                         </tr>
@@ -191,4 +211,69 @@ $(document).ready(function () {
     });
 });
 </script>
+
+
+{{-- script=of-courier-boy-aproved/rejected --}}
+<script>
+
+$(document).on('click', '.approveCourier', function(){
+
+    let id = $(this).data('id');
+
+    Swal.fire({
+        title: 'Approve Courier?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Approve'
+    }).then((result) => {
+
+        if(result.isConfirmed){
+
+            $.post(`courier/approve/${id}`, {
+                _token: "{{ csrf_token() }}"
+            }, function(res){
+
+                Swal.fire('Approved!', res.message, 'success')
+                .then(() => location.reload());
+
+            });
+
+        }
+
+    });
+
+});
+
+
+
+$(document).on('click', '.rejectCourier', function(){
+
+    let id = $(this).data('id');
+
+    Swal.fire({
+        title: 'Reject Courier?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Reject'
+    }).then((result) => {
+
+        if(result.isConfirmed){
+
+            $.post(`courier/reject/${id}`, {
+                _token: "{{ csrf_token() }}"
+            }, function(res){
+
+                Swal.fire('Rejected!', res.message, 'success')
+                .then(() => location.reload());
+
+            });
+
+        }
+
+    });
+
+});
+
+</script>
+
 @endpush

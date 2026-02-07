@@ -122,7 +122,7 @@
                             <th>Email</th>
                             <th>Vehicle</th>
                             <th>Vehicle No.</th>
-                            <th>Status</th>
+                            <th>Verified</th>
                             <th>Created</th>
                         </tr>
                     </thead>
@@ -151,11 +151,30 @@
                             <td><?php echo e($courier->vehicle_number ?? '-'); ?></td>
 
                             <td>
-                                <span class="badge badge-status <?php echo e($courier->is_verified ? 'bg-success' : 'bg-warning'); ?>">
-                                    <?php echo e($courier->is_verified ? 'Verified' : 'Pending'); ?>
+                                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($courier->is_verified == 0): ?>
 
-                                </span>
-                            </td>
+                                    <button class="btn btn-success btn-sm approveCourier"
+                                        data-id="<?php echo e($courier->id); ?>">
+                                        Approve
+                                    </button>
+
+                                    <button class="btn btn-danger btn-sm rejectCourier"
+                                        data-id="<?php echo e($courier->id); ?>">
+                                        Reject
+                                    </button>
+
+                                <?php elseif($courier->is_verified == 1): ?>
+
+                                    <span class="badge bg-success">Approved</span>
+
+                                <?php elseif($courier->is_verified == 2): ?>
+
+                                    <span class="badge bg-danger">Rejected</span>
+
+                                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+                                </td>
+
 
                             <td><?php echo e($courier->created_at->format('d M Y')); ?></td>
                         </tr>
@@ -193,6 +212,71 @@ $(document).ready(function () {
     });
 });
 </script>
+
+
+
+<script>
+
+$(document).on('click', '.approveCourier', function(){
+
+    let id = $(this).data('id');
+
+    Swal.fire({
+        title: 'Approve Courier?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Approve'
+    }).then((result) => {
+
+        if(result.isConfirmed){
+
+            $.post(`courier/approve/${id}`, {
+                _token: "<?php echo e(csrf_token()); ?>"
+            }, function(res){
+
+                Swal.fire('Approved!', res.message, 'success')
+                .then(() => location.reload());
+
+            });
+
+        }
+
+    });
+
+});
+
+
+
+$(document).on('click', '.rejectCourier', function(){
+
+    let id = $(this).data('id');
+
+    Swal.fire({
+        title: 'Reject Courier?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Reject'
+    }).then((result) => {
+
+        if(result.isConfirmed){
+
+            $.post(`courier/reject/${id}`, {
+                _token: "<?php echo e(csrf_token()); ?>"
+            }, function(res){
+
+                Swal.fire('Rejected!', res.message, 'success')
+                .then(() => location.reload());
+
+            });
+
+        }
+
+    });
+
+});
+
+</script>
+
 <?php $__env->stopPush(); ?>
 
 <?php echo $__env->make('layouts.admin-layout', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laravel_git\ecommerce-web\resources\views/admin/courierboy-list.blade.php ENDPATH**/ ?>

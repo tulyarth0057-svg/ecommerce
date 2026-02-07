@@ -200,22 +200,47 @@
             }
 
             .action-buttons {
-                display: flex;
-                gap: 1rem;
-                margin: 2.5rem 0;
-            }
+    display: flex;
+    flex-wrap: wrap; /* responsive wrap */
+    gap: 1rem;
+    margin: 2.5rem 0;
+    align-items: center;
+    justify-content: center;
+}
 
-            .action-buttons .btn {
-                padding: 0.9rem 1.8rem;
-                font-weight: 600;
-                border-radius: 50px;
-                transition: all 0.25s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                flex: 1;
-            }
+/* Button Styling */
+.action-buttons .btn {
+    padding: 0.9rem 1.8rem;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1 1 200px; /* responsive equal width */
+    min-height: 50px;
+    white-space: nowrap;
+}
+
+/* Hover Effect */
+.action-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+}
+
+/* Mobile Layout */
+@media (max-width: 576px) {
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-buttons .btn {
+        width: 100%;
+    }
+}
+
 
             .bg-secondary {
                 background: var(--gray);
@@ -377,22 +402,29 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="action-buttons">
-                        <a href="<?php echo e(url('/')); ?>" class="btn text-white bg-secondary rounded-5 flex-fill">
+                   <div class="action-buttons d-flex flex-wrap gap-3 align-items-center">
+
+                        <a href="<?php echo e(url('/')); ?>" class="btn text-white bg-secondary rounded-5">
                             <i class="ri-shopping-bag-3-line me-2"></i>
                             Continue Shopping
                         </a>
 
-                        <a href="<?php echo e(route('my.order', ['orderId' => $order->o_id])); ?>">
-                            <button type="button" class="btn btn-outline-orange text-white flex-fill bg-warning">
-                                <i class="ri-eye-line me-2"></i>
-                                View Order
-                            </button>
-                        </a> 
+                        <a href="<?php echo e(route('my.order', ['orderId' => $order->o_id])); ?>" 
+                        class="btn btn-warning text-white">
+                            <i class="ri-eye-line me-2"></i>
+                            View Order
+                        </a>
 
- 
+                        <a href="<?php echo e(route('order.invoice.download', $order->o_id)); ?>" 
+                        class="btn btn-primary">
+                            <i class="ri-download-line me-2"></i>
+                            Download Invoice
+                        </a>
 
                     </div>
+
+                    
+
                     
                     
 
@@ -409,22 +441,28 @@
         </div>
     </main>
 
+    <?php $__env->stopSection(); ?>
 
-    <?php $__env->startPush('scripts'); ?>
+<?php $__env->startPush('scripts'); ?>
  
 
-<?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('order_placed')): ?>
+<?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('success_order')): ?>
 <script>
-Swal.fire({
-    title: 'Order Placed Successfully!',
-    text: 'Thank you for your purchase.',
-    icon: 'success',
-    confirmButtonText: 'Continue Shopping'
+document.addEventListener('DOMContentLoaded', function () {
+    Swal.fire({
+        title: 'Order Placed Successfully!',
+        text: 'Thank you for shopping with us.',
+        icon: 'success',
+        confirmButtonText: 'View Order',
+        allowOutsideClick: false
+    }).then(() => {
+        window.location.href = "<?php echo e(route('order.success', session('success_order'))); ?>";
+    });
 });
 </script>
 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
 <?php $__env->stopPush(); ?>
 
-<?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.frontend-layout', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laravel_git\ecommerce-web\resources\views/order.blade.php ENDPATH**/ ?>

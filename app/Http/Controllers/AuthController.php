@@ -23,7 +23,8 @@ public function signup(Request $request)
     // Validation
     $request->validate([
         'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email',
+        // 'email' => 'required|email|unique:users,email',
+        'email' => 'required|email:rfc,dns|unique:users,email',
         'phone' => 'required|digits:10|unique:users,phone',
         'password' => 'required|string|min:6',
     ]);
@@ -307,6 +308,38 @@ public function postEditCourierboy(Request $request)
         'message' => 'Profile updated successfully!',
     ]);
 }
+
+
+// admin-courier-boy-verification-aproved/reject--controller------>
+public function approve($id)
+{
+    $courier = CourierBoy::findOrFail($id);
+
+    $courier->update([
+        'is_verified' => 1
+    ]);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Courier Approved Successfully'
+    ]);
+}
+
+// reject-controler----->
+public function reject($id)
+{
+    $courier = CourierBoy::findOrFail($id);
+
+    $courier->update([
+        'is_verified' => 2
+    ]);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Courier Rejected'
+    ]);
+}
+
 
 
     

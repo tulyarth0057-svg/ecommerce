@@ -732,7 +732,7 @@
           <label>Password</label>
           <div class="input-group mb-3 mt-2">
             <input type="password" name="password" id="signinPassword" class="password-input w-100" placeholder="Enter your password">
-            <span class="input-group-text bg-white toggle-password" data-target="signinPassword">
+            <span class="input-group-text ms-3 d-flex border-none toggle-password" data-target="signinPassword">
               <i class="bi bi-eye-slash"></i>
             </span>
           </div>
@@ -776,7 +776,7 @@
           <label>Password</label>
           <div class="input-group mb-3 mt-2">
             <input type="password" name="password" id="signupPassword" class="password-input w-100" placeholder="Enter your password">
-            <span class="input-group-text bg-white toggle-password" data-target="signupPassword">
+            <span class="input-group-text ms-3 d-flex border-none toggle-password" data-target="signupPassword">
               <i class="bi bi-eye-slash"></i>
             </span>
           </div>
@@ -862,6 +862,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         timeLeft--;
                         if(timeLeft < 0){
                             clearInterval(timerInterval);
+
+                             Swal.close(); 
+
                             Swal.update({
                                 title: 'OTP Expired',
                                 html: `<p>OTP has expired. Please signup again.</p>`,
@@ -870,7 +873,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 confirmButtonText: 'OK'
                             });
                         }
-                    }, 1000);
+                    }, 2000);
                 },
                 preConfirm: (otp) => {
                     if(timeLeft < 0){

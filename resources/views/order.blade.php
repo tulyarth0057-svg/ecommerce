@@ -202,22 +202,47 @@
             }
 
             .action-buttons {
-                display: flex;
-                gap: 1rem;
-                margin: 2.5rem 0;
-            }
+    display: flex;
+    flex-wrap: wrap; /* responsive wrap */
+    gap: 1rem;
+    margin: 2.5rem 0;
+    align-items: center;
+    justify-content: center;
+}
 
-            .action-buttons .btn {
-                padding: 0.9rem 1.8rem;
-                font-weight: 600;
-                border-radius: 50px;
-                transition: all 0.25s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                flex: 1;
-            }
+/* Button Styling */
+.action-buttons .btn {
+    padding: 0.9rem 1.8rem;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1 1 200px; /* responsive equal width */
+    min-height: 50px;
+    white-space: nowrap;
+}
+
+/* Hover Effect */
+.action-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+}
+
+/* Mobile Layout */
+@media (max-width: 576px) {
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-buttons .btn {
+        width: 100%;
+    }
+}
+
 
             .bg-secondary {
                 background: var(--gray);
@@ -375,30 +400,31 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="action-buttons">
-                        <a href="{{ url('/') }}" class="btn text-white bg-secondary rounded-5 flex-fill">
+                   <div class="action-buttons d-flex flex-wrap gap-3 align-items-center">
+
+                        <a href="{{ url('/') }}" class="btn text-white bg-secondary rounded-5">
                             <i class="ri-shopping-bag-3-line me-2"></i>
                             Continue Shopping
                         </a>
 
-                        <a href="{{ route('my.order', ['orderId' => $order->o_id]) }}">
-                            <button type="button" class="btn btn-outline-orange text-white flex-fill bg-warning">
-                                <i class="ri-eye-line me-2"></i>
-                                View Order
-                            </button>
-                        </a> 
+                        <a href="{{ route('my.order', ['orderId' => $order->o_id]) }}" 
+                        class="btn btn-warning text-white">
+                            <i class="ri-eye-line me-2"></i>
+                            View Order
+                        </a>
 
- {{-- <ul>
-@foreach($allOrders as $o)
-    <li>
-        <a href="{{ route('my.order', $o->o_id) }}">
-            Order #{{ $o->o_id }} - {{ ucfirst($o->o_order_status) }}
-        </a>
-    </li>
-@endforeach
-</ul> --}}
+                        <a href="{{ route('order.invoice.download', $order->o_id) }}" 
+                        class="btn btn-primary">
+                            <i class="ri-download-line me-2"></i>
+                            Download Invoice
+                        </a>
 
                     </div>
+
+                    {{-- <p class="mt-3 text-muted">
+                        You can download the invoice PDF here 👆
+                    </p> --}}
+
                     
                     
 
@@ -415,21 +441,26 @@
         </div>
     </main>
 
+    @endsection
 
-    @push('scripts')
+@push('scripts')
  
 
-@if(session('order_placed'))
+@if(session('success_order'))
 <script>
-Swal.fire({
-    title: 'Order Placed Successfully!',
-    text: 'Thank you for your purchase.',
-    icon: 'success',
-    confirmButtonText: 'Continue Shopping'
+document.addEventListener('DOMContentLoaded', function () {
+    Swal.fire({
+        title: 'Order Placed Successfully!',
+        text: 'Thank you for shopping with us.',
+        icon: 'success',
+        confirmButtonText: 'View Order',
+        allowOutsideClick: false
+    }).then(() => {
+        window.location.href = "{{ route('order.success', session('success_order')) }}";
+    });
 });
 </script>
 @endif
 
 @endpush
 
-@endsection

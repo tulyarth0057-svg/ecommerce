@@ -158,6 +158,10 @@ Route::post('/notifications/mark-read/{id}', function ($id) {
 })->name('notifications.markRead');
 
 
+//  courier-boy-approved-function-------->
+Route::post('courier/approve/{id}', [AuthController::class, 'approve']);
+Route::post('courier/reject/{id}', [AuthController::class, 'reject']);
+
   
 
 });
@@ -193,6 +197,11 @@ Route::post('/cart/set-quantity', [AddtocardController::class, 'setQuantity'])->
     // Show order success page
     Route::get('/order/success/{order}', [OrderController::class, 'orderSuccess'])
         ->name('order.success');
+  
+        // download-invoice-page---->
+        Route::get('/order/{orderId}/invoice', [OrderController::class, 'downloadInvoice'])
+    ->name('order.invoice.download')
+    ->middleware('auth');
 
 });
 
@@ -363,6 +372,23 @@ $notification->markAsRead();
 return response()->json(['success'=>true]);
 
 });
+
+
+Route::get('/courier-notifications-unread', function () {
+
+    $notifications = auth()->user()
+        ->unreadNotifications
+        ->where('type','App\Notifications\NewCourierNotification')
+        ->values();
+
+    return response()->json([
+        'count' => $notifications->count(),
+        'notifications' => $notifications
+    ]);
+
+})->name('courier.notifications.unread');
+
+
 
 
 

@@ -397,12 +397,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const payNowBtn = document.getElementById('payNowBtn');
     const placeOrderBtn = document.getElementById('placeOrderBtn');
 
+    /* -----------------------------
+        Reset Buttons
+    ------------------------------*/
     function resetPayBtn() {
         payNowBtn.disabled = false;
         payNowBtn.innerText = 'Pay Now';
     }
 
+    function resetCashBtn() {
+        placeOrderBtn.disabled = false;
+        placeOrderBtn.innerText = 'Place Order';
+    }
+
+    /* -----------------------------
+        Payment Toggle
+    ------------------------------*/
     window.selectPayment = function(el) {
+
         document.querySelectorAll('.payment-option')
             .forEach(opt => opt.classList.remove('payment-selected'));
 
@@ -415,14 +427,86 @@ document.addEventListener('DOMContentLoaded', function () {
         placeOrderBtn.style.display = method === 'cash' ? 'block' : 'none';
     };
 
+    /* =====================================================
+        CASH ON DELIVERY AJAX ORDER
+    ======================================================*/
+    placeOrderBtn.addEventListener('click', function(e){
+
+        e.preventDefault();
+
+        placeOrderBtn.disabled = true;
+        placeOrderBtn.innerText = "Processing...";
+
+        let formData = new FormData(form);
+
+        Swal.fire({
+            title: 'Placing Order...',
+            text: 'Please wait',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        fetch("{{ route('checkout.process') }}", {
+
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Accept": "application/json"
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(result => {
+
+            if(result.status){
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Order Placed 🎉',
+                    text: result.message,
+                    confirmButtonText: 'View Order'
+                }).then(() => {
+
+                    window.location.href = "/order/success/" + result.order_id;
+
+                });
+
+            } else {
+
+                resetCashBtn();
+                Swal.fire('Error', result.message, 'error');
+
+            }
+
+        })
+        .catch(err => {
+
+            console.error(err);
+            resetCashBtn();
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Order Failed',
+                text: 'Something went wrong'
+            });
+
+        });
+
+    });
+
+    /* =====================================================
+        RAZORPAY ONLINE PAYMENT
+    ======================================================*/
     payNowBtn.addEventListener('click', async function () {
+
         payNowBtn.disabled = true;
         payNowBtn.innerText = 'Processing...';
 
         try {
-            // Total amount को सही से parse करो (comma या space भी handle कर सकता है)
+
             const totalText = document.getElementById('totalAmount').innerText;
-            const total = parseFloat(totalText.replace(/[^0-9.]/g, '')); 
+            const total = parseFloat(totalText.replace(/[^0-9.]/g, ''));
+
             if (isNaN(total) || total <= 0) {
                 throw new Error("Invalid amount");
             }
@@ -436,121 +520,112 @@ document.addEventListener('DOMContentLoaded', function () {
                     "X-CSRF-TOKEN": "{{ csrf_token() }}",
                     "Accept": "application/json"
                 },
-                body: JSON.stringify({ amount: total })  // rupees में भेजो, backend paise में convert करेगा
+                body: JSON.stringify({ amount: total })
             });
 
-            if (!res.ok) {
-                const errData = await res.json();
-                throw new Error(errData.message || "Failed to create order");
-            }
-
             const data = await res.json();
-
-            if (!data.razorpay_order_id) {
-                throw new Error("No order ID received");
-            }
 
             const options = {
                 key: "{{ config('services.razorpay.key') }}",
                 amount: amountInPaise,
                 currency: "INR",
                 name: "Rimberio",
-                description: "Order Payment",  // optional लेकिन अच्छा लगता है
+                description: "Order Payment",
                 order_id: data.razorpay_order_id,
 
-                // Theme customize (तुम्हारा favorite color डाल सकती हो)
                 theme: {
-                    color: "#f56c3e"   // pinkish, या जो चाहो
+                    color: "#f56c3e"
                 },
 
-                // Prefill ज्यादा info → बेहतर UX
                 prefill: {
                     name: "{{ auth()->user()->name ?? '' }}",
                     email: "{{ auth()->user()->email ?? '' }}",
-                    contact: "{{ auth()->user()->phone ?? auth()->user()->mobile ?? '' }}"  // अगर phone field है तो add करो
+                    contact: "{{ auth()->user()->phone ?? '' }}"
                 },
 
-               handler: async function (response) {
-    try {
-        const formData = Object.fromEntries(new FormData(form));
+                handler: async function (response) {
 
-        const verifyRes = await fetch("{{ route('razorpay.verify') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Accept": "application/json"
-            },
-            body: JSON.stringify({
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_signature: response.razorpay_signature,
-                formData: formData
-            })
-        });
+                    try {
 
-        const result = await verifyRes.json();
+                        const formData = Object.fromEntries(new FormData(form));
 
-        if (result.success) {
-            Swal.fire({
-                title: 'Order Placed Successfully!',
-                text: 'Thank you for shopping with us.',
-                icon: 'success',
-                confirmButtonText: 'View Order',
-                allowOutsideClick: false
-            }).then(() => {
-                window.location.href = "/order/success/" + result.order_id;
-            });
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Payment Failed',
-                text: result.message || 'Something went wrong!'
-            });
-            resetPayBtn();
-        }
-    } catch (err) {
-        console.error(err);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: 'Payment processed but verification failed. Please contact support.'
-        });
-        resetPayBtn();
-    }
-},
+                        const verifyRes = await fetch("{{ route('razorpay.verify') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                "Accept": "application/json"
+                            },
+                            body: JSON.stringify({
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature,
+                                formData: formData
+                            })
+                        });
 
+                        const result = await verifyRes.json();
 
-                modal: {
-                    ondismiss: function () {
+                        if (result.success) {
+
+                            Swal.fire({
+                                title: 'Order Placed Successfully!',
+                                text: 'Thank you for shopping with us.',
+                                icon: 'success',
+                                confirmButtonText: 'View Order'
+                            }).then(() => {
+
+                                window.location.href = "/order/success/" + result.order_id;
+
+                            });
+
+                        } else {
+
+                            resetPayBtn();
+                            Swal.fire('Error', result.message, 'error');
+
+                        }
+
+                    } catch (err) {
+
+                        console.error(err);
                         resetPayBtn();
-                        // alert("Payment popup closed");  // optional
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Verification Failed'
+                        });
+
                     }
                 },
 
-                // Optional: notes add कर सकते हो backend verification के लिए
-                // notes: { address: "some info" }
+                modal: {
+                    ondismiss: resetPayBtn
+                }
             };
 
             const rzp = new Razorpay(options);
 
-            rzp.on('payment.failed', function (response) {
-                alert(response.error.description || "Payment failed");
+            rzp.on('payment.failed', function () {
                 resetPayBtn();
+                Swal.fire('Payment Failed');
             });
 
             rzp.open();
 
         } catch (e) {
-            console.error("Payment init error:", e);
-            alert(e.message || "Something went wrong. Please try again.");
+
+            console.error(e);
             resetPayBtn();
+            Swal.fire('Error', e.message, 'error');
+
         }
     });
+
 });
 </script>
 
-
+{{-- sweetalert of cash and online payment --}}
 
 @if(session('success_order'))
 <script>

@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
  use Illuminate\Support\Facades\Log;
+ use PDF;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class RazorpayController extends Controller
 {
@@ -175,6 +178,27 @@ class RazorpayController extends Controller
 
         // Clear cart
         DB::table('addtocart')->where('user_id', $userId)->delete();
+
+          // 🔥 PDF Invoice generation
+    $order = DB::table('tbl_orders')->where('o_id', $orderId)->first();
+    $orderItems = DB::table('tbl_order_items')->where('o_i_order_id', $orderId)->get();
+
+    $pdf = PDF::loadView('invoice', compact('order','orderItems'));
+    $fileName = 'invoice_'.$order->o_order_number.'.pdf';
+    $filePath = storage_path('app/public/invoices/'.$fileName);
+    $pdf->save($filePath);
+
+    // 🔥 Send Email
+    Mail::send([], [], function($message) use ($order, $filePath, $fileName){
+        $message->to($order->o_email)
+                ->subject("Your Order Invoice #{$order->o_order_number}")
+                ->attach($filePath, ['as'=>$fileName,'mime'=>'application/pdf'])
+               ->text("Hello {$order->o_name}, Thank you for your order! Your invoice is attached.");
+
+
+    });
+
+
 
         return response()->json([
             'success'  => true,

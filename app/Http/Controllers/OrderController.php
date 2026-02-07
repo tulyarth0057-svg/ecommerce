@@ -13,6 +13,9 @@ use App\Models\CourierBoy;
 use App\Models\User;
 use App\Notifications\NewOrderNotification;
 use App\Notifications\CourierAssignedNotification;
+use PDF;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
                       
 
 
@@ -122,7 +125,6 @@ public function processCheckout(Request $request)
     'o_updated_at'     => now(),
 ]);
 
-// 🔥 THIS WAS MISSING
 OrderStatus::create([
     'order_id' => $orderId,
     'status'   => 'pending',
@@ -163,8 +165,34 @@ foreach($admins as $admin){
     // Clear Cart
     DB::table('addtocart')->where('user_id', $userId)->delete();
 
-    return redirect()->route('order.success', $orderId)
-           ->with('success', 'Order placed successfully!');
+   
+    // 🔥 PDF Invoice generation
+    $order = DB::table('tbl_orders')->where('o_id', $orderId)->first();
+    $orderItems = DB::table('tbl_order_items')->where('o_i_order_id', $orderId)->get();
+
+    $pdf = PDF::loadView('invoice', compact('order','orderItems'));
+    $fileName = 'invoice_'.$order->o_order_number.'.pdf';
+    $filePath = storage_path('app/public/invoices/'.$fileName);
+    $pdf->save($filePath);
+
+    // 🔥 Send Email
+    Mail::send([], [], function($message) use ($order, $filePath, $fileName){
+        $message->to($order->o_email)
+                ->subject("Your Order Invoice #{$order->o_order_number}")
+                ->attach($filePath, ['as'=>$fileName,'mime'=>'application/pdf'])
+               ->text("Hello {$order->o_name}, Thank you for your order! Your invoice is attached.");
+
+
+    });
+
+// ✅ RETURN JSON INSTEAD OF REDIRECT
+return response()->json([
+    'status' => true,
+    'message' => 'Order placed successfully!',
+    'order_id' => $orderId
+]);
+
+
 }
 
 
@@ -200,6 +228,35 @@ public function orderSuccess($orderId)
         ->get();
 
     return view('order', compact('order', 'orderItems', 'allOrders'));
+}
+
+
+
+// download-invoice-controler------->
+public function downloadInvoice($orderId)
+{
+    $userId = auth()->id();
+
+    // Fetch order (ensure user owns it)
+    $order = DB::table('tbl_orders')
+        ->where('o_id', $orderId)
+        ->where('o_user_id', $userId)
+        ->first();
+
+    if (!$order) {
+        abort(404);
+    }
+
+    $orderItems = DB::table('tbl_order_items')
+        ->where('o_i_order_id', $orderId)
+        ->get();
+
+    // Generate PDF
+    $pdf = PDF::loadView('invoice', compact('order','orderItems'));
+    $fileName = 'invoice_'.$order->o_order_number.'.pdf';
+
+    // Download PDF directly
+    return $pdf->download($fileName);
 }
 
 
